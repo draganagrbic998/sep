@@ -11,6 +11,7 @@ import com.example.demo.utils.PaymentParams;
 
 import java.util.Map;
 
+// Dok ne napravim psp ovo ostaje ovako. svakako nema smisla da testiram da li sve radi dok psp ne napravim
 @RestController
 @RequestMapping(value = "/paypal-service")
 public class PaymentController {

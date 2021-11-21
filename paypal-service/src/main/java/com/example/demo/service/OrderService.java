@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.model.Merchant;
 import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
 import com.example.demo.repo.OrderRepository;
@@ -28,12 +29,20 @@ public class OrderService {
 	@Autowired
 	private OrderRepository repo;
 
+	@Autowired
+	private MerchantService merchantService;
+
 	// Ovo ce biti metnuto u bazu u jednom trenutku
+	// Svaki merchant ce ima svoje. Ovo nabavimo za testiranje na paypal-ov sajt.
 	String clientId = "ASbalrTsNQwyeFRT6r47HW23NQwDpF9V_4IRJIEkhWGmgI2uZ5L7lYgrspWWgWvEYqd8GT1SmF4hcRd4";
 	String clientSecret = "EJZT7rVvs4wBMCghAlPnx96WC-Se44lmQTKuiAXRWNFvFxH-e69d_aSI8gESJPAbbys3CvOmLZttfGPb";
 
+	// Napravimo narudzbu kod paypal-a
+	// Klijent prodavnice onda treba da potvrdi placanje
 	public Map<String, Object> createPayment(Order order) {
 		Map<String, Object> response = new HashMap<String, Object>();
+
+		Merchant merchant = merchantService.findOne(order.getMerchantId());
 
 		Amount amount = new Amount();
 		amount.setCurrency(order.getCurrency());
@@ -60,7 +69,7 @@ public class OrderService {
 		Payment createdPayment;
 		try {
 			String redirectUrl = "";
-			APIContext context = new APIContext(clientId, clientSecret, "sandbox");
+			APIContext context = new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox");
 			createdPayment = payment.create(context);
 			if (createdPayment != null) {
 				List<Links> links = createdPayment.getLinks();
@@ -83,10 +92,12 @@ public class OrderService {
 		return response;
 	}
 
+	// Poziva se nakon sto klijent odobri placanje
 	public Map<String, Object> completePayment(PaymentParams params) {
 		Map<String, Object> response = new HashMap<String, Object>();
 
 		Order order = repo.findByPayPalOrderIdNotNull(params.getPaymentId());
+		Merchant merchant = merchantService.findOne(order.getMerchantId());
 
 		Payment payment = new Payment();
 		payment.setId(params.getPaymentId());
@@ -94,7 +105,7 @@ public class OrderService {
 		paymentExecution.setPayerId(params.getPayerId());
 
 		try {
-			APIContext context = new APIContext(clientId, clientSecret, "sandbox");
+			APIContext context = new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox");
 			Payment createdPayment = payment.execute(context, paymentExecution);
 			if (createdPayment != null) {
 				response.put("status", "success");
