@@ -5,8 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.model.Order;
+import com.example.demo.model.OrderStatus;
+import com.example.demo.repo.OrderRepository;
 import com.example.demo.utils.PaymentParams;
 import com.paypal.api.payments.Amount;
 import com.paypal.api.payments.Links;
@@ -19,17 +23,22 @@ import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
 
 @Service
-public class PaymentService {
+public class OrderService {
+
+	@Autowired
+	private OrderRepository repo;
 
 	// Ovo ce biti metnuto u bazu u jednom trenutku
 	String clientId = "ASbalrTsNQwyeFRT6r47HW23NQwDpF9V_4IRJIEkhWGmgI2uZ5L7lYgrspWWgWvEYqd8GT1SmF4hcRd4";
 	String clientSecret = "EJZT7rVvs4wBMCghAlPnx96WC-Se44lmQTKuiAXRWNFvFxH-e69d_aSI8gESJPAbbys3CvOmLZttfGPb";
 
-	public Map<String, Object> createPayment(String sum) {
+	public Map<String, Object> createPayment(Order order) {
 		Map<String, Object> response = new HashMap<String, Object>();
+
 		Amount amount = new Amount();
-		amount.setCurrency("USD");
-		amount.setTotal(sum);
+		amount.setCurrency(order.getCurrency());
+		amount.setTotal(order.getValue().toString());
+
 		Transaction transaction = new Transaction();
 		transaction.setAmount(amount);
 		List<Transaction> transactions = new ArrayList<Transaction>();
@@ -47,6 +56,7 @@ public class PaymentService {
 		redirectUrls.setCancelUrl("http://localhost:4200/cancel");
 		redirectUrls.setReturnUrl("http://localhost:4200/");
 		payment.setRedirectUrls(redirectUrls);
+
 		Payment createdPayment;
 		try {
 			String redirectUrl = "";
@@ -62,6 +72,10 @@ public class PaymentService {
 				}
 				response.put("status", "success");
 				response.put("redirect_url", redirectUrl);
+
+				order.setStatus(OrderStatus.CREATED);
+				order.setPayPalOrderId(createdPayment.getId());
+				repo.save(order);
 			}
 		} catch (PayPalRESTException e) {
 			System.out.println("Error happened during payment creation!");
@@ -71,20 +85,28 @@ public class PaymentService {
 
 	public Map<String, Object> completePayment(PaymentParams params) {
 		Map<String, Object> response = new HashMap<String, Object>();
+
+		Order order = repo.findByPayPalOrderIdNotNull(params.getPaymentId());
+
 		Payment payment = new Payment();
 		payment.setId(params.getPaymentId());
 		PaymentExecution paymentExecution = new PaymentExecution();
 		paymentExecution.setPayerId(params.getPayerId());
+
 		try {
 			APIContext context = new APIContext(clientId, clientSecret, "sandbox");
 			Payment createdPayment = payment.execute(context, paymentExecution);
 			if (createdPayment != null) {
 				response.put("status", "success");
 				response.put("payment", createdPayment);
+				order.setStatus(OrderStatus.COMPLETED);
 			}
 		} catch (PayPalRESTException e) {
 			System.err.println(e.getDetails());
+			order.setStatus(OrderStatus.FAILED);
 		}
+		repo.save(order);
+
 		return response;
 	}
 

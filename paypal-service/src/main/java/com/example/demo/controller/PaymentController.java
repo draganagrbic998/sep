@@ -2,7 +2,11 @@ package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.example.demo.service.PaymentService;
+
+import com.example.demo.dto.OrderDTO;
+import com.example.demo.mapper.OrderMapper;
+import com.example.demo.model.Order;
+import com.example.demo.service.OrderService;
 import com.example.demo.utils.PaymentParams;
 
 import java.util.Map;
@@ -12,18 +16,20 @@ import java.util.Map;
 public class PaymentController {
 
 	@Autowired
-	private PaymentService paymentService;
+	private OrderMapper orderMapper;
 
-	@CrossOrigin(origins = "http://localhost:4200")
+	@Autowired
+	private OrderService orderService;
+
 	@PostMapping(value = "/make/payment")
-	public Map<String, Object> makePayment(@RequestParam("sum") String sum) {
-		return paymentService.createPayment(sum);
+	public Map<String, Object> createPayment(@RequestBody OrderDTO orderDTO) {
+		Order order = orderMapper.toEntity(orderDTO);
+		return orderService.createPayment(order);
 	}
 
-	@CrossOrigin(origins = "http://localhost:4200")
 	@PostMapping(value = "/complete/payment")
 	public Map<String, Object> completePayment(@RequestBody PaymentParams params) {
-		return paymentService.completePayment(params);
+		return orderService.completePayment(params);
 	}
 
 }
