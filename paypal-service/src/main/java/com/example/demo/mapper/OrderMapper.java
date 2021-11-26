@@ -3,11 +3,13 @@ package com.example.demo.mapper;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.example.demo.dto.OrderDTO;
 import com.example.demo.model.Order;
 import com.example.demo.service.OrderService;
 
+@Component
 public class OrderMapper {
 
 	@Autowired

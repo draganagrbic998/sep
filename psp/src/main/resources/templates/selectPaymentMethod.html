@@ -93,8 +93,8 @@
 				<div class="card-body container-card">
 					<h5 class="card-title title" th:text="${method.name}"></h5>
 					<button class="btn btn-boja link"
-						th:href="@{'http://localhost:8762/' + ${method.name}} + '/pay/' +  ${appId}"
-						th:attr="create_url=@{'http://localhost:8762/psp/redirect/' + ${method.name}} + '/' + ${orderIdPSP}, merchant_id=${merchantId}, order_id=${orderId}, order_price=${orderPrice}, order_currency=${orderCurrency}, callback_url=${callbackUrl}">
+						th:href="@{'http://localhost:8762/' + ${method.name}} + '/pay/' +  ${merchantId}"
+						th:attr="create_url=@{'http://localhost:8762/psp/redirection/' + ${method.name}} + '/' + ${orderIdPSP}, merchant_id=${merchantId}, order_id=${orderId}, order_price=${orderPrice}, order_currency=${orderCurrency}, callback_url=${callbackUrl}">
 						Potvrdi</button>
 				</div>
 			</div>
@@ -103,7 +103,7 @@
 
 	<script>
 		$(document).ready(function(){
-			$( ".link" ).click(function(e) {
+			$(".link").click(function(e) {
 				  e.preventDefault();
 				  console.log($(this).attr('create_url'));
 				  console.log($(this).attr('mechant_id'));
@@ -112,7 +112,7 @@
 				  console.log($(this).attr('order_currency'));
 				  console.log($(this).attr('callback_url'));
 
-				  console.log("REDIRECT URL: ")
+				  console.log("Redirect URL: ")
 				  console.log($(this).attr('href'));
 
 				  var hrefUrl = $(this).attr('href');
@@ -127,11 +127,7 @@
 						'merchantId':$(this).attr('merchant_id'),
 						'callbackUrl': $(this).attr('callback_url')}),
 					success: function(res){
-						console.log(res);
-
 						var url = hrefUrl + "/" + res.id
-						console.log(url);
-
 						window.location.href = url;
 					},
 					error: function(odgovor){
