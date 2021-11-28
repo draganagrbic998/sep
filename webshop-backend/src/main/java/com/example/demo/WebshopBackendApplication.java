@@ -16,7 +16,5 @@ public class WebshopBackendApplication {
 	// HTTPS
 	// PREAUTHORIZE
 	// PAGINATION
-	// PRODUCT IMAGE
-	// PRODUCT CATEGORY
 
 }

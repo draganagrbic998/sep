@@ -24,24 +24,28 @@ public class Product {
 	private Long id;
 
 	@Column
-	@NotBlank(message = "Name cannot be blank")
+	@NotBlank
 	private String name;
 
 	@Column
-	@NotBlank(message = "Description cannot be blank")
+	@NotBlank
 	private String description;
 
 	@Column
-	@NotNull(message = "Price cannot be null")
-	@Positive(message = "Price must be positive number")
+	@NotNull
+	@Positive
 	private Double price;
 
 	@Column
-	@NotBlank(message = "Category cannot be blank")
+	@NotBlank
 	private String category;
 
 	@Column
-	@NotBlank(message = "Currency cannot be blank")
+	@NotBlank
 	private String currency;
+
+	@Column
+	@NotBlank
+	private String imageLocation;
 
 }

@@ -7,13 +7,15 @@ import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.ProductUpload;
+import com.example.demo.mapper.ProductMapper;
 import com.example.demo.model.Product;
 import com.example.demo.service.ProductService;
 
@@ -26,6 +28,7 @@ import lombok.AllArgsConstructor;
 public class ProductController {
 
 	private final ProductService service;
+	private final ProductMapper mapper;
 
 	@GetMapping
 	public ResponseEntity<List<Product>> read() {
@@ -33,19 +36,27 @@ public class ProductController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Product> create(@Valid @RequestBody Product product) {
-		if (product.getId() != null) {
+	public ResponseEntity<Product> create(@Valid @ModelAttribute ProductUpload dto) {
+		if (dto.getId() != null) {
 			return ResponseEntity.badRequest().build();
 		}
-		return ResponseEntity.ok(service.save(product));
+		try {
+			return ResponseEntity.ok(service.save(mapper.map(dto), dto.getImage()));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().build();
+		}
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Product> update(@PathVariable Long id, @Valid @RequestBody Product product) {
-		if (id == null || product.getId() == null || id != product.getId()) {
+	public ResponseEntity<Product> update(@PathVariable Long id, @Valid @ModelAttribute ProductUpload dto) {
+		if (id == null || dto.getId() == null || id != dto.getId()) {
 			return ResponseEntity.badRequest().build();
 		}
-		return ResponseEntity.ok(service.save(product));
+		try {
+			return ResponseEntity.ok(service.save(mapper.map(dto), dto.getImage()));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().build();
+		}
 	}
 
 	@DeleteMapping("/{id}")
