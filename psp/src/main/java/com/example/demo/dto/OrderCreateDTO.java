@@ -16,6 +16,5 @@ public class OrderCreateDTO {
 	private String currency;
 	private Integer merchantId;
 	private String callbackUrl;
-	private String redirectUrl;
 
 }

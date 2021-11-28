@@ -98,7 +98,7 @@
 			<div class="bg-white rounded-lg shadow-sm p-5 container-card">
 				<div>
 					<form
-						th:action="@{'http://localhost:8086/merchant/createUpdate/' + ${mechantId}}"
+						th:action="@{'http://localhost:8086/merchant/createUpdate/' + ${merchantId}}"
 						id="registerForm" role="form" method="POST">
 						<div class="input-group form-group">
 							<div class="input-group-prepend">
@@ -116,8 +116,8 @@
 								class="form-control" placeholder="Paypal client secret">
 						</div>
 						<button type="submit"
-							class="subscribe btn btn-boja btn-block shadow-sm" style="margin: auto; max-width: 100px;">
-							Register</button>
+							class="subscribe btn btn-boja btn-block shadow-sm"
+							style="margin: auto; max-width: 100px;">Register</button>
 					</form>
 				</div>
 			</div>
@@ -125,8 +125,7 @@
 	</div>
 	<script>
 		$(document).ready(function(){
-			var formId = 'registerForm';
-			$('#' + formId).submit(function (e) {
+			$('#registerForm').submit(function (e) {
 				handleFormRegister(e, formId);
 			});
 		});
@@ -149,11 +148,11 @@
 				url: form.attr('action'),
 				contentType: "application/json",
 				data: JSON.stringify(obj),
-				success: function(odgovor){
-					window.location.href = odgovor;
+				success: function(res){
+					window.location.href = res;
 				},
-				error: function(odgovor){
-					alert(odgovor.responseText);
+				error: function(res){
+					alert(res.responseText);
 				}
 			});
 		}
