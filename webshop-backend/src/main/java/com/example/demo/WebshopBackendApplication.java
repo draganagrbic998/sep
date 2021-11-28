@@ -12,4 +12,8 @@ public class WebshopBackendApplication {
 		SpringApplication.run(WebshopBackendApplication.class, args);
 	}
 
+	// LOGGING
+	// HTTPS
+	// PREAUTHORIZE
+
 }
