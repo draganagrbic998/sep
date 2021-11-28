@@ -19,7 +19,7 @@
               placeholder="Select {{ control }}"
             >
               <mat-option
-                *ngFor="let option of options(control)"
+                *ngFor="let option of options(control) | async"
                 [value]="option"
                 >{{ option }}</mat-option
               >

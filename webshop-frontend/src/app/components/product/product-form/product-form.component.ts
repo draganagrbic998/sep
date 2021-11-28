@@ -14,7 +14,7 @@ import { Route } from 'src/app/utils/route';
   selector: 'app-application-upload',
   template: `<app-form title="Upload Product" [config]="config" [pending]="pending" [style]="style" (submit)="upload($event)"></app-form>`
 })
-export class ProductFormComponent implements OnInit {
+export class ProductFormComponent {
 
   constructor(
     private productService: ProductService,
@@ -28,51 +28,39 @@ export class ProductFormComponent implements OnInit {
   categories: string[];
   currencies: string[];
   pending = false;
-  config: FormConfig;
+  config: FormConfig = {
+    name: {
+      validation: 'required'
+    },
+    description: {
+      validation: 'required'
+    },
+    price: {
+      validation: 'price'
+    },
+    category: {
+      type: 'select',
+      validation: 'required',
+      // if api failed, return empty list
+      options: this.categoryService.read().pipe(map(res => res.map(category => category.name)))
+    },
+    currency: {
+      type: 'select',
+      validation: 'required',
+      options: this.currencyService.read().pipe(map(res => res.map(currency => currency.name)))
+    },
+    image: {
+      type: 'file',
+      validation: 'required'
+    }
+  }
   style: FormStyle = {
     width: '550px',
     'margin-top': '100px'
   }
 
-  ngOnInit() {
-    this.readOptions().then(() => this.setFormConfig())
-      .catch(() => this.setFormConfig())
-  }
-
-  private async readOptions() {
-    this.categories = await this.categoryService.read().pipe(map(res => res.map(category => category.name))).toPromise()
-    this.currencies = await this.currencyService.read().pipe(map(res => res.map(currency => currency.name))).toPromise()
-  }
-
-  private setFormConfig() {
-    this.config = {
-      name: {
-        validation: 'required'
-      },
-      description: {
-        validation: 'required'
-      },
-      price: {
-        validation: 'price'
-      },
-      category: {
-        type: 'select',
-        validation: 'required',
-        options: this.categories
-      },
-      currency: {
-        type: 'select',
-        validation: 'required',
-        options: this.currencies
-      },
-      image: {
-        type: 'file',
-        validation: 'required'
-      }
-    }
-  }
-
   async upload(upload: ProductUpload) {
+    upload.id = +this.route.snapshot.params.id || null
     this.pending = true;
 
     try {

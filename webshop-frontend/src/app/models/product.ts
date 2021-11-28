@@ -1,6 +1,6 @@
 import { StandardModel } from "./standard-model";
 
-export interface ProductUpload {
+export interface ProductUpload extends StandardModel {
     name: string;
     description: string;
     price: string;
