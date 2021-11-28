@@ -22,7 +22,7 @@ import com.example.demo.repo.PaymentRequestRepository;
 @Service
 public class PaymentRequestService {
 
-	@Value("${bankId}")
+	@Value("${bankID}")
 	private String bankId;
 
 	@Autowired
