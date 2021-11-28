@@ -1,3 +1,5 @@
+import { StandardModel } from "./standard-model";
+
 export interface ProductUpload {
     name: string;
     description: string;
@@ -7,7 +9,7 @@ export interface ProductUpload {
     image: Blob;
 }
 
-export interface Product {
+export interface Product extends StandardModel {
     id: number;
     name: string;
     description: string;
