@@ -3,6 +3,9 @@ package com.example.demo.dto;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
 
@@ -15,8 +18,13 @@ import lombok.Setter;
 @Setter
 public class Auth {
 
+	@NotBlank(message = "Email cannot be blank")
+	@Email(message = "Valid email is required")
 	private String email;
+
+	@NotBlank(message = "Password cannot be blank")
 	private String password;
+
 	private List<String> roles;
 	private String token;
 
