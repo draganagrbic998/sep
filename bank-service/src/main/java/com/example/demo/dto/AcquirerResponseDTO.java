@@ -7,9 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PaymentRequestResponseDTO {
+public class AcquirerResponseDTO {
 
-	private String paymentId;
-	private String paymentUrl;
+	private Boolean authentificated;
+	private Boolean transactionAutorized;
 
 }
