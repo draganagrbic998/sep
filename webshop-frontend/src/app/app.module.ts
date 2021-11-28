@@ -12,6 +12,7 @@ import { LoginComponent } from './components/auth/login/login.component';
 import { FormComponent } from './components/utils/form/form.component';
 import { SpinnerComponent } from './components/utils/spinner/spinner.component';
 import { ToolbarComponent } from './components/utils/toolbar/toolbar.component';
+import { ProductFormComponent } from './components/product/product-form/product-form.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { ToolbarComponent } from './components/utils/toolbar/toolbar.component';
     LoginComponent,
     FormComponent,
     SpinnerComponent,
-    ToolbarComponent
+    ToolbarComponent,
+    ProductFormComponent
   ],
   imports: [
     BrowserModule,

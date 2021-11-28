@@ -7,21 +7,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.model.Currency;
-import com.example.demo.service.CurrencyService;
+import com.example.demo.model.Category;
+import com.example.demo.service.CategoryService;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/currencies")
+@RequestMapping("/categories")
 // add preauthorize
-public class CurrencyController {
+public class CategoryController {
 
-	private final CurrencyService service;
+	private final CategoryService service;
 
 	@GetMapping
-	public ResponseEntity<List<Currency>> read() {
+	public ResponseEntity<List<Category>> read() {
 		return ResponseEntity.ok(service.read());
 	}
 

@@ -37,6 +37,10 @@ public class Product {
 	private Double price;
 
 	@Column
+	@NotBlank(message = "Category cannot be blank")
+	private String category;
+
+	@Column
 	@NotBlank(message = "Currency cannot be blank")
 	private String currency;
 

@@ -21,7 +21,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/products")
 // add preauthorize
 public class ProductController {
 

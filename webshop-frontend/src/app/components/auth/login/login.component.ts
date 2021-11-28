@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
   }
   style: FormStyle = {
     width: '500px',
-    'margin-top': '200px'
+    'margin-top': '250px'
   }
 
   ngOnInit() {
