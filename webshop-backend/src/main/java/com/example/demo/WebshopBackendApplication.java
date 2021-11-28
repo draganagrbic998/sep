@@ -13,6 +13,5 @@ public class WebshopBackendApplication {
 	// LOGGING
 	// HTTPS
 	// PREAUTHORIZE
-	// PAGINATION
 
 }
