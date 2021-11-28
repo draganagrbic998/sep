@@ -40,6 +40,20 @@ public class CartItem {
 	@Column
 	@NotNull
 	@Positive
-	private Integer quantity;
+	private Long quantity;
+
+	public CartItem(Cart cart, Product product) {
+		this.cart = cart;
+		this.product = product;
+		this.quantity = 1l;
+	}
+
+	public void incQuantity() {
+		++quantity;
+	}
+
+	public void decQuantity() {
+		--quantity;
+	}
 
 }
