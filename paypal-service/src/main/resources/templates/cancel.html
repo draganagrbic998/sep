@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<link href="css/styles.css" rel="stylesheet" />
+<title>Paypal plaćanje</title>
+</head>
+<body>
+	<h3 style="text-align: center;">PayPal payment canceled!</h3>
+	<script>
+		var redirectUrl = "[[${redirect}]]";
+		
+		setTimeout(function() {
+			window.location = redirectUrl;
+		}, 2500);
+	</script>
+</body>
+</html>

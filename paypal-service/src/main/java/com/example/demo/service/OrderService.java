@@ -6,13 +6,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import com.example.demo.dto.PaymentCompletedDTO;
 import com.example.demo.model.Merchant;
 import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
 import com.example.demo.repo.OrderRepository;
-import com.example.demo.utils.PaymentParams;
 import com.paypal.api.payments.Amount;
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payer;
@@ -36,6 +39,14 @@ public class OrderService {
 	// Svaki merchant ce ima svoje. Ovo nabavimo za testiranje na paypal-ov sajt.
 	String clientId = "ASbalrTsNQwyeFRT6r47HW23NQwDpF9V_4IRJIEkhWGmgI2uZ5L7lYgrspWWgWvEYqd8GT1SmF4hcRd4";
 	String clientSecret = "EJZT7rVvs4wBMCghAlPnx96WC-Se44lmQTKuiAXRWNFvFxH-e69d_aSI8gESJPAbbys3CvOmLZttfGPb";
+
+	public Order getOrder(Integer orderId) {
+		return repo.getById(orderId);
+	}
+
+	public Order saveOrder(Order order) {
+		return repo.save(order);
+	}
 
 	// Napravimo narudzbu kod paypal-a
 	// Klijent prodavnice onda treba da potvrdi placanje
@@ -62,8 +73,8 @@ public class OrderService {
 		payment.setTransactions(transactions);
 
 		RedirectUrls redirectUrls = new RedirectUrls();
-		redirectUrls.setCancelUrl("http://localhost:4200/cancel");
-		redirectUrls.setReturnUrl("http://localhost:4200/");
+		redirectUrls.setReturnUrl("http://localhost:8086/view/success_url/" + order.getId().toString());
+		redirectUrls.setCancelUrl("http://localhost:8086/view/cancel_url/" + order.getId().toString());
 		payment.setRedirectUrls(redirectUrls);
 
 		Payment createdPayment;
@@ -93,32 +104,52 @@ public class OrderService {
 	}
 
 	// Poziva se nakon sto klijent odobri placanje
-	public Map<String, Object> completePayment(PaymentParams params) {
-		Map<String, Object> response = new HashMap<String, Object>();
-
-		Order order = repo.findByPayPalOrderIdNotNull(params.getPaymentId());
+	public String completePayment(String paymentId, String payerId) {
+		Order order = repo.findByPayPalOrderIdNotNull(paymentId);
 		Merchant merchant = merchantService.findOne(order.getMerchantId());
 
 		Payment payment = new Payment();
-		payment.setId(params.getPaymentId());
+		payment.setId(paymentId);
 		PaymentExecution paymentExecution = new PaymentExecution();
-		paymentExecution.setPayerId(params.getPayerId());
+		paymentExecution.setPayerId(payerId);
+
+		Payment completedPayment = new Payment();
 
 		try {
 			APIContext context = new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox");
-			Payment createdPayment = payment.execute(context, paymentExecution);
-			if (createdPayment != null) {
-				response.put("status", "success");
-				response.put("payment", createdPayment);
+			completedPayment = payment.execute(context, paymentExecution);
+			if (completedPayment != null) {
 				order.setStatus(OrderStatus.COMPLETED);
 			}
 		} catch (PayPalRESTException e) {
 			System.err.println(e.getDetails());
 			order.setStatus(OrderStatus.FAILED);
 		}
+
+		if (order.getStatus().toString().equalsIgnoreCase("COMPLETED")) {
+			order.setExecuted(true);
+
+			RestTemplate restTemplate = new RestTemplate();
+			PaymentCompletedDTO paymentCompletedDTO = new PaymentCompletedDTO();
+			paymentCompletedDTO.setOrderId(order.getShopOrderId());
+			paymentCompletedDTO.setStatus(OrderStatus.COMPLETED);
+			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
+					new HttpEntity<PaymentCompletedDTO>(paymentCompletedDTO), String.class);
+		}
+
 		repo.save(order);
 
-		return response;
+		return completedPayment.toJSON();
 	}
 
+	public String getOrderDetails(int orderId) throws PayPalRESTException {
+		Order order = repo.getById(orderId);
+		Merchant merchant = merchantService.findOne(order.getMerchantId());
+
+		APIContext context = new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox");
+
+		Payment payment = Payment.get(context, order.getPayPalOrderId());
+
+		return payment.toJSON();
+	}
 }

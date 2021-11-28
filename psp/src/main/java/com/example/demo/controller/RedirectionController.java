@@ -37,7 +37,7 @@ public class RedirectionController {
 		Order order = orderService.findById(orderIdWebshop);
 
 		ResponseEntity<OrderCreatedDTO> responseEntity = restTemplate.exchange(
-				"http://localhost:8762/" + method + "/create", HttpMethod.POST,
+				"http://localhost:8762/" + method + "/create/payment", HttpMethod.POST,
 				new HttpEntity<OrderCreateDTO>(orderCreateDTO), OrderCreatedDTO.class);
 
 		order.setStatus(OrderStatus.SENT);
