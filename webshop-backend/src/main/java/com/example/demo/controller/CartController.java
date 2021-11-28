@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.model.Cart;
-import com.example.demo.model.Order;
+import com.example.demo.dto.CartDTO;
+import com.example.demo.dto.OrderDTO;
 import com.example.demo.service.CartService;
 
 import lombok.AllArgsConstructor;
@@ -25,17 +25,17 @@ public class CartController {
 	private final CartService service;
 
 	@GetMapping("/read_card")
-	public ResponseEntity<Cart> readCart() {
+	public ResponseEntity<CartDTO> readCart() {
 		return ResponseEntity.ok(service.readCart());
 	}
 
 	@GetMapping("/read_orders")
-	public ResponseEntity<List<Order>> readOrders() {
+	public ResponseEntity<List<OrderDTO>> readOrders() {
 		return ResponseEntity.ok(service.readOrders());
 	}
 
 	@PutMapping("/add_to_cart/{productId}")
-	public ResponseEntity<Cart> addToCart(@PathVariable Long productId) {
+	public ResponseEntity<CartDTO> addToCart(@PathVariable Long productId) {
 		if (productId == null) {
 			return ResponseEntity.badRequest().build();
 		}
@@ -43,7 +43,7 @@ public class CartController {
 	}
 
 	@PutMapping("/remove_from_cart/{productId}")
-	public ResponseEntity<Cart> removeFromCart(@PathVariable Long productId) {
+	public ResponseEntity<CartDTO> removeFromCart(@PathVariable Long productId) {
 		if (productId == null) {
 			return ResponseEntity.badRequest().build();
 		}
@@ -51,7 +51,7 @@ public class CartController {
 	}
 
 	@PostMapping("/order_cart")
-	public ResponseEntity<Cart> orderCart() {
+	public ResponseEntity<CartDTO> orderCart() {
 		return ResponseEntity.ok(service.orderCart());
 	}
 

@@ -1,7 +1,5 @@
 package com.example.demo.model;
 
-import java.util.List;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,7 +26,5 @@ public class Cart {
 	@JoinColumn(name = "user_id")
 	@NotNull
 	private User user;
-
-	private List<CartItem> items;
 
 }
