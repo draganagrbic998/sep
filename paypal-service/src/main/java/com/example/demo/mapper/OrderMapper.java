@@ -18,12 +18,11 @@ public class OrderMapper {
 	public Order toEntity(OrderDTO dto) {
 		Order model = new Order();
 
-		model.setShopOrderId(dto.getShopOrderId());
+		model.setShopOrderId(dto.getOrderIdWebshop());
 		model.setMerchantId(dto.getMerchantId());
 		model.setCurrency(dto.getCurrency());
-		model.setValue(dto.getValue());
+		model.setValue(dto.getPrice());
 		model.setCallbackUrl(dto.getCallbackUrl());
-		model.setRedirectUrl(dto.getRedirectUrl());
 		model.setExecuted(false);
 		model.setCreatedTimestamp(LocalDateTime.now());
 

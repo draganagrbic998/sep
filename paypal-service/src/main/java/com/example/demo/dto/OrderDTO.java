@@ -9,16 +9,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class OrderDTO {
 
-	private Double value;
-	
+	private Integer orderIdWebshop;
+	private Double price;
 	private String currency;
-
 	private Integer merchantId;
-
-	private Integer shopOrderId;
-
-	private String redirectUrl;
-
 	private String callbackUrl;
 
 }
