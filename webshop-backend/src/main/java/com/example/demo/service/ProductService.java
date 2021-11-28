@@ -26,9 +26,8 @@ public class ProductService {
 
 	@Transactional
 	public Product save(Product product, MultipartFile image) throws IOException {
-		product = repo.save(product);
 		product.setImageLocation(fileService.store(image));
-		return product;
+		return repo.save(product);
 	}
 
 	@Transactional

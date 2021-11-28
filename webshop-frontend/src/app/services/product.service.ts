@@ -17,6 +17,9 @@ export class ProductService extends StandardRestService<Product> {
   upload(upload: ProductUpload) {
     const data = new FormData();
     for (const field in upload) {
+      if (field === 'id' && !upload[field]) {
+        continue;
+      }
       data.append(field, upload[field]);
     }
     return this.http.post<Product>(this.API_URL, data);
