@@ -1,0 +1,14 @@
+<mat-toolbar color="primary" class="mat-elevation-z24">
+  <span></span>
+  <span>
+    <button *ngIf="!login" mat-icon-button [matMenuTriggerFor]="more">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #more="matMenu">
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Sign out</span>
+      </button>
+    </mat-menu>
+  </span>
+</mat-toolbar>

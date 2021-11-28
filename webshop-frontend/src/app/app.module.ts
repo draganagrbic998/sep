@@ -8,10 +8,18 @@ import { MaterialModule } from './material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './utils/auth.interceptor';
+import { LoginComponent } from './components/auth/login/login.component';
+import { FormComponent } from './components/utils/form/form.component';
+import { SpinnerComponent } from './components/utils/spinner/spinner.component';
+import { ToolbarComponent } from './components/utils/toolbar/toolbar.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    LoginComponent,
+    FormComponent,
+    SpinnerComponent,
+    ToolbarComponent
   ],
   imports: [
     BrowserModule,
