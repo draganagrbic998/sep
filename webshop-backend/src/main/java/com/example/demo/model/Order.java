@@ -1,5 +1,8 @@
 package com.example.demo.model;
 
+import java.util.Date;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,5 +31,14 @@ public class Order {
 	@JoinColumn(name = "user_id")
 	@NotNull
 	private User user;
+
+	@Column
+	@NotNull
+	private Date date;
+
+	public Order(User user) {
+		date = new Date();
+		this.user = user;
+	}
 
 }

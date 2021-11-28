@@ -63,13 +63,7 @@ public class CartService {
 		Cart cart = cartRepo.findByUserId(userService.getLoggedInUser().getId());
 		Product product = productRepo.findById(productId).get();
 		CartItem item = itemRepo.findByCartIdAndProductId(cart.getId(), product.getId());
-
-		if (item.getQuantity() <= 1) {
-			itemRepo.deleteById(item.getId());
-		} else {
-			item.decQuantity();
-			itemRepo.save(item);
-		}
+		itemRepo.deleteById(item.getId());
 
 		return readCart();
 	}
@@ -77,8 +71,7 @@ public class CartService {
 	@Transactional
 	public CartDTO orderCart() {
 		Cart cart = cartRepo.findByUserId(userService.getLoggedInUser().getId());
-		Order order = new Order();
-		order.setUser(userService.getLoggedInUser());
+		Order order = new Order(userService.getLoggedInUser());
 		orderRepo.save(order);
 
 		List<CartItem> items = itemRepo.findByCartId(cart.getId());

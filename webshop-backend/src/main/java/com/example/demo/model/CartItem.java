@@ -52,8 +52,4 @@ public class CartItem {
 		++quantity;
 	}
 
-	public void decQuantity() {
-		--quantity;
-	}
-
 }

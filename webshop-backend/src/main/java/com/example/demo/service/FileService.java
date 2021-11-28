@@ -14,7 +14,7 @@ public class FileService {
 	public static final String RESOURCES_PATH = "src/main/resources/images/";
 
 	public String store(MultipartFile file) throws IOException {
-		String fileName = new Date().getTime() + "_" + file.getOriginalFilename();
+		String fileName = "image_" + new Date().getTime() + "_" + file.getOriginalFilename();
 		FileOutputStream fout = new FileOutputStream(new File(RESOURCES_PATH + fileName));
 		fout.write(file.getBytes());
 		fout.close();

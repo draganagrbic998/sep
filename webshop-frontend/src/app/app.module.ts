@@ -13,6 +13,7 @@ import { FormComponent } from './components/utils/form/form.component';
 import { SpinnerComponent } from './components/utils/spinner/spinner.component';
 import { ToolbarComponent } from './components/utils/toolbar/toolbar.component';
 import { ProductFormComponent } from './components/product/product-form/product-form.component';
+import { ProductListComponent } from './components/product/product-list/product-list.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { ProductFormComponent } from './components/product/product-form/product-
     FormComponent,
     SpinnerComponent,
     ToolbarComponent,
-    ProductFormComponent
+    ProductFormComponent,
+    ProductListComponent
   ],
   imports: [
     BrowserModule,

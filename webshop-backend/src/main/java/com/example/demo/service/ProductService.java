@@ -1,8 +1,9 @@
 package com.example.demo.service;
 
 import java.io.IOException;
-import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,16 +18,24 @@ import lombok.AllArgsConstructor;
 public class ProductService {
 
 	private final ProductRepository repo;
+	private final UserService userService;
 	private final FileService fileService;
 
 	@Transactional(readOnly = true)
-	public List<Product> read() {
-		return repo.findAll();
+	public Page<Product> read(String category, Pageable pageable) {
+		if (category == null) {
+			return repo.findAll(pageable);
+		}
+		if (category.equalsIgnoreCase("personal")) {
+			return repo.findByUserId(userService.getLoggedInUser().getId(), pageable);
+		}
+		return repo.findByCategory(category, pageable);
 	}
 
 	@Transactional
 	public Product save(Product product, MultipartFile image) throws IOException {
-		product.setImageLocation(fileService.store(image));
+		product.setUser(userService.getLoggedInUser());
+		product.setImageLocation("http://localhost:8080/" + fileService.store(image));
 		return repo.save(product);
 	}
 

@@ -67,8 +67,7 @@ export class ProductFormComponent {
       await this.productService.upload(upload).toPromise();
       this.pending = false;
       this.snackbar.open(SNACKBAR_SUCCESS_TEXT, SNACKBAR_CLOSE_BUTTON, SNACKBAR_SUCCESS_CONFIG);
-      alert('AHA');
-      // this.router.navigate([Route.ADVERTISEMENTS]);
+      this.router.navigate([Route.PRODUCTS]);
     }
 
     catch {
