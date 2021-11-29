@@ -132,7 +132,7 @@ public class OrderService {
 			RestTemplate restTemplate = new RestTemplate();
 			PaymentCompletedDTO paymentCompletedDTO = new PaymentCompletedDTO();
 			paymentCompletedDTO.setOrderId(order.getShopOrderId());
-			paymentCompletedDTO.setStatus(OrderStatus.COMPLETED);
+			paymentCompletedDTO.setStatus("COMPLETED");
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
 					new HttpEntity<PaymentCompletedDTO>(paymentCompletedDTO), String.class);
 		}

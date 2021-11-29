@@ -7,9 +7,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PaymentCompletedDTO {
+public class MerchantDTO {
 
-	private Integer orderId;
-	private String status;
+	private String merchantId;
+	private String merchantPassword;
+	private String bankUrl;
 
 }

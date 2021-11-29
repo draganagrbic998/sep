@@ -7,7 +7,7 @@
 <link
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
 	rel="stylesheet" type="text/css" />
-<title>Paypal - Cancel</title>
+<title>Card - Payment Failed</title>
 
 <style>
 .rounded-lg {
@@ -58,7 +58,7 @@
 <body class="background">
 	<div class="row mb-4">
 		<div class="col-lg-12 mx-auto text-center title-container">
-			<h1 class="display-4 h1-custom">Cancelation</h1>
+			<h1 class="display-4 h1-custom">Card Payment Failed</h1>
 		</div>
 	</div>
 
@@ -67,10 +67,12 @@
 	<div class="row">
 		<div class="col-lg-5 mx-auto">
 			<div class="bg-white rounded-lg shadow-sm p-5 container-card"
-				style="text-align: center;">Payment canceled!</div>
+				style="text-align: center;">
+				<div>Payment failed</div>
+				<div>Please contact the PSP staff</div>
+			</div>
 		</div>
 	</div>
-
 	<script>
 		var redirectUrl = "[[${redirect}]]";
 		

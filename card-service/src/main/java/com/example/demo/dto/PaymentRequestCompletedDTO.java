@@ -7,9 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PaymentCompletedDTO {
+public class PaymentRequestCompletedDTO {
 
-	private Integer orderId;
+	private Integer merchantOrderId;
 	private String status;
 
 }
