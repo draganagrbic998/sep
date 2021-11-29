@@ -15,7 +15,7 @@ import java.util.Map;
 
 // Dok ne napravim psp ovo ostaje ovako. svakako nema smisla da testiram da li sve radi dok psp ne napravim
 @RestController
-@RequestMapping(value = "/paypal-service")
+@RequestMapping(value = "/paypal")
 public class PaymentController {
 
 	@Autowired
