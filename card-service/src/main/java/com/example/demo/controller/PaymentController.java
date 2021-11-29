@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.demo.example.exception.NotFoundException;
+import com.example.demo.dto.OrderCreatedDTO;
 import com.example.demo.dto.OrderDTO;
 import com.example.demo.dto.PaymentRequestCompletedDTO;
 import com.example.demo.mapper.OrderMapper;
@@ -24,9 +25,9 @@ public class PaymentController {
 	private OrderService orderService;
 
 	@PostMapping(value = "/create/payment")
-	public Order createPayment(@RequestBody OrderDTO orderDTO) {
+	public OrderCreatedDTO createPayment(@RequestBody OrderDTO orderDTO) {
 		Order order = orderMapper.toEntity(orderDTO);
-		return orderService.save(order);
+		return orderMapper.toDTO(orderService.save(order));
 	}
 
 	@RequestMapping(value = "/pay/{merchantWebshopId}/{orderId}", method = RequestMethod.GET)

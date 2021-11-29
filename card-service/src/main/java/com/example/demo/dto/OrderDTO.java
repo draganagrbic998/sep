@@ -12,6 +12,7 @@ public class OrderDTO {
 	private Integer orderIdWebshop;
 	private Double price;
 	private String currency;
+	private Integer merchantId;
 	private String callbackUrl;
 
 }

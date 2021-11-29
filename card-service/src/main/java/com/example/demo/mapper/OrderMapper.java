@@ -3,6 +3,7 @@ package com.example.demo.mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.example.demo.dto.OrderCreatedDTO;
 import com.example.demo.dto.OrderDTO;
 import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
@@ -24,6 +25,15 @@ public class OrderMapper {
 		model.setOrderStatus(OrderStatus.CREATED);
 
 		return model;
+	}
+
+	public OrderCreatedDTO toDTO(Order model) {
+		OrderCreatedDTO dto = new OrderCreatedDTO();
+
+		dto.setId(model.getId());
+		dto.setStatus("CREATED");
+
+		return dto;
 	}
 
 }
