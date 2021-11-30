@@ -102,7 +102,7 @@
 			<div class="bg-white rounded-lg shadow-sm p-5 container-card">
 				<div>
 					<form id="cardForm"
-						th:action="@{'http://localhost:8090/payments/confirm/' + ${paymentRequestId}}"
+						th:action="@{'http://localhost:8090/payment-requests/confirm/' + ${paymentRequestId}}"
 						method="POST" role="form">
 						<div class="form-group">
 							<label for="cardHolder">Full name (on the card)</label> <input

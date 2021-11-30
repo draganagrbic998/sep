@@ -5,17 +5,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.example.demo.dto.OrderCreatedDTO;
 import com.example.demo.dto.OrderDTO;
 import com.example.demo.mapper.OrderMapper;
 import com.example.demo.model.Order;
 import com.example.demo.service.OrderService;
 import com.paypal.base.rest.PayPalRESTException;
 
-import java.util.Map;
-
 // Dok ne napravim psp ovo ostaje ovako. svakako nema smisla da testiram da li sve radi dok psp ne napravim
 @RestController
-@RequestMapping(value = "/paypal-service")
+@RequestMapping(value = "/paypal")
 public class PaymentController {
 
 	@Autowired
@@ -25,9 +24,9 @@ public class PaymentController {
 	private OrderService orderService;
 
 	@PostMapping(value = "/create/payment")
-	public Map<String, Object> createPayment(@RequestBody OrderDTO orderDTO) {
+	public OrderCreatedDTO createPayment(@RequestBody OrderDTO orderDTO) {
 		Order order = orderMapper.toEntity(orderDTO);
-		return orderService.createPayment(order);
+		return orderMapper.toDTO(orderService.createPayment(order));
 	}
 
 	@RequestMapping(value = "/pay/{merchantId}/{orderId}", method = RequestMethod.GET)

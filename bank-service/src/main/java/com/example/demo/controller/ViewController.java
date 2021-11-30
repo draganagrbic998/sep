@@ -12,7 +12,6 @@ public class ViewController {
 	@RequestMapping(value = "/form/{paymentRequestId}")
 	public String form(@PathVariable Integer paymentRequestId, Model model) {
 		model.addAttribute("paymentRequestId", paymentRequestId);
-
 		return "form";
 	}
 

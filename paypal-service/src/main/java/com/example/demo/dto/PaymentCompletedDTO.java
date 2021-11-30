@@ -1,7 +1,5 @@
 package com.example.demo.dto;
 
-import com.example.demo.model.OrderStatus;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +10,6 @@ import lombok.Setter;
 public class PaymentCompletedDTO {
 
 	private Integer orderId;
-	private OrderStatus status;
+	private String status;
 
 }

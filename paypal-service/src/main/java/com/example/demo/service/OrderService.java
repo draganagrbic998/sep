@@ -1,9 +1,7 @@
 package com.example.demo.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -17,7 +15,6 @@ import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
 import com.example.demo.repo.OrderRepository;
 import com.paypal.api.payments.Amount;
-import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payer;
 import com.paypal.api.payments.Payment;
 import com.paypal.api.payments.PaymentExecution;
@@ -50,9 +47,7 @@ public class OrderService {
 
 	// Napravimo narudzbu kod paypal-a
 	// Klijent prodavnice onda treba da potvrdi placanje
-	public Map<String, Object> createPayment(Order order) {
-		Map<String, Object> response = new HashMap<String, Object>();
-
+	public Order createPayment(Order order) {
 		Merchant merchant = merchantService.findOne(order.getMerchantId());
 
 		Amount amount = new Amount();
@@ -79,28 +74,17 @@ public class OrderService {
 
 		Payment createdPayment;
 		try {
-			String redirectUrl = "";
 			APIContext context = new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox");
 			createdPayment = payment.create(context);
 			if (createdPayment != null) {
-				List<Links> links = createdPayment.getLinks();
-				for (Links link : links) {
-					if (link.getRel().equals("approval_url")) {
-						redirectUrl = link.getHref();
-						break;
-					}
-				}
-				response.put("status", "success");
-				response.put("redirect_url", redirectUrl);
-
 				order.setStatus(OrderStatus.CREATED);
 				order.setPayPalOrderId(createdPayment.getId());
-				repo.save(order);
+				order = repo.save(order);
 			}
 		} catch (PayPalRESTException e) {
 			System.out.println("Error happened during payment creation!");
 		}
-		return response;
+		return order;
 	}
 
 	// Poziva se nakon sto klijent odobri placanje
@@ -132,7 +116,7 @@ public class OrderService {
 			RestTemplate restTemplate = new RestTemplate();
 			PaymentCompletedDTO paymentCompletedDTO = new PaymentCompletedDTO();
 			paymentCompletedDTO.setOrderId(order.getShopOrderId());
-			paymentCompletedDTO.setStatus(OrderStatus.COMPLETED);
+			paymentCompletedDTO.setStatus("COMPLETED");
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
 					new HttpEntity<PaymentCompletedDTO>(paymentCompletedDTO), String.class);
 		}

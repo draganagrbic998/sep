@@ -10,5 +10,6 @@ import lombok.Setter;
 public class OrderCreatedDTO {
 
 	private Integer id;
+	private String status;
 
 }
