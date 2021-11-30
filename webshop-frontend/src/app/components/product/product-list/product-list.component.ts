@@ -30,6 +30,10 @@ export class ProductListComponent implements OnInit {
     this.readCategories().then(() => this.readProducts())
   }
 
+  addToCart(product: Product){
+    
+  }
+
   edit(product: Product) {
     return `/${Route.PRODUCT_FORM}/${product.id}`
   }

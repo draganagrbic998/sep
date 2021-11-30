@@ -6,14 +6,10 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.dto.CartDTO;
-import com.example.demo.dto.OrderDTO;
-import com.example.demo.model.Cart;
+import com.example.demo.dto.OrderResponse;
 import com.example.demo.model.CartItem;
 import com.example.demo.model.Order;
-import com.example.demo.model.Product;
 import com.example.demo.repository.CartItemRepository;
-import com.example.demo.repository.CartRepository;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.ProductRepository;
 
@@ -23,65 +19,50 @@ import lombok.AllArgsConstructor;
 @Service
 public class CartService {
 
-	private final CartRepository cartRepo;
 	private final CartItemRepository itemRepo;
 	private final ProductRepository productRepo;
 	private final OrderRepository orderRepo;
 	private final UserService userService;
 
 	@Transactional(readOnly = true)
-	public CartDTO readCart() {
-		Cart cart = cartRepo.findByUserId(userService.getLoggedInUser().getId());
-		return new CartDTO(cart, itemRepo.findByCartId(cart.getId()));
-	}
-
-	@Transactional(readOnly = true)
-	public List<OrderDTO> readOrders() {
-		List<Order> orders = orderRepo.findByUserId(userService.getLoggedInUser().getId());
-		return orders.stream().map(order -> new OrderDTO(order, itemRepo.findByOrderId(order.getId())))
-				.collect(Collectors.toList());
+	public List<CartItem> readCart() {
+		return itemRepo.findByUserIdAndOrderIdIsNull(userService.getLoggedInUser().getId());
 	}
 
 	@Transactional
-	public CartDTO addToCart(Long productId) {
-		Cart cart = cartRepo.findByUserId(userService.getLoggedInUser().getId());
-		Product product = productRepo.findById(productId).get();
-		CartItem item = itemRepo.findByCartIdAndProductId(cart.getId(), product.getId());
+	public void addToCart(Long productId) {
+		CartItem item = itemRepo.findByUserIdAndProductIdAndOrderIsNull(userService.getLoggedInUser().getId(),
+				productId);
 
 		if (item == null) {
-			itemRepo.save(new CartItem(cart, product));
+			itemRepo.save(new CartItem(userService.getLoggedInUser(), productRepo.findById(productId).get()));
 		} else {
 			item.incQuantity();
 			itemRepo.save(item);
 		}
-
-		return readCart();
 	}
 
 	@Transactional
-	public CartDTO removeFromCart(Long productId) {
-		Cart cart = cartRepo.findByUserId(userService.getLoggedInUser().getId());
-		Product product = productRepo.findById(productId).get();
-		CartItem item = itemRepo.findByCartIdAndProductId(cart.getId(), product.getId());
-		itemRepo.deleteById(item.getId());
-
-		return readCart();
+	public void removeFromCart(Long productId) {
+		itemRepo.deleteById(itemRepo
+				.findByUserIdAndProductIdAndOrderIsNull(userService.getLoggedInUser().getId(), productId).getId());
 	}
 
 	@Transactional
-	public CartDTO orderCart() {
-		Cart cart = cartRepo.findByUserId(userService.getLoggedInUser().getId());
+	public void orderCart() {
 		Order order = new Order(userService.getLoggedInUser());
 		orderRepo.save(order);
 
-		List<CartItem> items = itemRepo.findByCartId(cart.getId());
-		items.forEach(item -> {
-			item.setCart(null);
-			item.setOrder(order);
-		});
-
+		List<CartItem> items = readCart();
+		items.forEach(item -> item.setOrder(order));
 		itemRepo.saveAll(items);
-		return readCart();
+	}
+
+	@Transactional(readOnly = true)
+	public List<OrderResponse> readOrders() {
+		List<Order> orders = orderRepo.findByUserId(userService.getLoggedInUser().getId());
+		return orders.stream().map(order -> new OrderResponse(order, itemRepo.findByOrderId(order.getId())))
+				.collect(Collectors.toList());
 	}
 
 }
