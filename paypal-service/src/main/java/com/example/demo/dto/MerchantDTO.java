@@ -7,12 +7,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OrderDTO {
+public class MerchantDTO {
 
-	private Integer orderIdWebshop;
-	private Double price;
-	private String currency;
+	private String clientId;
+	private String clientSecret;
 	private String merchantApiKey;
-	private String callbackUrl;
 
 }

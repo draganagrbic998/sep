@@ -97,8 +97,7 @@
 		<div class="col-lg-5 mx-auto">
 			<div class="bg-white rounded-lg shadow-sm p-5 container-card">
 				<div>
-					<form
-						th:action="@{'http://localhost:8086/merchant/createUpdate/' + ${merchantId}}"
+					<form th:action="@{'http://localhost:8086/merchant/create}"
 						id="registerForm" role="form" method="POST">
 						<div class="input-group form-group">
 							<div class="input-group-prepend">

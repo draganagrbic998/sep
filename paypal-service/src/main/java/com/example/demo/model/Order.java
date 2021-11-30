@@ -34,7 +34,7 @@ public class Order {
 	private Integer shopOrderId;
 
 	@Column
-	private Integer merchantId;
+	private String merchantApiKey;
 
 	@Column
 	private OrderStatus status;

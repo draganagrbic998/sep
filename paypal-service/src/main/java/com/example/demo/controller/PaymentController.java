@@ -12,7 +12,6 @@ import com.example.demo.model.Order;
 import com.example.demo.service.OrderService;
 import com.paypal.base.rest.PayPalRESTException;
 
-// Dok ne napravim psp ovo ostaje ovako. svakako nema smisla da testiram da li sve radi dok psp ne napravim
 @RestController
 @RequestMapping(value = "/paypal")
 public class PaymentController {
@@ -42,7 +41,7 @@ public class PaymentController {
 	}
 
 	@RequestMapping(value = "/getOrder/{orderId}", method = RequestMethod.GET)
-	public ResponseEntity<String> createOrderForPaypal(@PathVariable Integer orderId) throws PayPalRESTException {
+	public ResponseEntity<String> getOrderForPaypal(@PathVariable Integer orderId) throws PayPalRESTException {
 		String payment = orderService.getOrderDetails(orderId);
 		return ResponseEntity.ok(payment);
 	}

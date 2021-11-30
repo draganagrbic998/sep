@@ -21,14 +21,12 @@ public class ViewController {
 	public String paypal(@PathVariable Integer orderId, Model model) {
 		Order order = orderService.getOrder(orderId);
 		model.addAttribute("orderId", orderId);
-		model.addAttribute("merchantId", order.getMerchantId());
 		model.addAttribute("payPalOrderId", order.getPayPalOrderId());
-		return "order";
+		return "confirmOrder";
 	}
 
-	@RequestMapping(value = "/register/{merchantId}")
-	public String register(@PathVariable String merchantId, Model model) {
-		model.addAttribute("merchantId", merchantId);
+	@RequestMapping(value = "/register")
+	public String register(Model model) {
 		return "register";
 	}
 

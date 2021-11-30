@@ -23,7 +23,7 @@ public class ClientController {
 	@Autowired
 	private ClientService service;
 
-	@RequestMapping(method = RequestMethod.POST, consumes = "application/json")
+	@RequestMapping(value = "/create", method = RequestMethod.POST, consumes = "application/json")
 	public ResponseEntity<Client> create(@RequestBody ClientDTO dto) {
 		return new ResponseEntity<>(service.save(mapper.toEntity(dto)), HttpStatus.CREATED);
 	}

@@ -48,7 +48,7 @@ public class OrderService {
 	// Napravimo narudzbu kod paypal-a
 	// Klijent prodavnice onda treba da potvrdi placanje
 	public Order createPayment(Order order) {
-		Merchant merchant = merchantService.findOne(order.getMerchantId());
+		Merchant merchant = merchantService.findOneByApiKey(order.getMerchantApiKey());
 
 		Amount amount = new Amount();
 		amount.setCurrency(order.getCurrency());
@@ -90,7 +90,7 @@ public class OrderService {
 	// Poziva se nakon sto klijent odobri placanje
 	public String completePayment(String paymentId, String payerId) {
 		Order order = repo.findByPayPalOrderIdNotNull(paymentId);
-		Merchant merchant = merchantService.findOne(order.getMerchantId());
+		Merchant merchant = merchantService.findOneByApiKey(order.getMerchantApiKey());
 
 		Payment payment = new Payment();
 		payment.setId(paymentId);
@@ -128,7 +128,7 @@ public class OrderService {
 
 	public String getOrderDetails(int orderId) throws PayPalRESTException {
 		Order order = repo.getById(orderId);
-		Merchant merchant = merchantService.findOne(order.getMerchantId());
+		Merchant merchant = merchantService.findOneByApiKey(order.getMerchantApiKey());
 
 		APIContext context = new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox");
 

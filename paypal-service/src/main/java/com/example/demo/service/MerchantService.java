@@ -22,6 +22,10 @@ public class MerchantService {
 		return repo.getById(id);
 	}
 
+	public Merchant findOneByApiKey(String apiKey) {
+		return repo.findByMerchantApiKey(apiKey);
+	}
+
 	public Merchant save(Merchant merchant) {
 		return repo.save(merchant);
 	}

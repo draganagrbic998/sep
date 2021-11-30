@@ -25,4 +25,7 @@ public class Merchant {
 	@Column
 	private String clientSecret;
 
+	@Column
+	private String merchantApiKey;
+
 }
