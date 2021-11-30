@@ -29,10 +29,6 @@ public class CartItem {
 	private User user;
 
 	@ManyToOne
-	@JoinColumn(name = "order_id")
-	private Order order;
-
-	@ManyToOne
 	@JoinColumn(name = "product_id")
 	@NotNull
 	private Product product;
@@ -41,6 +37,10 @@ public class CartItem {
 	@NotNull
 	@Positive
 	private Long quantity;
+
+	@ManyToOne
+	@JoinColumn(name = "order_id")
+	private Order order;
 
 	public CartItem(User user, Product product) {
 		this.user = user;

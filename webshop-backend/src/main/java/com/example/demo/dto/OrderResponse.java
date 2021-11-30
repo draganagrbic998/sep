@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.example.demo.model.CartItem;
 import com.example.demo.model.Order;
-import com.example.demo.model.User;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,13 +16,11 @@ import lombok.Setter;
 public class OrderResponse {
 
 	private Long id;
-	private User user;
 	private Date date;
 	private List<CartItem> items;
 
 	public OrderResponse(Order order, List<CartItem> items) {
 		id = order.getId();
-		user = order.getUser();
 		date = order.getDate();
 		items.forEach(item -> item.setOrder(null));
 		this.items = items;
