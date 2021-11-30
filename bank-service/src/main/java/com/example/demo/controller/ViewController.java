@@ -15,4 +15,9 @@ public class ViewController {
 		return "form";
 	}
 
+	@RequestMapping(value = "/registerForm")
+	public String form(Model model) {
+		return "registerForm";
+	}
+
 }

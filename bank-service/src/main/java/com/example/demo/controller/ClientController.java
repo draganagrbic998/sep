@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.ClientDTO;
+import com.example.demo.mapper.ClientMapper;
 import com.example.demo.model.Client;
 import com.example.demo.service.ClientService;
 
@@ -16,11 +18,14 @@ import com.example.demo.service.ClientService;
 public class ClientController {
 
 	@Autowired
-	private ClientService clientService;
+	private ClientMapper mapper;
+
+	@Autowired
+	private ClientService service;
 
 	@RequestMapping(method = RequestMethod.POST, consumes = "application/json")
-	public ResponseEntity<Client> addClient(@RequestBody Client client) {
-		return new ResponseEntity<>(clientService.save(client), HttpStatus.CREATED);
+	public ResponseEntity<Client> create(@RequestBody ClientDTO dto) {
+		return new ResponseEntity<>(service.save(mapper.toEntity(dto)), HttpStatus.CREATED);
 	}
 
 }
