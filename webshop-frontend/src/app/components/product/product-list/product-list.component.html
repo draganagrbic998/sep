@@ -18,6 +18,15 @@
         <div class="row">
           <b>Price: </b>{{ product.price }} {{ product.currency }}
         </div>
+
+        <span class="actions" *ngIf="category === 'Personal'">
+          <button mat-button color="primary" (click)="edit(product)">
+            <mat-icon>edit</mat-icon>Edit
+          </button>
+          <button mat-button color="warn" (click)="delete(product)">
+            <mat-icon>delete</mat-icon>Delete
+          </button>
+        </span>
       </mat-card-content>
     </mat-card>
   </div>

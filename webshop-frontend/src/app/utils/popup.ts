@@ -1,4 +1,5 @@
 import { MatSnackBarConfig } from "@angular/material/snack-bar";
+import { MatDialogConfig } from '@angular/material/dialog';
 
 export const SNACKBAR_CLOSE_BUTTON = 'Close';
 export const SNACKBAR_SUCCESS_TEXT = 'Success! Operation finished.';
@@ -16,4 +17,9 @@ export const SNACKBAR_ERROR_CONFIG: MatSnackBarConfig = {
     verticalPosition: 'top',
     panelClass: 'snackbar-error',
     duration: 2000
+};
+
+export const DIALOG_CONFIG: MatDialogConfig = {
+    panelClass: 'no-padding',
+    disableClose: true
 };

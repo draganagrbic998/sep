@@ -14,6 +14,7 @@ import { SpinnerComponent } from './components/utils/spinner/spinner.component';
 import { ToolbarComponent } from './components/utils/toolbar/toolbar.component';
 import { ProductFormComponent } from './components/product/product-form/product-form.component';
 import { ProductListComponent } from './components/product/product-list/product-list.component';
+import { DeleteConfirmationComponent } from './components/utils/delete-confirmation/delete-confirmation.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { ProductListComponent } from './components/product/product-list/product-
     SpinnerComponent,
     ToolbarComponent,
     ProductFormComponent,
-    ProductListComponent
+    ProductListComponent,
+    DeleteConfirmationComponent
   ],
   imports: [
     BrowserModule,

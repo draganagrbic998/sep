@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { map } from 'rxjs/operators';
 import { Product } from 'src/app/models/product';
 import { CategoryService } from 'src/app/services/category.service';
 import { ProductService } from 'src/app/services/product.service';
+import { DIALOG_CONFIG } from 'src/app/utils/popup';
+import { DeleteConfirmationComponent } from '../../utils/delete-confirmation/delete-confirmation.component';
 
 @Component({
   selector: 'app-product-list',
@@ -13,7 +16,8 @@ export class ProductListComponent implements OnInit {
 
   constructor(
     private productService: ProductService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private dialog: MatDialog
   ) { }
 
   products: Product[]
@@ -23,6 +27,18 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit() {
     this.readCategories().then(() => this.readProducts())
+  }
+
+  edit(product: Product) {
+
+  }
+
+  async delete(product: Product) {
+    const options: MatDialogConfig = { ...DIALOG_CONFIG, ...{ data: () => this.productService.delete(product.id) } };
+    const res = await this.dialog.open(DeleteConfirmationComponent, options).afterClosed().toPromise()
+    if (res) {
+      this.readProducts()
+    }
   }
 
   async readProducts() {

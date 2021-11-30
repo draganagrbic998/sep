@@ -17,4 +17,8 @@ export abstract class StandardRestService<T extends StandardModel> {
     return this.http.get<T[]>(this.API_URL);
   }
 
+  delete(id: number) {
+    return this.http.delete<void>(`${this.API_URL}/${id}`)
+  }
+
 }

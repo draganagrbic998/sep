@@ -1,0 +1,28 @@
+@import "../../../../styles/theme";
+
+.root {
+  text-align: center;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+  background-color: $warn;
+}
+
+.body {
+  padding: 25px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 25px;
+}
