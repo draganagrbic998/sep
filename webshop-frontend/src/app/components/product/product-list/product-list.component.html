@@ -4,3 +4,21 @@
 >
   <mat-tab *ngFor="let category of categories" [label]="category"> </mat-tab>
 </mat-tab-group>
+
+<div class="products">
+  <div class="root mat-elevation-z24" *ngFor="let product of products">
+    <mat-card>
+      <mat-card-content>
+        <h2>{{ product.name }}</h2>
+
+        <img [src]="product.imageLocation" />
+
+        <div class="row"><b>Category: </b>{{ product.category }}</div>
+        <div class="row"><b>Description: </b>{{ product.description }}</div>
+        <div class="row">
+          <b>Price: </b>{{ product.price }} {{ product.currency }}
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
