@@ -30,10 +30,10 @@ public class PaymentController {
 		return orderMapper.toDTO(orderService.save(order));
 	}
 
-	@RequestMapping(value = "/pay/{merchantWebshopId}/{orderId}", method = RequestMethod.GET)
-	public ModelAndView pay(@PathVariable Integer merchantWebshopId, @PathVariable Integer orderId)
+	@RequestMapping(value = "/pay/{merchantApiKey}/{orderId}", method = RequestMethod.GET)
+	public ModelAndView pay(@PathVariable String merchantApiKey, @PathVariable Integer orderId)
 			throws NotFoundException {
-		String redirectUrl = orderService.pay(orderId, merchantWebshopId);
+		String redirectUrl = orderService.pay(orderId, merchantApiKey);
 		return new ModelAndView("redirect:" + redirectUrl);
 	}
 

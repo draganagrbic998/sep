@@ -11,10 +11,10 @@ import lombok.ToString;
 @NoArgsConstructor
 public class OrderCreateDTO {
 
-	private Integer orderIdWebshop;
+	private String merchantApiKey;
+	private Integer orderIdWebShop;
 	private Double price;
 	private String currency;
-	private Integer merchantId;
 	private String callbackUrl;
 
 }

@@ -27,7 +27,7 @@ public class OrderController {
 	private Order createOrder(@RequestBody OrderWebshopDTO orderWebshopDTO) {
 		Order o = orderMapper.toEntity(orderWebshopDTO);
 		o.setStatus(OrderStatus.CREATED);
-		Order savedOrder = orderService.saveOrder(o);
+		Order savedOrder = orderService.save(o);
 		return savedOrder;
 	}
 

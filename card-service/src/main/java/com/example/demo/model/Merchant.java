@@ -30,7 +30,7 @@ public class Merchant {
 	private String merchantPassword;
 
 	@Column(nullable = false)
-	private Integer merchantWebshopId;
+	private String merchantApiKey;
 
 	@Column(nullable = false)
 	private String bankUrl;

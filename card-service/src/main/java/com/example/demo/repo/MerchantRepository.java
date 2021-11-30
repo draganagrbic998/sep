@@ -8,6 +8,6 @@ import com.example.demo.model.Merchant;
 
 public interface MerchantRepository extends JpaRepository<Merchant, Integer> {
 
-	Optional<Merchant> findByMerchantWebshopId(Integer merchantWebshopId);
+	Optional<Merchant> findByMerchantApiKey(String merchantApiKey);
 
 }

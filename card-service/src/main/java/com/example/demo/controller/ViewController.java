@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -24,9 +23,8 @@ public class ViewController {
 		return "error";
 	}
 
-	@RequestMapping(value = "/register/{merchantId}")
-	public String form(@PathVariable Integer merchantId, Model model) {
-		model.addAttribute("merchantId", merchantId);
+	@RequestMapping(value = "/register")
+	public String form(Model model) {
 		return "register";
 	}
 

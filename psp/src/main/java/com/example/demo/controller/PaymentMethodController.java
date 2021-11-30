@@ -29,12 +29,12 @@ public class PaymentMethodController {
 	@RequestMapping(value = "/create", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	private ResponseEntity<PaymentMethod> createPaymentMethod(@RequestBody PaymentMethodDTO dto) {
 		PaymentMethod m = paymentMethodMapper.toEntity(dto);
-		return new ResponseEntity<>(paymentMethodService.savePaymentMethod(m), HttpStatus.CREATED);
+		return new ResponseEntity<>(paymentMethodService.save(m), HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "/{paymentMethodId}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> removePaymentMethod(@PathVariable Integer paymentMethodId) throws NotFoundException {
-		return new ResponseEntity<>(paymentMethodService.removePaymentMethod(paymentMethodId), HttpStatus.NO_CONTENT);
+		return new ResponseEntity<>(paymentMethodService.remove(paymentMethodId), HttpStatus.NO_CONTENT);
 	}
 
 }

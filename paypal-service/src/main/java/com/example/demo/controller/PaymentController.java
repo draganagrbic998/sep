@@ -28,8 +28,8 @@ public class PaymentController {
 		return orderMapper.toDTO(orderService.createPayment(order));
 	}
 
-	@RequestMapping(value = "/pay/{merchantId}/{orderId}", method = RequestMethod.GET)
-	public ModelAndView pay(@PathVariable Integer merchantId, @PathVariable Integer orderId) {
+	@RequestMapping(value = "/pay/{merchantApiKey}/{orderId}", method = RequestMethod.GET)
+	public ModelAndView pay(@PathVariable Integer merchantApiKey, @PathVariable Integer orderId) {
 		String redirectUrl = "http://localhost:8086/view/paypal_payment/" + orderId;
 		return new ModelAndView("redirect:" + redirectUrl);
 	}

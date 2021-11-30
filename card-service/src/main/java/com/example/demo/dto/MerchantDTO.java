@@ -9,6 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MerchantDTO {
 
+	private String merchantApiKey;
 	private String merchantId;
 	private String merchantPassword;
 	private String bankUrl;

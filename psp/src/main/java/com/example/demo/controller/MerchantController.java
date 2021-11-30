@@ -27,14 +27,14 @@ public class MerchantController {
 	private MerchantService merchantService;
 
 	@RequestMapping(value = "/create", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	private ResponseEntity<Merchant> createOrder(@RequestBody MerchantDTO dto) {
+	private ResponseEntity<Merchant> create(@RequestBody MerchantDTO dto) {
 		Merchant m = merchantMapper.toEntity(dto);
-		return new ResponseEntity<>(merchantService.saveMerchant(m), HttpStatus.CREATED);
+		return new ResponseEntity<>(merchantService.save(m), HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "/{appId}", method = RequestMethod.DELETE)
-	public ResponseEntity<?> removeMerchant(@PathVariable Integer merchantId) throws NotFoundException {
-		return new ResponseEntity<>(merchantService.removeMerchant(merchantId), HttpStatus.NO_CONTENT);
+	public ResponseEntity<?> remove(@PathVariable Integer merchantId) throws NotFoundException {
+		return new ResponseEntity<>(merchantService.remove(merchantId), HttpStatus.NO_CONTENT);
 	}
 
 }

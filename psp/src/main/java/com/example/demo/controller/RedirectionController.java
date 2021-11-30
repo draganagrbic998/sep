@@ -41,7 +41,7 @@ public class RedirectionController {
 				new HttpEntity<OrderCreateDTO>(orderCreateDTO), OrderCreatedDTO.class);
 
 		order.setStatus(OrderStatus.SENT);
-		orderService.saveOrder(order);
+		orderService.save(order);
 
 		return new ResponseEntity<>(responseEntity.getBody(), HttpStatus.OK);
 	}

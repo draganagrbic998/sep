@@ -30,24 +30,22 @@ public class ViewController {
 	@Autowired
 	private OrderService orderService;
 
-	@RequestMapping(value = "/selectPaymentMethod/{appApiKey}/{orderId}", method = RequestMethod.GET)
-	public String selectPaymentMethod(@PathVariable UUID appApiKey, @PathVariable UUID orderId, Model model)
+	@RequestMapping(value = "/selectPaymentMethod/{merchantApiKey}/{orderId}", method = RequestMethod.GET)
+	public String selectPaymentMethod(@PathVariable UUID merchantApiKey, @PathVariable UUID orderId, Model model)
 			throws NotFoundException {
-		List<PaymentMethod> paymentMethods = paymentMethodService.getPaymentMethods(appApiKey);
+		List<PaymentMethod> paymentMethods = paymentMethodService.getPaymentMethods(merchantApiKey);
 
-		String appApiKeyString = appApiKey.toString();
-		Merchant merchant = merchantService.findByApiKey(appApiKeyString);
-
+		Merchant merchant = merchantService.findByApiKey(merchantApiKey.toString());
 		Order o = orderService.findById(orderId);
 
 		model.addAttribute("orderIdPSP", o.getId());
-		model.addAttribute("orderId", o.getOrderIdWebshop());
+		model.addAttribute("orderIdWebShop", o.getOrderIdWebshop());
 		model.addAttribute("orderPrice", o.getPrice());
 		model.addAttribute("orderCurrency", o.getCurrency());
 		model.addAttribute("callbackUrl", o.getCallbackUrl());
 
 		model.addAttribute("paymentMethods", paymentMethods);
-		model.addAttribute("merchantId", merchant.getId());
+		model.addAttribute("merchantApiKey", merchant.getApiKey());
 
 		return "selectPaymentMethod";
 	}

@@ -18,7 +18,7 @@ public class OrderMapper {
 	public Order toEntity(OrderDTO dto) {
 		Order model = new Order();
 
-		model.setShopOrderId(dto.getOrderIdWebshop());
+		model.setShopOrderId(dto.getOrderIdWebShop());
 		model.setCurrency(dto.getCurrency());
 		model.setPrice(dto.getPrice());
 		model.setCallbackUrl(dto.getCallbackUrl());

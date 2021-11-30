@@ -95,8 +95,8 @@
 				<div class="card-body container-card">
 					<h5 class="card-title title" th:text="${method.name}"></h5>
 					<button class="btn btn-boja link"
-						th:href="@{'http://localhost:8762/' + ${method.name}} + '/pay/' +  ${merchantId}"
-						th:attr="create_url=@{'http://localhost:8762/psp/redirection/' + ${method.name}} + '/' + ${orderIdPSP}, merchant_id=${merchantId}, order_id=${orderId}, order_price=${orderPrice}, order_currency=${orderCurrency}, callback_url=${callbackUrl}">
+						th:href="@{'http://localhost:8762/' + ${method.name}} + '/pay/' +  ${merchantApiKey}"
+						th:attr="create_url=@{'http://localhost:8762/psp/redirection/' + ${method.name}} + '/' + ${orderIdPSP}, merchant_api_key=${merchantApiKey}, order_id=${orderIdWebShop}, order_price=${orderPrice}, order_currency=${orderCurrency}, callback_url=${callbackUrl}">
 						Confirm</button>
 				</div>
 			</div>
@@ -108,7 +108,7 @@
 			$(".link").click(function(e) {
 				  e.preventDefault();
 				  console.log($(this).attr('create_url'));
-				  console.log($(this).attr('mechant_id'));
+				  console.log($(this).attr('merchant_api_key'));
 				  console.log($(this).attr('order_id'));
 				  console.log($(this).attr('order_price'));
 				  console.log($(this).attr('order_currency'));
@@ -126,7 +126,7 @@
 						'orderIdWebShop':$(this).attr('order_id'),
 						'price':$(this).attr('order_price'),
 						'currency':$(this).attr('order_currency'),
-						'merchantId':$(this).attr('merchant_id'),
+						'merchantApiKey':$(this).attr('merchant_api_key'),
 						'callbackUrl': $(this).attr('callback_url')}),
 					success: function(res){
 						var url = hrefUrl + "/" + res.id

@@ -19,9 +19,9 @@ public class MerchantController {
 	@Autowired
 	private MerchantService service;
 
-	@RequestMapping(value = "/createUpdate/{mechantId}", method = RequestMethod.POST)
-	public Merchant createUpdate(@PathVariable Integer merchantWebshopId, @RequestBody MerchantDTO dto)
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public Merchant create(@RequestBody MerchantDTO dto)
 			throws NotFoundException {
-		return service.save(mapper.toEntity(dto, merchantWebshopId));
+		return service.save(mapper.toEntity(dto));
 	}
 }

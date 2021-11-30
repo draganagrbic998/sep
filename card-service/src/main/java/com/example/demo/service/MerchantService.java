@@ -24,15 +24,15 @@ public class MerchantService {
 		return repo.getById(id);
 	}
 
-	public Optional<Merchant> findByMerchantWebshopIdOpional(Integer mechantWebshopId) {
-		return repo.findByMerchantWebshopId(mechantWebshopId);
+	public Optional<Merchant> findByMerchantApiKeyOptional(String merchantApiKey) {
+		return repo.findByMerchantApiKey(merchantApiKey);
 	}
 
-	public Merchant findByMerchantWebshopId(Integer mechantWebshopId) throws NotFoundException {
-		Optional<Merchant> merchant = repo.findByMerchantWebshopId(mechantWebshopId);
+	public Merchant findByMerchantApiKey(String merchantApiKey) throws NotFoundException {
+		Optional<Merchant> merchant = repo.findByMerchantApiKey(merchantApiKey);
 
 		if (!merchant.isPresent()) {
-			throw new NotFoundException(mechantWebshopId.toString(), Merchant.class.getSimpleName());
+			throw new NotFoundException(merchantApiKey, Merchant.class.getSimpleName());
 		}
 
 		return merchant.get();

@@ -50,9 +50,9 @@ public class OrderService {
 		return order.get();
 	}
 
-	public String pay(Integer orderId, Integer merchantWebshopId) throws NotFoundException {
+	public String pay(Integer orderId, String merchantApiKey) throws NotFoundException {
 		Order order = this.findById(orderId);
-		Merchant merchant = merchantService.findByMerchantWebshopId(merchantWebshopId);
+		Merchant merchant = merchantService.findByMerchantApiKey(merchantApiKey);
 
 		PaymentRequestDTO dto = paymentRequestMapper.toDTO(merchant, order);
 

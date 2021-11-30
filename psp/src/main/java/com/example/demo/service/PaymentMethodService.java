@@ -36,11 +36,11 @@ public class PaymentMethodService {
 		return paymentMethod.get();
 	}
 
-	public PaymentMethod savePaymentMethod(PaymentMethod paymentMethod) {
+	public PaymentMethod save(PaymentMethod paymentMethod) {
 		return paymentMethodRepository.save(paymentMethod);
 	}
 
-	public PaymentMethod removePaymentMethod(Integer paymentMethodId) throws NotFoundException {
+	public PaymentMethod remove(Integer paymentMethodId) throws NotFoundException {
 		Optional<PaymentMethod> paymentMethod = paymentMethodRepository.findById(paymentMethodId);
 
 		if (!paymentMethod.isPresent()) {
@@ -51,10 +51,10 @@ public class PaymentMethodService {
 		return paymentMethodRepository.save(paymentMethod.get());
 	}
 
-	public List<PaymentMethod> getPaymentMethods(UUID appApiKey) throws NotFoundException {
+	public List<PaymentMethod> getPaymentMethods(UUID merchantApiKey) throws NotFoundException {
 		List<PaymentMethod> ret = new ArrayList<>();
 
-		Merchant merchant = merchantService.findByApiKey(appApiKey.toString());
+		Merchant merchant = merchantService.findByApiKey(merchantApiKey.toString());
 
 		for (PaymentMethod pm : merchant.getMethods()) {
 			ret.add(pm);

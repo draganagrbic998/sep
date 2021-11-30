@@ -30,11 +30,11 @@ public class MerchantService {
 		return merchant.get();
 	}
 
-	public Merchant saveMerchant(Merchant merchant) {
+	public Merchant save(Merchant merchant) {
 		return merchantRepository.save(merchant);
 	}
 
-	public Merchant removeMerchant(Integer merchantId) throws NotFoundException {
+	public Merchant remove(Integer merchantId) throws NotFoundException {
 		Optional<Merchant> merchant = merchantRepository.findById(merchantId);
 
 		if (!merchant.isPresent()) {
