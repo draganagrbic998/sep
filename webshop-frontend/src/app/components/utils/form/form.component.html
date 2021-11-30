@@ -1,9 +1,9 @@
-<div class="root" [ngStyle]="style">
+<div class="root" [ngStyle]="config.style">
   <mat-card class="mat-elevation-z24">
     <mat-card-content>
-      <h1>{{ title }}</h1>
+      <h1>{{ config.title }}</h1>
       <form [formGroup]="form" (submit)="$event.stopPropagation()">
-        <div [class.disabled]="pending">
+        <div [class.disabled]="config.pending">
           <mat-form-field *ngFor="let control of controls">
             <mat-label>{{ capitalize(control) }}</mat-label>
             <input
@@ -46,7 +46,11 @@
               </button>
               <span
                 class="file-status"
-                [class.warning]="!form.value[control] && form.touched"
+                [class.warning]="
+                  !form.value[control] &&
+                  form.touched &&
+                  validation(control) === 'required'
+                "
               >
                 {{
                   form.value[control]
@@ -59,14 +63,14 @@
         </div>
         <div class="center">
           <button
-            *ngIf="!pending"
+            *ngIf="!config.pending"
             mat-raised-button
             color="primary"
             (click)="handleSubmit()"
           >
             Submit
           </button>
-          <app-spinner *ngIf="pending"></app-spinner>
+          <app-spinner *ngIf="config.pending"></app-spinner>
         </div>
       </form>
     </mat-card-content>

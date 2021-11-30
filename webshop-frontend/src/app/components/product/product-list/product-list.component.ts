@@ -5,6 +5,7 @@ import { Product } from 'src/app/models/product';
 import { CategoryService } from 'src/app/services/category.service';
 import { ProductService } from 'src/app/services/product.service';
 import { DIALOG_CONFIG } from 'src/app/utils/popup';
+import { Route } from 'src/app/utils/route';
 import { DeleteConfirmationComponent } from '../../utils/delete-confirmation/delete-confirmation.component';
 
 @Component({
@@ -30,7 +31,7 @@ export class ProductListComponent implements OnInit {
   }
 
   edit(product: Product) {
-
+    return `/${Route.PRODUCT_FORM}/${product.id}`
   }
 
   async delete(product: Product) {

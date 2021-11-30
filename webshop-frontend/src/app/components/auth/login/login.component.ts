@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { Auth, Role } from 'src/app/models/auth';
+import { Auth } from 'src/app/models/auth';
 import { AuthService } from 'src/app/services/auth.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { FormConfig, FormStyle } from 'src/app/utils/form';
@@ -10,7 +10,7 @@ import { Route } from 'src/app/utils/route';
 
 @Component({
   selector: 'app-login',
-  template: `<app-form title="Log In" [config]="config" [pending]="pending" [style]="style" (submit)="login($event)"></app-form>`
+  template: `<app-form [config]="this"></app-form>`
 })
 export class LoginComponent implements OnInit {
 
@@ -21,8 +21,9 @@ export class LoginComponent implements OnInit {
     private snackbar: MatSnackBar,
   ) { }
 
+  title = "Log In"
   pending = false;
-  config: FormConfig = {
+  formConfig: FormConfig = {
     email: {
       validation: 'required'
     },
@@ -40,7 +41,7 @@ export class LoginComponent implements OnInit {
     this.storageService.removeAuth();
   }
 
-  async login(auth: Auth) {
+  async save(auth: Auth) {
     this.pending = true;
 
     try {

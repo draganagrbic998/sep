@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ProductUpload } from 'src/app/models/product';
+import { Product, ProductUpload } from 'src/app/models/product';
 import { CategoryService } from 'src/app/services/category.service';
 import { CurrencyService } from 'src/app/services/currency.service';
 import { ProductService } from 'src/app/services/product.service';
@@ -12,9 +13,9 @@ import { Route } from 'src/app/utils/route';
 
 @Component({
   selector: 'app-application-upload',
-  template: `<app-form title="Upload Product" [config]="config" [pending]="pending" [style]="style" (submit)="upload($event)"></app-form>`
+  template: `<app-form [config]="this"></app-form>`
 })
-export class ProductFormComponent {
+export class ProductFormComponent implements OnInit {
 
   constructor(
     private productService: ProductService,
@@ -25,10 +26,12 @@ export class ProductFormComponent {
     private snackbar: MatSnackBar,
   ) { }
 
+  readFunction: () => Observable<Product>;
+  title = "Create Product"
   categories: string[];
   currencies: string[];
   pending = false;
-  config: FormConfig = {
+  formConfig: FormConfig = {
     name: {
       validation: 'required'
     },
@@ -51,7 +54,7 @@ export class ProductFormComponent {
     },
     image: {
       type: 'file',
-      validation: 'required'
+      validation: !this.productId ? 'required' : 'none'
     }
   }
   style: FormStyle = {
@@ -59,8 +62,21 @@ export class ProductFormComponent {
     'margin-top': '100px'
   }
 
-  async upload(upload: ProductUpload) {
-    upload.id = +this.route.snapshot.params.id || null
+  get productId() {
+    return +this.route.snapshot.params.id
+  }
+
+  ngOnInit() {
+    if (this.productId) {
+      this.readFunction = () => this.productService.readOne(this.productId)
+      this.title = "Edit Product"
+    }
+  }
+
+  async save(upload: ProductUpload) {
+    if (this.productId) {
+      upload.id = this.productId;
+    }
     this.pending = true;
 
     try {

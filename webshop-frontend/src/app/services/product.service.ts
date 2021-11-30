@@ -22,10 +22,13 @@ export class ProductService extends StandardRestService<Product> {
   upload(upload: ProductUpload) {
     const data = new FormData();
     for (const field in upload) {
-      if (field === 'id' && !upload[field]) {
+      if (['id', 'image'].includes(field) && !upload[field]) {
         continue;
       }
       data.append(field, upload[field]);
+    }
+    if (upload.id) {
+      return this.http.put<Product>(`${this.API_URL}/${upload.id}`, data);
     }
     return this.http.post<Product>(this.API_URL, data);
   }
