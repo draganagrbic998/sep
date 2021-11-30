@@ -33,7 +33,6 @@ public class ProductUpload {
 	@NotBlank(message = "Currency cannot be blank")
 	private String currency;
 
-	@NotNull(message = "Image cannot be null")
 	private MultipartFile image;
 
 }

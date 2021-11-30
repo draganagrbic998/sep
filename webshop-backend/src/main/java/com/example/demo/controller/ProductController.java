@@ -36,6 +36,11 @@ public class ProductController {
 		return ResponseEntity.ok(service.read(category, pageable));
 	}
 
+	@GetMapping("/{id}")
+	public ResponseEntity<Product> readOne(@PathVariable Long id) {
+		return ResponseEntity.ok(service.readOne(id));
+	}
+
 	@PostMapping
 	public ResponseEntity<Product> create(@Valid @ModelAttribute ProductUpload dto) {
 		if (dto.getId() != null) {
