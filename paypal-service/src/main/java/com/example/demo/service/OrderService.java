@@ -5,7 +5,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -14,6 +18,8 @@ import com.example.demo.model.Merchant;
 import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
 import com.example.demo.repo.OrderRepository;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.paypal.api.payments.Amount;
 import com.paypal.api.payments.Payer;
 import com.paypal.api.payments.Payment;
@@ -25,6 +31,9 @@ import com.paypal.base.rest.PayPalRESTException;
 
 @Service
 public class OrderService {
+
+	@Autowired
+	private RestTemplate restTemplate;
 
 	@Autowired
 	private OrderRepository repo;
@@ -115,7 +124,7 @@ public class OrderService {
 
 			RestTemplate restTemplate = new RestTemplate();
 			PaymentCompletedDTO paymentCompletedDTO = new PaymentCompletedDTO();
-			paymentCompletedDTO.setOrderId(order.getShopOrderId());
+			paymentCompletedDTO.setId(order.getShopOrderId());
 			paymentCompletedDTO.setStatus("COMPLETED");
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
 					new HttpEntity<PaymentCompletedDTO>(paymentCompletedDTO), String.class);
@@ -136,4 +145,54 @@ public class OrderService {
 
 		return payment.toJSON();
 	}
+
+	@Scheduled(fixedDelay = 300000)
+	public void checkOrders() {
+		List<Order> orders = repo.findAllByExecuted(false);
+
+		for (Order order : orders) {
+			Merchant merchant = merchantService.findOneByApiKey(order.getMerchantApiKey());
+
+			APIContext context = new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox");
+
+			try {
+				String apiUrl = "https://api.sandbox.paypal.com/v2/checkout/orders/" + order.getPayPalOrderId();
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_JSON);
+				headers.set("Authorization", "Bearer " + context.fetchAccessToken());
+				HttpEntity entity = new HttpEntity(headers);
+
+				ResponseEntity<String> details = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
+				String status = (new Gson()).fromJson(details.getBody(), JsonObject.class).get("status").getAsString();
+
+				if (status.equalsIgnoreCase("completed")) {
+					order.setStatus(OrderStatus.COMPLETED);
+					order.setExecuted(true);
+
+					PaymentCompletedDTO paymentCompletedDTO = new PaymentCompletedDTO();
+					paymentCompletedDTO.setId(order.getShopOrderId());
+					paymentCompletedDTO.setStatus("COMPLETED");
+
+					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
+							new HttpEntity<PaymentCompletedDTO>(paymentCompletedDTO), String.class);
+				}
+
+			} catch (Exception e) {
+				order.setStatus(OrderStatus.FAILED);
+				order.setExecuted(true);
+
+				PaymentCompletedDTO paymentCompletedDTO = new PaymentCompletedDTO();
+				paymentCompletedDTO.setId(order.getShopOrderId());
+				paymentCompletedDTO.setStatus("FAILED");
+
+				restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
+						new HttpEntity<PaymentCompletedDTO>(paymentCompletedDTO), String.class);
+
+			}
+
+		}
+
+		repo.saveAll(orders);
+	}
+
 }
