@@ -22,7 +22,7 @@ export class FormComponent implements OnInit {
     pending: boolean;
     style: FormStyle;
     save: (value: any) => void;
-    readFunction: () => Observable<StandardModel>;
+    readFunction?: () => Observable<StandardModel>;
   }
 
   form: FormGroup;
