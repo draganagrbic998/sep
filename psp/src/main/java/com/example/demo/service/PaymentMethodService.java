@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 
 import com.demo.example.exception.NotFoundException;
@@ -21,6 +22,9 @@ public class PaymentMethodService {
 
 	@Autowired
 	private PaymentMethodRepository paymentMethodRepository;
+
+	@Autowired
+	private DiscoveryClient discoveryClient;
 
 	public List<PaymentMethod> findAll() {
 		return paymentMethodRepository.findAll();
@@ -62,4 +66,13 @@ public class PaymentMethodService {
 
 		return ret;
 	}
+
+	// Da bi prilikom dodavanja nacina placanja proverili da li uopste imamo
+	// takav servis na eureci, jer dzaba mi dodajemo ako to nema da radi
+	public List<String> getAll() {
+		List<String> services = discoveryClient.getServices();
+		services.remove("psp");
+		return services;
+	}
+
 }
