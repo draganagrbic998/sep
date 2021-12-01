@@ -27,8 +27,13 @@ export class ToolbarComponent {
     return this.router.url.includes(Route.CART);
   }
 
+  get orders() {
+    return this.router.url.includes(Route.ORDERS);
+  }
+
   productsLink = Route.PRODUCTS;
   cartLink = Route.CART;
+  ordersLink = Route.ORDERS;
 
   logout() {
     this.storageService.removeAuth();
