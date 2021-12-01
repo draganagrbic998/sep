@@ -1,1 +1,22 @@
-<p>order-list works!</p>
+<div class="orders">
+  <div class="order mat-elevation-z24" *ngFor="let order of orders">
+    <mat-card>
+      <mat-card-content>
+        <div class="header">
+          <span></span>
+          <span>
+            {{ order.date | date: "dd/MM/yyyy HH:mm:ss" }}
+          </span>
+        </div>
+
+        <div class="body">
+          <div class="row"><b>Products: </b>{{ productsSummary(order) }}</div>
+          <div class="row">
+            <b>Total products count: </b>{{ totalProductsCount(order) }}
+          </div>
+          <div class="row"><b>Total price: </b>{{ totalPrice(order) }}</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

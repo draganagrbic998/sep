@@ -13,7 +13,7 @@ export interface Product extends StandardModel {
     id: number;
     name: string;
     description: string;
-    price: string;
+    price: number;
     category: string;
     currency: string;
     imageLocation: string;
