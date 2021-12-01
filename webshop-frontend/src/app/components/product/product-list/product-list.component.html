@@ -41,14 +41,18 @@
               <mat-icon>delete</mat-icon>Delete
             </button>
 
-            <button
-              *ngIf="category !== 'Personal'"
-              mat-button
-              color="accent"
-              (click)="addToCart(product)"
-            >
-              <mat-icon>add_shopping_cart</mat-icon>Add to cart
-            </button>
+            <span *ngIf="category !== 'Personal'">
+              <button
+                *ngIf="cartPendingId !== product.id"
+                mat-button
+                color="accent"
+                (click)="addToCart(product)"
+              >
+                <mat-icon>add_shopping_cart</mat-icon>Add to cart
+              </button>
+
+              <app-spinner *ngIf="cartPendingId === product.id"></app-spinner>
+            </span>
           </span>
         </span>
       </mat-card-content>

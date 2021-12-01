@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { map } from 'rxjs/operators';
 import { Product } from 'src/app/models/product';
+import { CartService } from 'src/app/services/cart.service';
 import { CategoryService } from 'src/app/services/category.service';
 import { ProductService } from 'src/app/services/product.service';
-import { DIALOG_CONFIG } from 'src/app/utils/popup';
+import { DIALOG_CONFIG, SNACKBAR_CLOSE_BUTTON, SNACKBAR_ERROR_CONFIG, SNACKBAR_ERROR_TEXT, SNACKBAR_SUCCESS_CONFIG, SNACKBAR_SUCCESS_TEXT } from 'src/app/utils/popup';
 import { Route } from 'src/app/utils/route';
 import { DeleteConfirmationComponent } from '../../utils/delete-confirmation/delete-confirmation.component';
 
@@ -18,7 +20,9 @@ export class ProductListComponent implements OnInit {
   constructor(
     private productService: ProductService,
     private categoryService: CategoryService,
-    private dialog: MatDialog
+    private cartService: CartService,
+    private dialog: MatDialog,
+    private snackbar: MatSnackBar
   ) { }
 
   products: Product[]
@@ -30,8 +34,18 @@ export class ProductListComponent implements OnInit {
     this.readCategories().then(() => this.readProducts())
   }
 
-  addToCart(product: Product){
-    
+  cartPendingId: number = null;
+
+  async addToCart(product: Product) {
+    this.cartPendingId = product.id;
+    try {
+      await this.cartService.addToCart(product.id).toPromise();
+      this.cartPendingId = null;
+      this.snackbar.open(SNACKBAR_SUCCESS_TEXT, SNACKBAR_CLOSE_BUTTON, SNACKBAR_SUCCESS_CONFIG);
+    } catch {
+      this.cartPendingId = null;
+      this.snackbar.open(SNACKBAR_ERROR_TEXT, SNACKBAR_CLOSE_BUTTON, SNACKBAR_ERROR_CONFIG);
+    }
   }
 
   edit(product: Product) {
