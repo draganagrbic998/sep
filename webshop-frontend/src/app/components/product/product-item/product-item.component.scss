@@ -1,0 +1,26 @@
+.root {
+  border: 1px solid rgb(116, 112, 112);
+  border-radius: 5px;
+  margin: 30px;
+  width: 500px;
+}
+
+img {
+  display: block;
+  margin: 0 auto;
+  width: 95%;
+  height: 250px;
+  margin-bottom: 25px;
+  margin-top: 20px;
+}
+
+.row {
+  margin-top: 7px;
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 20px;
+}

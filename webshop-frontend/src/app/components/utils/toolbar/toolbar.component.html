@@ -1,5 +1,9 @@
 <mat-toolbar color="primary" class="mat-elevation-z24">
-  <span></span>
+  <span>
+    <button mat-button>
+      <mat-icon>shopping_cart</mat-icon>Shopping Cart
+    </button>
+  </span>
   <span>
     <button *ngIf="!login" mat-icon-button [matMenuTriggerFor]="more">
       <mat-icon>more_vert</mat-icon>

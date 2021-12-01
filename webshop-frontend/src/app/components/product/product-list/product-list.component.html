@@ -6,56 +6,10 @@
 </mat-tab-group>
 
 <div class="products">
-  <div class="root mat-elevation-z24" *ngFor="let product of products">
-    <mat-card>
-      <mat-card-content>
-        <h2>{{ product.name }}</h2>
-
-        <img [src]="product.imageLocation" />
-
-        <div class="row"><b>Category: </b>{{ product.category }}</div>
-        <div class="row"><b>Description: </b>{{ product.description }}</div>
-        <div class="row">
-          <b>Price: </b>{{ product.price }} {{ product.currency }}
-        </div>
-
-        <span class="actions">
-          <span>
-            <button
-              *ngIf="category === 'Personal'"
-              mat-button
-              color="primary"
-              [routerLink]="edit(product)"
-            >
-              <mat-icon>edit</mat-icon>Edit
-            </button>
-          </span>
-
-          <span>
-            <button
-              *ngIf="category === 'Personal'"
-              mat-button
-              color="warn"
-              (click)="delete(product)"
-            >
-              <mat-icon>delete</mat-icon>Delete
-            </button>
-
-            <span *ngIf="category !== 'Personal'">
-              <button
-                *ngIf="cartPendingId !== product.id"
-                mat-button
-                color="accent"
-                (click)="addToCart(product)"
-              >
-                <mat-icon>add_shopping_cart</mat-icon>Add to cart
-              </button>
-
-              <app-spinner *ngIf="cartPendingId === product.id"></app-spinner>
-            </span>
-          </span>
-        </span>
-      </mat-card-content>
-    </mat-card>
-  </div>
+  <app-product-item
+    *ngFor="let product of products"
+    [product]="product"
+    [actions]="category === 'Personal' ? 'crud' : 'add_to_cart'"
+    (refreshProducts)="readProducts()"
+  ></app-product-item>
 </div>

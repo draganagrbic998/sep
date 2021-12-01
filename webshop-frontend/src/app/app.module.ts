@@ -15,6 +15,8 @@ import { ToolbarComponent } from './components/utils/toolbar/toolbar.component';
 import { ProductFormComponent } from './components/product/product-form/product-form.component';
 import { ProductListComponent } from './components/product/product-list/product-list.component';
 import { DeleteConfirmationComponent } from './components/utils/delete-confirmation/delete-confirmation.component';
+import { CartListComponent } from './components/cart/cart-list/cart-list.component';
+import { ProductItemComponent } from './components/product/product-item/product-item.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +27,9 @@ import { DeleteConfirmationComponent } from './components/utils/delete-confirmat
     ToolbarComponent,
     ProductFormComponent,
     ProductListComponent,
-    DeleteConfirmationComponent
+    DeleteConfirmationComponent,
+    CartListComponent,
+    ProductItemComponent
   ],
   imports: [
     BrowserModule,
