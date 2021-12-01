@@ -15,7 +15,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/categories")
-// add preauthorize
 public class CategoryController {
 
 	private final CategoryService service;

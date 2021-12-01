@@ -15,7 +15,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/currencies")
-// add preauthorize
 public class CurrencyController {
 
 	private final CurrencyService service;

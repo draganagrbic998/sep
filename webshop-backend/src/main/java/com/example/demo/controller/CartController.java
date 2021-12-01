@@ -19,7 +19,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/cart")
-// add preauthorize
 public class CartController {
 
 	private final CartService service;

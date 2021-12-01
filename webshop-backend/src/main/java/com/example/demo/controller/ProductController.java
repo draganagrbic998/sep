@@ -25,7 +25,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/products")
-// add preauthorize
 public class ProductController {
 
 	private final ProductService service;
@@ -66,7 +65,7 @@ public class ProductController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> delet(@PathVariable Long id) {
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		if (id == null) {
 			return ResponseEntity.badRequest().build();
 		}

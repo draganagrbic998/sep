@@ -35,3 +35,12 @@
 .row {
   margin-top: 7px;
 }
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 80%;
+  font-size: 30px;
+}
