@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PaymentRequestCompletedDTO {
 
-	private Integer merchantOrderId;
+	private Integer id;
 	private String status;
 
 }

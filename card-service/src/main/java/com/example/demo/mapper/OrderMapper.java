@@ -19,10 +19,12 @@ public class OrderMapper {
 		Order model = new Order();
 
 		model.setShopOrderId(dto.getOrderIdWebShop());
+		model.setMerchantApiKey(dto.getMerchantApiKey());
 		model.setCurrency(dto.getCurrency());
 		model.setPrice(dto.getPrice());
 		model.setCallbackUrl(dto.getCallbackUrl());
 		model.setOrderStatus(OrderStatus.CREATED);
+		model.setTicks(0);
 
 		return model;
 	}

@@ -19,8 +19,9 @@ public class TransactionController {
 	private TransactionService transactionService;
 
 	@RequestMapping(value = "/{orderId}", method = RequestMethod.GET)
-	private ResponseEntity<?> getTransaction(@PathVariable Integer orderId) throws NotFoundException {
-		return new ResponseEntity<>(transactionService.findByMerchantOrderId(orderId), HttpStatus.OK);
+	private ResponseEntity<String> getTransaction(@PathVariable Integer orderId) throws NotFoundException {
+		return new ResponseEntity<>(transactionService.findByMerchantOrderId(orderId).getStatus().toString(),
+				HttpStatus.OK);
 	}
 
 }

@@ -133,7 +133,7 @@ public class PaymentRequestService {
 
 			PaymentRequestCompletedDTO paymentRequestCompletedDTO = new PaymentRequestCompletedDTO();
 
-			paymentRequestCompletedDTO.setMerchantOrderId(paymentRequest.getMerchantOrderId());
+			paymentRequestCompletedDTO.setId(paymentRequest.getMerchantOrderId());
 			paymentRequestCompletedDTO.setStatus("SUCCESSFUL");
 
 			restTemplate.exchange(paymentRequest.getCallbackUrl() + "/complete", HttpMethod.POST,
@@ -170,7 +170,7 @@ public class PaymentRequestService {
 
 				PaymentRequestCompletedDTO paymentRequestCompletedDTO = new PaymentRequestCompletedDTO();
 
-				paymentRequestCompletedDTO.setMerchantOrderId(paymentRequest.getMerchantOrderId());
+				paymentRequestCompletedDTO.setId(paymentRequest.getMerchantOrderId());
 				paymentRequestCompletedDTO.setStatus("SUCCESSFUL");
 
 				restTemplate.exchange(paymentRequest.getCallbackUrl() + "/complete", HttpMethod.POST,
@@ -193,7 +193,7 @@ public class PaymentRequestService {
 	private void refusePaymentRequest(PaymentRequest paymentRequest) {
 		PaymentRequestCompletedDTO paymentRequestCompletedDTO = new PaymentRequestCompletedDTO();
 
-		paymentRequestCompletedDTO.setMerchantOrderId(paymentRequest.getMerchantOrderId());
+		paymentRequestCompletedDTO.setId(paymentRequest.getMerchantOrderId());
 		paymentRequestCompletedDTO.setStatus("FAILED");
 
 		restTemplate.exchange(paymentRequest.getCallbackUrl() + "/complete", HttpMethod.POST,

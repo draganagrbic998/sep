@@ -32,9 +32,15 @@ public class Order {
 	private String currency;
 
 	@Column
+	private String merchantApiKey;
+
+	@Column
 	private OrderStatus orderStatus;
 
 	@Column
 	private String callbackUrl;
+
+	@Column
+	private Integer ticks;
 
 }
