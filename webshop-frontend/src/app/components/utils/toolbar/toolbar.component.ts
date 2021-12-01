@@ -23,17 +23,12 @@ export class ToolbarComponent {
     return this.router.url.includes(Route.PRODUCTS);
   }
 
-  get productsLink() {
-    return Route.PRODUCTS;
-  }
-
   get cart() {
     return this.router.url.includes(Route.CART);
   }
 
-  get cartLink() {
-    return Route.CART;
-  }
+  productsLink = Route.PRODUCTS;
+  cartLink = Route.CART;
 
   logout() {
     this.storageService.removeAuth();

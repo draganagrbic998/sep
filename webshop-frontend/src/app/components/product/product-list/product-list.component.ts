@@ -3,6 +3,7 @@ import { map } from 'rxjs/operators';
 import { Product } from 'src/app/models/product';
 import { CategoryService } from 'src/app/services/category.service';
 import { ProductService } from 'src/app/services/product.service';
+import { Route } from 'src/app/utils/route';
 
 @Component({
   selector: 'app-product-list',
@@ -20,6 +21,8 @@ export class ProductListComponent implements OnInit {
   categories: string[]
   category: string;
   page = 0
+
+  productFormLink = '/' + Route.PRODUCT_FORM + '/new'
 
   ngOnInit() {
     this.readCategories().then(() => this.readProducts())

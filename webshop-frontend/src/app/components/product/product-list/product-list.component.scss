@@ -9,3 +9,18 @@
   flex-wrap: wrap;
   justify-content: center;
 }
+
+.add-product {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 30px;
+  margin-top: 20px;
+}
+
+.add-product button {
+  padding: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  font-size: 15px;
+}

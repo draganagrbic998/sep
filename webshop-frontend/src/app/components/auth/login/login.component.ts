@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
       this.pending = false;
       this.storageService.setAuth(res);
 
-      this.router.navigate([`${Route.PRODUCT_FORM}/new`])
+      this.router.navigate([Route.PRODUCTS])
     }
 
     catch {

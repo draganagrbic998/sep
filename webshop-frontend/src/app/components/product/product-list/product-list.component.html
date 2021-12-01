@@ -5,6 +5,13 @@
   <mat-tab *ngFor="let category of categories" [label]="category"> </mat-tab>
 </mat-tab-group>
 
+<div *ngIf="category === 'Personal'" class="add-product">
+  <span></span>
+  <button mat-raised-button color="primary" [routerLink]="productFormLink">
+    <mat-icon>add_circle_outline</mat-icon>Add Product
+  </button>
+</div>
+
 <div class="products">
   <app-product-item
     *ngFor="let product of products"
