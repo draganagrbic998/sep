@@ -36,6 +36,11 @@ public class RedirectionController {
 			@RequestBody OrderCreateDTO orderCreateDTO) throws NotFoundException {
 		Order order = orderService.findById(orderIdWebshop);
 
+		// Kupac mora u roku od 5 minuta da odabere nacin placanja
+		if (order.getTicks() >= 5) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
 		ResponseEntity<OrderCreatedDTO> responseEntity = restTemplate.exchange(
 				"http://localhost:8762/" + method + "/create/payment", HttpMethod.POST,
 				new HttpEntity<OrderCreateDTO>(orderCreateDTO), OrderCreatedDTO.class);

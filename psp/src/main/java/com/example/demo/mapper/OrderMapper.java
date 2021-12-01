@@ -15,6 +15,7 @@ public class OrderMapper {
 		model.setPrice(dto.getPrice());
 		model.setCurrency(dto.getCurrency());
 		model.setCallbackUrl(dto.getCallbackUrl());
+		model.setTicks(0);
 
 		return model;
 	}
