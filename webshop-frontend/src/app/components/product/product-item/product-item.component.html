@@ -10,6 +10,7 @@
       <div class="row">
         <b>Price: </b>{{ product.price }} {{ product.currency }}
       </div>
+      <ng-content></ng-content>
 
       <span class="actions">
         <span>
@@ -41,6 +42,19 @@
               (click)="addToCart(product)"
             >
               <mat-icon>add_shopping_cart</mat-icon>Add to cart
+            </button>
+
+            <app-spinner *ngIf="cartPendingId === product.id"></app-spinner>
+          </span>
+
+          <span *ngIf="actions === 'remove_from_cart'">
+            <button
+              *ngIf="cartPendingId !== product.id"
+              mat-button
+              color="accent"
+              (click)="remove_from_cart(product)"
+            >
+              <mat-icon>remove_shopping_cart</mat-icon>Remove from cart
             </button>
 
             <app-spinner *ngIf="cartPendingId === product.id"></app-spinner>

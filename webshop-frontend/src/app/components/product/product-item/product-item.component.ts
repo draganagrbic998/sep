@@ -28,6 +28,19 @@ export class ProductItemComponent {
 
   cartPendingId: number = null;
 
+  async remove_from_cart(product: Product) {
+    this.cartPendingId = product.id;
+    try {
+      await this.cartService.removeFromCart(product.id).toPromise();
+      this.cartPendingId = null;
+      this.snackbar.open(SNACKBAR_SUCCESS_TEXT, SNACKBAR_CLOSE_BUTTON, SNACKBAR_SUCCESS_CONFIG);
+      this.refreshProducts.emit();
+    } catch {
+      this.cartPendingId = null;
+      this.snackbar.open(SNACKBAR_ERROR_TEXT, SNACKBAR_CLOSE_BUTTON, SNACKBAR_ERROR_CONFIG);
+    }
+  }
+
   async addToCart(product: Product) {
     this.cartPendingId = product.id;
     try {

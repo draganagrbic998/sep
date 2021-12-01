@@ -1,14 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { map } from 'rxjs/operators';
 import { Product } from 'src/app/models/product';
-import { CartService } from 'src/app/services/cart.service';
 import { CategoryService } from 'src/app/services/category.service';
 import { ProductService } from 'src/app/services/product.service';
-import { DIALOG_CONFIG, SNACKBAR_CLOSE_BUTTON, SNACKBAR_ERROR_CONFIG, SNACKBAR_ERROR_TEXT, SNACKBAR_SUCCESS_CONFIG, SNACKBAR_SUCCESS_TEXT } from 'src/app/utils/popup';
-import { Route } from 'src/app/utils/route';
-import { DeleteConfirmationComponent } from '../../utils/delete-confirmation/delete-confirmation.component';
 
 @Component({
   selector: 'app-product-list',
@@ -19,10 +13,7 @@ export class ProductListComponent implements OnInit {
 
   constructor(
     private productService: ProductService,
-    private categoryService: CategoryService,
-    private cartService: CartService,
-    private dialog: MatDialog,
-    private snackbar: MatSnackBar
+    private categoryService: CategoryService
   ) { }
 
   products: Product[]
@@ -36,7 +27,6 @@ export class ProductListComponent implements OnInit {
 
   async readProducts() {
     this.products = await this.productService.readPaged(this.category, this.page).pipe(map(res => res.content)).toPromise();
-
   }
 
   private async readCategories() {
