@@ -9,7 +9,9 @@ import com.example.demo.model.Category;
 import com.example.demo.repository.CategoryRepository;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @AllArgsConstructor
 @Service
 public class CategoryService {
@@ -18,6 +20,7 @@ public class CategoryService {
 
 	@Transactional(readOnly = true)
 	public List<Category> read() {
+		log.info("CategoryService - read");
 		return repo.findAll();
 	}
 

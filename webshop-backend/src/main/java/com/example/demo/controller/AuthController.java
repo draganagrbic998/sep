@@ -12,7 +12,9 @@ import com.example.demo.dto.Auth;
 import com.example.demo.service.UserService;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @AllArgsConstructor
 @RestController
 @RequestMapping("/auth")
@@ -22,6 +24,7 @@ public class AuthController {
 
 	@PostMapping
 	public ResponseEntity<Auth> login(@Valid @RequestBody Auth auth) {
+		log.info("AuthController - login");
 		return ResponseEntity.ok(service.login(auth));
 	}
 

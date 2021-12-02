@@ -15,7 +15,9 @@ import com.example.demo.model.CartItem;
 import com.example.demo.service.CartService;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @AllArgsConstructor
 @RestController
 @RequestMapping("/cart")
@@ -25,12 +27,16 @@ public class CartController {
 
 	@GetMapping
 	public ResponseEntity<List<CartItem>> readCart() {
+		log.info("CartController - readCart");
 		return ResponseEntity.ok(service.readCart());
 	}
 
 	@PutMapping("/{productId}/add")
 	public ResponseEntity<Void> addToCart(@PathVariable Long productId) {
+		log.info("CartController - addToCart: productId=" + productId);
+
 		if (productId == null) {
+			log.error("addToCart - productId is null");
 			return ResponseEntity.badRequest().build();
 		}
 		service.addToCart(productId);
@@ -39,7 +45,10 @@ public class CartController {
 
 	@PutMapping("/{productId}/remove")
 	public ResponseEntity<Void> removeFromCart(@PathVariable Long productId) {
+		log.info("CartController - removeFromCart: productId=" + productId);
+
 		if (productId == null) {
+			log.error("removeFromCart - productId is null");
 			return ResponseEntity.badRequest().build();
 		}
 		service.removeFromCart(productId);
@@ -48,12 +57,14 @@ public class CartController {
 
 	@PostMapping("/order")
 	public ResponseEntity<Void> orderCart() {
+		log.info("CartController - orderCart");
 		service.orderCart();
 		return ResponseEntity.noContent().build();
 	}
 
 	@GetMapping("/orders")
 	public ResponseEntity<List<OrderResponse>> readOrders() {
+		log.info("CartController - readOrders");
 		return ResponseEntity.ok(service.readOrders());
 	}
 

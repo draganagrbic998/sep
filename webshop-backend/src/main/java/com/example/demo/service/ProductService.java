@@ -12,7 +12,9 @@ import com.example.demo.model.Product;
 import com.example.demo.repository.ProductRepository;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @AllArgsConstructor
 @Service
 public class ProductService {
@@ -23,6 +25,7 @@ public class ProductService {
 
 	@Transactional(readOnly = true)
 	public Page<Product> read(String category, Pageable pageable) {
+		log.info("ProductService - read: category=" + category);
 		if (category.equalsIgnoreCase("all")) {
 			return repo.findAll(pageable);
 		}
@@ -34,6 +37,7 @@ public class ProductService {
 
 	@Transactional(readOnly = true)
 	public Product readOne(Long id) {
+		log.info("ProductService - readOne: id=" + id);
 		return repo.findById(id).get();
 	}
 
@@ -45,11 +49,14 @@ public class ProductService {
 		} else if (product.getId() != null) {
 			product.setImageLocation(readOne(product.getId()).getImageLocation());
 		}
-		return repo.save(product);
+		product = repo.save(product);
+		log.info("ProductService - save: id=" + product.getId());
+		return product;
 	}
 
 	@Transactional
 	public void delete(Long id) {
+		log.info("ProductService - delete: id=" + id);
 		repo.deleteById(id);
 	}
 

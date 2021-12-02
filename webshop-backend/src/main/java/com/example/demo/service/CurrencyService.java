@@ -9,7 +9,9 @@ import com.example.demo.model.Currency;
 import com.example.demo.repository.CurrencyRepository;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @AllArgsConstructor
 @Service
 public class CurrencyService {
@@ -18,6 +20,7 @@ public class CurrencyService {
 
 	@Transactional(readOnly = true)
 	public List<Currency> read() {
+		log.info("CurrencyService - read");
 		return repo.findAll();
 	}
 

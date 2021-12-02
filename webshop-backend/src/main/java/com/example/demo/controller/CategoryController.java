@@ -11,7 +11,9 @@ import com.example.demo.model.Category;
 import com.example.demo.service.CategoryService;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @AllArgsConstructor
 @RestController
 @RequestMapping("/categories")
@@ -21,6 +23,7 @@ public class CategoryController {
 
 	@GetMapping
 	public ResponseEntity<List<Category>> read() {
+		log.info("CategoryController - read");
 		return ResponseEntity.ok(service.read());
 	}
 
