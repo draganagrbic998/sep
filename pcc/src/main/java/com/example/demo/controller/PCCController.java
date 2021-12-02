@@ -17,6 +17,9 @@ import com.example.demo.dto.PCCResponseDTO;
 import com.example.demo.mapper.ResponseMapper;
 import com.example.demo.service.BankService;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @RestController
 @RequestMapping("/pcc")
 public class PCCController {
@@ -32,14 +35,15 @@ public class PCCController {
 
 	@RequestMapping(value = "/redirect", method = RequestMethod.POST, consumes = "application/json")
 	public ResponseEntity<?> redirect(@RequestBody PCCRequestDTO pccRequestDTO) throws NotFoundException {
+		log.info("PCCController - redirect: acquirerOrderId=" + pccRequestDTO.getAcquirerOrderId().toString());
 		String bankId = pccRequestDTO.getPanNumber().replace("-", "").substring(1, 7);
 		String bankUrl = bankService.getBankByPanNumber(bankId).getBankUrl();
 
 		// Saljemo banci kupca
+		log.info("redirect - notifying buyer bank @" + bankUrl + "/pcc/pay");
 		ResponseEntity<PCCResponseDTO> responseEntity = restTemplate.exchange(bankUrl + "/pcc/pay", HttpMethod.POST,
 				new HttpEntity<PCCRequestDTO>(pccRequestDTO), PCCResponseDTO.class);
 
-		// Saljemo banci prodavca
 		return new ResponseEntity<>(responseMapper.toDTO(responseEntity.getBody()), HttpStatus.OK);
 	}
 

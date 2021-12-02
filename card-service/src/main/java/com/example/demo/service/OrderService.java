@@ -68,14 +68,14 @@ public class OrderService {
 
 		PaymentRequestDTO dto = paymentRequestMapper.toDTO(merchant, order);
 
-		log.info("checkOrders - create PaymentRequest in bank @" + merchant.getBankUrl());
+		log.info("pay - create PaymentRequest in bank @" + merchant.getBankUrl());
 		ResponseEntity<PaymentRequestResponseDTO> responseEntity = restTemplate.exchange(
 				merchant.getBankUrl() + "/payment-requests/create", HttpMethod.POST,
 				new HttpEntity<PaymentRequestDTO>(dto), PaymentRequestResponseDTO.class);
 
 		this.save(order);
 
-		log.info("checkOrders - obtained: paymentUrl=" + responseEntity.getBody().getPaymentUrl() + " paymentId="
+		log.info("pay - obtained: paymentUrl=" + responseEntity.getBody().getPaymentUrl() + " paymentId="
 				+ responseEntity.getBody().getPaymentId());
 		return responseEntity.getBody().getPaymentUrl() + "/" + responseEntity.getBody().getPaymentId();
 	}
@@ -93,7 +93,7 @@ public class OrderService {
 			paymentRequestCompletedDTO.setId(order.getShopOrderId());
 			paymentRequestCompletedDTO.setStatus("COMPLETED");
 
-			log.info("checkOrders - notifying WebShop @" + order.getCallbackUrl());
+			log.info("completePayment - notifying WebShop @" + order.getCallbackUrl());
 			ResponseEntity<String> responseEntity = restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
 					new HttpEntity<PaymentRequestCompletedDTO>(paymentRequestCompletedDTO), String.class);
 
@@ -107,7 +107,7 @@ public class OrderService {
 
 			paymentRequestCompletedDTO.setId(order.getShopOrderId());
 
-			log.info("checkOrders - notifying WebShop @" + order.getCallbackUrl());
+			log.info("completePayment - notifying WebShop @" + order.getCallbackUrl());
 			ResponseEntity<String> responseEntity = restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
 					new HttpEntity<PaymentRequestCompletedDTO>(paymentRequestCompletedDTO), String.class);
 
