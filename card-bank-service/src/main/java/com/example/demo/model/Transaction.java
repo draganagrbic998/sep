@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,8 +19,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Table(name = "order_table")
-public class Order {
+@Table(name = "transaction_table")
+public class Transaction {
 
 	@EqualsAndHashCode.Include
 	@Id
@@ -26,24 +28,24 @@ public class Order {
 	private Integer id;
 
 	@Column
-	private Integer shopOrderId;
-
-	@Column
-	private Double price;
+	private Double amount;
 
 	@Column
 	private String currency;
 
 	@Column
-	private String merchantApiKey;
+	private String merchantId;
 
 	@Column
-	private OrderStatus orderStatus;
+	private Integer merchantOrderId;
 
 	@Column
-	private String callbackUrl;
+	private LocalDateTime merchantTimestamp;
 
 	@Column
-	private Integer ticks;
+	private String panNumber;
+
+	@Column
+	private TransactionStatus status;
 
 }

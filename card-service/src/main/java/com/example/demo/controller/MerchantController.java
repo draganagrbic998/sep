@@ -9,8 +9,11 @@ import com.example.demo.mapper.MerchantMapper;
 import com.example.demo.model.Merchant;
 import com.example.demo.service.MerchantService;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @RestController
-@RequestMapping(value = "/merchant")
+@RequestMapping("/merchants")
 public class MerchantController {
 
 	@Autowired
@@ -20,8 +23,8 @@ public class MerchantController {
 	private MerchantService service;
 
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public Merchant create(@RequestBody MerchantDTO dto)
-			throws NotFoundException {
+	public Merchant create(@RequestBody MerchantDTO dto) throws NotFoundException {
+		log.info("MerchantController - create");
 		return service.save(mapper.toEntity(dto));
 	}
 }

@@ -9,6 +9,9 @@ import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
 import com.example.demo.service.OrderService;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @Component
 public class OrderMapper {
 
@@ -16,6 +19,7 @@ public class OrderMapper {
 	OrderService service;
 
 	public Order toEntity(OrderDTO dto) {
+		log.info("OrderMapper - toEntity");
 		Order model = new Order();
 
 		model.setShopOrderId(dto.getOrderIdWebShop());
@@ -30,6 +34,7 @@ public class OrderMapper {
 	}
 
 	public OrderCreatedDTO toDTO(Order model) {
+		log.info("OrderMapper - toDTO: orderId=" + model.getId().toString());
 		OrderCreatedDTO dto = new OrderCreatedDTO();
 
 		dto.setId(model.getId());

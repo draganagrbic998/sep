@@ -101,12 +101,11 @@
 		<div class="col-lg-5 mx-auto" style="height: 90%;">
 			<div class="bg-white rounded-lg shadow-sm p-5 container-card">
 				<div>
-					<form th:action="@{'http://localhost:8087/merchant/create}"
+					<form th:action="@{'http://localhost:8087/merchants/create}"
 						id="registration" role="form" method="POST">
 						<div class="input-group form-group">
 							<div class="input-group-prepend">
-								<span class="input-group-text"><i
-									class="fas fa-cog icon"></i></span>
+								<span class="input-group-text"><i class="fas fa-cog icon"></i></span>
 							</div>
 							<input id="merchantApiKey" name="merchantApiKey" type="text"
 								class="form-control" placeholder="Merchant Api Key">

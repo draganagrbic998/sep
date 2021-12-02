@@ -10,6 +10,9 @@ import com.example.demo.model.Merchant;
 import com.example.demo.model.Order;
 import com.example.demo.service.OrderService;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @Component
 public class PaymentRequestMapper {
 
@@ -19,6 +22,8 @@ public class PaymentRequestMapper {
 	OrderService service;
 
 	public PaymentRequestDTO toDTO(Merchant merchant, Order order) {
+		log.info("PaymentRequestMapper - toDTO: merchantId=" + merchant.getMerchantId() + " orderId="
+				+ order.getId().toString());
 		PaymentRequestDTO dto = new PaymentRequestDTO();
 
 		dto.setMerchantId(merchant.getMerchantId());

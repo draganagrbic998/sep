@@ -21,6 +21,9 @@ import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
 import com.example.demo.repo.OrderRepository;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @Service
 public class OrderService {
 
@@ -36,41 +39,53 @@ public class OrderService {
 	@Autowired
 	private PaymentRequestMapper paymentRequestMapper;
 
-	public Order save(Order order) {
-		return repo.save(order);
-	}
-
 	public List<Order> findAll() {
+		log.info("OrderService - findAll");
 		return repo.findAll();
 	}
 
 	public Order findById(Integer id) throws NotFoundException {
+		log.info("OrderService - findById: id=" + id.toString());
 		Optional<Order> order = repo.findById(id);
 
 		if (!order.isPresent()) {
+			log.error("Order: id=" + id.toString() + " not found.");
 			throw new NotFoundException(id.toString(), Order.class.getSimpleName());
 		}
 
 		return order.get();
 	}
 
+	public Order save(Order order) {
+		log.info("OrderService - save: id=" + order.getId().toString());
+		return repo.save(order);
+	}
+
 	public String pay(Integer orderId, String merchantApiKey) throws NotFoundException {
+		log.info("OrderService - pay: orderId=" + orderId.toString() + " merchantApiKey=" + merchantApiKey);
 		Order order = this.findById(orderId);
 		Merchant merchant = merchantService.findByMerchantApiKey(merchantApiKey);
 
 		PaymentRequestDTO dto = paymentRequestMapper.toDTO(merchant, order);
 
-		ResponseEntity<PaymentRequestResponseDTO> responseEntity = restTemplate.exchange(merchant.getBankUrl(),
-				HttpMethod.POST, new HttpEntity<PaymentRequestDTO>(dto), PaymentRequestResponseDTO.class);
+		log.info("checkOrders - create PaymentRequest in bank @" + merchant.getBankUrl());
+		ResponseEntity<PaymentRequestResponseDTO> responseEntity = restTemplate.exchange(
+				merchant.getBankUrl() + "/payment-requests/create", HttpMethod.POST,
+				new HttpEntity<PaymentRequestDTO>(dto), PaymentRequestResponseDTO.class);
 
 		this.save(order);
 
+		log.info("checkOrders - obtained: paymentUrl=" + responseEntity.getBody().getPaymentUrl() + " paymentId="
+				+ responseEntity.getBody().getPaymentId());
 		return responseEntity.getBody().getPaymentUrl() + "/" + responseEntity.getBody().getPaymentId();
 	}
 
 	public String completePayment(PaymentRequestCompletedDTO paymentRequestCompletedDTO) throws NotFoundException {
+		log.info("OrderService - completePayment: orderId=" + paymentRequestCompletedDTO.getId().toString());
+		Order order = this.findById(paymentRequestCompletedDTO.getId());
+
 		if (paymentRequestCompletedDTO.getStatus().contentEquals("SUCCESS")) {
-			Order order = this.findById(paymentRequestCompletedDTO.getId());
+			log.info("Order: id=" + order.getId().toString() + " payment_status=SUCCESS");
 
 			order.setOrderStatus(OrderStatus.COMPLETED);
 			order = this.save(order);
@@ -78,24 +93,27 @@ public class OrderService {
 			paymentRequestCompletedDTO.setId(order.getShopOrderId());
 			paymentRequestCompletedDTO.setStatus("COMPLETED");
 
+			log.info("checkOrders - notifying WebShop @" + order.getCallbackUrl());
 			ResponseEntity<String> responseEntity = restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
 					new HttpEntity<PaymentRequestCompletedDTO>(paymentRequestCompletedDTO), String.class);
 
 			return responseEntity.getBody();
 
 		} else if (paymentRequestCompletedDTO.getStatus().contentEquals("FAILED")) {
-			Order order = this.findById(paymentRequestCompletedDTO.getId());
+			log.info("Order: id=" + order.getId().toString() + " payment_status=FAILED");
 
 			order.setOrderStatus(OrderStatus.FAILED);
 			order = this.save(order);
 
 			paymentRequestCompletedDTO.setId(order.getShopOrderId());
 
+			log.info("checkOrders - notifying WebShop @" + order.getCallbackUrl());
 			ResponseEntity<String> responseEntity = restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
 					new HttpEntity<PaymentRequestCompletedDTO>(paymentRequestCompletedDTO), String.class);
 
 			return responseEntity.getBody();
 		} else {
+			log.info("Order: id=" + order.getId().toString() + " - Error occured while paying for the order");
 			return "Error occured while paying for the order";
 		}
 	}
@@ -107,6 +125,7 @@ public class OrderService {
 	// to znaci da ili kupac nije potvrdio ili je pukla banka
 	@Scheduled(fixedDelay = 60000)
 	public void checkOrders() {
+		log.info("OrderService - checkOrders");
 		List<Order> orders = this.findAll();
 
 		for (Order order : orders) {
@@ -114,13 +133,18 @@ public class OrderService {
 
 			if (order.getOrderStatus() == OrderStatus.CREATED) {
 				if (order.getTicks() < 5) {
+					log.info(
+							"Order: id=" + order.getId().toString() + " tick=" + order.getTicks().toString() + " - OK");
 					order.setTicks(order.getTicks() + 1);
 					this.save(order);
 
 					try {
+						log.info("checkOrders - get order state from bank @" + merchant.getBankUrl());
 						ResponseEntity<String> responseEntity = restTemplate
 								.getForEntity(merchant.getBankUrl() + "/" + order.getShopOrderId(), String.class);
+
 						if (responseEntity.getBody() == "SUCCESSFUL") {
+							log.info("Order: id=" + order.getId().toString() + " payment_status=SUCCESSFUL");
 							order.setOrderStatus(OrderStatus.COMPLETED);
 							this.save(order);
 
@@ -128,16 +152,18 @@ public class OrderService {
 							paymentRequestCompletedDTO.setId(order.getShopOrderId());
 							paymentRequestCompletedDTO.setStatus("COMPLETED");
 
+							log.info("checkOrders - notifying WebShop @" + order.getCallbackUrl());
 							new RestTemplate().exchange(order.getCallbackUrl(), HttpMethod.POST,
 									new HttpEntity<PaymentRequestCompletedDTO>(paymentRequestCompletedDTO),
 									String.class);
 						}
 					} catch (Exception e) {
-						// ovde log
-						System.out.println("Nepostojeca transakcija");
+						log.info("Order: id=" + order.getId().toString() + " - Order doesn't exist");
 					}
 
 				} else {
+					log.warn("Order: id=" + order.getId().toString() + " tick=" + order.getTicks().toString()
+							+ " - FAILED");
 					order.setOrderStatus(OrderStatus.FAILED);
 					this.save(order);
 
@@ -145,6 +171,7 @@ public class OrderService {
 					paymentRequestCompletedDTO.setId(order.getShopOrderId());
 					paymentRequestCompletedDTO.setStatus("FAILED");
 
+					log.info("checkOrders - notifying WebShop @" + order.getCallbackUrl());
 					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
 							new HttpEntity<PaymentRequestCompletedDTO>(paymentRequestCompletedDTO), String.class);
 
