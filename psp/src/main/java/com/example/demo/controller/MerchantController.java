@@ -16,6 +16,9 @@ import com.example.demo.mapper.MerchantMapper;
 import com.example.demo.model.Merchant;
 import com.example.demo.service.MerchantService;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @RestController
 @RequestMapping("/merchants")
 public class MerchantController {
@@ -28,12 +31,14 @@ public class MerchantController {
 
 	@RequestMapping(value = "/create", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	private ResponseEntity<Merchant> create(@RequestBody MerchantDTO dto) {
+		log.info("MerchantController - create");
 		Merchant m = merchantMapper.toEntity(dto);
 		return new ResponseEntity<>(merchantService.save(m), HttpStatus.CREATED);
 	}
 
-	@RequestMapping(value = "/{appId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{merchantId}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> remove(@PathVariable Integer merchantId) throws NotFoundException {
+		log.info("MerchantController - remove: id=" + merchantId.toString());
 		return new ResponseEntity<>(merchantService.remove(merchantId), HttpStatus.NO_CONTENT);
 	}
 

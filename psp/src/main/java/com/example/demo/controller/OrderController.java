@@ -13,6 +13,9 @@ import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
 import com.example.demo.service.OrderService;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -24,7 +27,8 @@ public class OrderController {
 	private OrderService orderService;
 
 	@RequestMapping(value = "/create", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	private Order createOrder(@RequestBody OrderWebshopDTO orderWebshopDTO) {
+	private Order create(@RequestBody OrderWebshopDTO orderWebshopDTO) {
+		log.info("OrderController - create");
 		Order o = orderMapper.toEntity(orderWebshopDTO);
 		o.setStatus(OrderStatus.CREATED);
 		Order savedOrder = orderService.save(o);

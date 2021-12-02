@@ -14,6 +14,9 @@ import com.example.demo.model.Merchant;
 import com.example.demo.model.PaymentMethod;
 import com.example.demo.repo.PaymentMethodRepository;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @Service
 public class PaymentMethodService {
 
@@ -27,13 +30,16 @@ public class PaymentMethodService {
 	private DiscoveryClient discoveryClient;
 
 	public List<PaymentMethod> findAll() {
+		log.info("PaymentMethodService - findAll");
 		return paymentMethodRepository.findAll();
 	}
 
 	public PaymentMethod findById(Integer id) throws NotFoundException {
+		log.info("PaymentMethodService - findById: id=" + id.toString());
 		Optional<PaymentMethod> paymentMethod = paymentMethodRepository.findById(id);
 
 		if (!paymentMethod.isPresent()) {
+			log.error("PaymentMethod: id=" + id.toString() + " not found.");
 			throw new NotFoundException(id.toString(), PaymentMethod.class.getSimpleName());
 		}
 
@@ -41,35 +47,39 @@ public class PaymentMethodService {
 	}
 
 	public PaymentMethod save(PaymentMethod paymentMethod) {
+		log.info("PaymentMethodService - save: id=" + paymentMethod.getId().toString());
 		return paymentMethodRepository.save(paymentMethod);
 	}
 
 	public PaymentMethod remove(Integer paymentMethodId) throws NotFoundException {
+		log.info("PaymentMethodService - remove: id=" + paymentMethodId.toString());
 		Optional<PaymentMethod> paymentMethod = paymentMethodRepository.findById(paymentMethodId);
 
 		if (!paymentMethod.isPresent()) {
+			log.error("PaymentMethod: id=" + paymentMethodId.toString() + " not found.");
 			throw new NotFoundException(paymentMethodId.toString(), PaymentMethod.class.getSimpleName());
 		}
 
 		paymentMethod.get().setActive(false);
-		return paymentMethodRepository.save(paymentMethod.get());
+		return this.save(paymentMethod.get());
 	}
 
 	public List<PaymentMethod> getPaymentMethods(UUID merchantApiKey) throws NotFoundException {
+		log.info("PaymentMethodService - getPaymentMethods: merchantApiKey=" + merchantApiKey.toString());
 		List<PaymentMethod> ret = new ArrayList<>();
 
 		Merchant merchant = merchantService.findByApiKey(merchantApiKey.toString());
 
-		for (PaymentMethod pm : merchant.getMethods()) {
+		for (PaymentMethod pm : merchant.getMethods())
 			ret.add(pm);
-		}
 
 		return ret;
 	}
 
 	// Da bi prilikom dodavanja nacina placanja proverili da li uopste imamo
 	// takav servis na eureci, jer dzaba mi dodajemo ako to nema da radi
-	public List<String> getAll() {
+	public List<String> getAllEurekaServices() {
+		log.info("PaymentMethodService - getAllEurekaServices");
 		List<String> services = discoveryClient.getServices();
 		services.remove("psp");
 		return services;

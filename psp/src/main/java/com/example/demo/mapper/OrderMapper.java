@@ -5,10 +5,14 @@ import org.springframework.stereotype.Component;
 import com.example.demo.dto.OrderWebshopDTO;
 import com.example.demo.model.Order;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @Component
 public class OrderMapper {
 
 	public Order toEntity(OrderWebshopDTO dto) {
+		log.info("OrderMapper - toEntity");
 		Order model = new Order();
 
 		model.setOrderIdWebshop(dto.getId());

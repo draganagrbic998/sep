@@ -19,6 +19,7 @@ import com.example.demo.service.OrderService;
 import com.example.demo.service.PaymentMethodService;
 
 @Controller
+@RequestMapping("/view")
 public class ViewController {
 
 	@Autowired
@@ -31,7 +32,7 @@ public class ViewController {
 	private OrderService orderService;
 
 	@RequestMapping(value = "/selectPaymentMethod/{merchantApiKey}/{orderId}", method = RequestMethod.GET)
-	public String selectPaymentMethod(@PathVariable UUID merchantApiKey, @PathVariable UUID orderId, Model model)
+	public String selectPaymentMethod(@PathVariable UUID merchantApiKey, @PathVariable Integer orderId, Model model)
 			throws NotFoundException {
 		List<PaymentMethod> paymentMethods = paymentMethodService.getPaymentMethods(merchantApiKey);
 

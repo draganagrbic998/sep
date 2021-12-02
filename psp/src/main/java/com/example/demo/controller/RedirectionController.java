@@ -1,7 +1,5 @@
 package com.example.demo.controller;
 
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -21,6 +19,9 @@ import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
 import com.example.demo.service.OrderService;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @RestController
 @RequestMapping("/redirection")
 public class RedirectionController {
@@ -32,18 +33,24 @@ public class RedirectionController {
 	private OrderService orderService;
 
 	@RequestMapping(value = "/{method}/{orderIdWebshop}", method = RequestMethod.POST)
-	public ResponseEntity<?> createOrderInPaymentService(@PathVariable String method, @PathVariable UUID orderIdWebshop,
-			@RequestBody OrderCreateDTO orderCreateDTO) throws NotFoundException {
+	public ResponseEntity<?> createOrderInPaymentService(@PathVariable String method,
+			@PathVariable Integer orderIdWebshop, @RequestBody OrderCreateDTO orderCreateDTO) throws NotFoundException {
+		log.info("RedirectionController - createOrderInPaymentService: method=" + method + " orderIdWebshop="
+				+ orderIdWebshop.toString());
 		Order order = orderService.findById(orderIdWebshop);
 
 		// Kupac mora u roku od 5 minuta da odabere nacin placanja
 		if (order.getTicks() >= 5) {
+			log.error("Order: id=" + order.getId().toString() + " exceeded maximum tick count.");
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
+		log.info("createOrderInPaymentService - sending order to payment service: name=" + method);
 		ResponseEntity<OrderCreatedDTO> responseEntity = restTemplate.exchange(
 				"http://localhost:8762/" + method + "/create/payment", HttpMethod.POST,
 				new HttpEntity<OrderCreateDTO>(orderCreateDTO), OrderCreatedDTO.class);
+
+		log.info("createOrderInPaymentService - OrderCreatedDTO: status=" + responseEntity.getBody().getStatus());
 
 		order.setStatus(OrderStatus.SENT);
 		orderService.save(order);
