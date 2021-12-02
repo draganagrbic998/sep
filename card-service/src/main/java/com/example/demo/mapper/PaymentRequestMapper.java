@@ -22,8 +22,7 @@ public class PaymentRequestMapper {
 	OrderService service;
 
 	public PaymentRequestDTO toDTO(Merchant merchant, Order order) {
-		log.info("PaymentRequestMapper - toDTO: merchantId=" + merchant.getMerchantId() + " orderId="
-				+ order.getId().toString());
+		log.info("PaymentRequestMapper - toDTO: merchantId=" + merchant.getMerchantId() + " orderId=" + order.getId());
 		PaymentRequestDTO dto = new PaymentRequestDTO();
 
 		dto.setMerchantId(merchant.getMerchantId());

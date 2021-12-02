@@ -32,8 +32,7 @@ public class PaymentController {
 
 	@RequestMapping(value = "/pay/{merchantApiKey}/{orderId}", method = RequestMethod.GET)
 	public ModelAndView pay(@PathVariable Integer merchantApiKey, @PathVariable Integer orderId) {
-		log.info("PaymentController - pay: merchantApiKey" + merchantApiKey.toString() + " orderId="
-				+ orderId.toString());
+		log.info("PaymentController - pay: merchantApiKey" + merchantApiKey + " orderId=" + orderId);
 		String redirectUrl = "http://localhost:8086/view/paypal_payment/" + orderId.toString();
 		return new ModelAndView("redirect:" + redirectUrl);
 	}
@@ -47,7 +46,7 @@ public class PaymentController {
 
 	@RequestMapping(value = "/getOrder/{orderId}", method = RequestMethod.GET)
 	public ResponseEntity<String> getOrderForPaypal(@PathVariable Integer orderId) throws PayPalRESTException {
-		log.info("PaymentController - getOrderForPaypal: orderId=" + orderId.toString());
+		log.info("PaymentController - getOrderForPaypal: orderId=" + orderId);
 		String payment = orderService.getOrderDetails(orderId);
 		return ResponseEntity.ok(payment);
 	}

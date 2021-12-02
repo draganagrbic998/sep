@@ -16,7 +16,7 @@ import lombok.extern.log4j.Log4j2;
 public class PCCMapper {
 
 	public PCCRequestDTO toDTO(Integer transactionId, ClientDTO clientDTO, PaymentRequest paymentRequest) {
-		log.info("PCCMapper - toDTO: transactionId=" + transactionId.toString());
+		log.info("PCCMapper - toDTO: transactionId=" + transactionId);
 		PCCRequestDTO dto = new PCCRequestDTO();
 
 		dto.setAcquirerOrderId(transactionId);
@@ -33,8 +33,7 @@ public class PCCMapper {
 	}
 
 	public PCCResponseDTO toSuccessfulPCCResponse(PCCRequestDTO pccRequestDTO) {
-		log.info("PCCMapper - toSuccessfulPCCResponse: acquirerOrderId="
-				+ pccRequestDTO.getAcquirerOrderId().toString());
+		log.info("PCCMapper - toSuccessfulPCCResponse: acquirerOrderId=" + pccRequestDTO.getAcquirerOrderId());
 		PCCResponseDTO responseDTO = new PCCResponseDTO();
 
 		responseDTO.setAcquirerOrderId(pccRequestDTO.getAcquirerOrderId());
@@ -47,8 +46,7 @@ public class PCCMapper {
 	}
 
 	public PCCResponseDTO toFailedAuthPCCResponse(PCCRequestDTO pccRequestDTO) {
-		log.info("PCCMapper - toFailedAuthPCCResponse: acquirerOrderId="
-				+ pccRequestDTO.getAcquirerOrderId().toString());
+		log.info("PCCMapper - toFailedAuthPCCResponse: acquirerOrderId=" + pccRequestDTO.getAcquirerOrderId());
 		PCCResponseDTO responseDTO = new PCCResponseDTO();
 
 		responseDTO.setAcquirerOrderId(pccRequestDTO.getAcquirerOrderId());
@@ -61,8 +59,7 @@ public class PCCMapper {
 	}
 
 	public PCCResponseDTO toFailedPaymentPCCResponse(PCCRequestDTO pccRequestDTO) {
-		log.info("PCCMapper - toFailedPaymentPCCResponse: acquirerOrderId="
-				+ pccRequestDTO.getAcquirerOrderId().toString());
+		log.info("PCCMapper - toFailedPaymentPCCResponse: acquirerOrderId=" + pccRequestDTO.getAcquirerOrderId());
 		PCCResponseDTO responseDTO = new PCCResponseDTO();
 
 		responseDTO.setAcquirerOrderId(pccRequestDTO.getAcquirerOrderId());

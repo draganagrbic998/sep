@@ -23,7 +23,7 @@ public class PCCController {
 
 	@RequestMapping(value = "/pay", method = RequestMethod.POST, consumes = "application/json")
 	public ResponseEntity<?> pay(@RequestBody PCCRequestDTO pccRequestDTO) {
-		log.info("PCCController - pay: acquirerOrderId=" + pccRequestDTO.getAcquirerOrderId().toString());
+		log.info("PCCController - pay: acquirerOrderId=" + pccRequestDTO.getAcquirerOrderId());
 		return new ResponseEntity<>(pccService.pay(pccRequestDTO), HttpStatus.OK);
 	}
 }

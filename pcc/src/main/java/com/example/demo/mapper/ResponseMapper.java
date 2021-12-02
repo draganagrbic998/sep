@@ -12,7 +12,7 @@ import lombok.extern.log4j.Log4j2;
 public class ResponseMapper {
 
 	public AcquirerResponseDTO toDTO(PCCResponseDTO pccDto) {
-		log.info("ResponseMapper - toDTO: acquirerOrderId=" + pccDto.getAcquirerOrderId().toString());
+		log.info("ResponseMapper - toDTO: acquirerOrderId=" + pccDto.getAcquirerOrderId());
 		AcquirerResponseDTO dto = new AcquirerResponseDTO();
 
 		dto.setAuthentificated(pccDto.getAuthentificated());

@@ -45,11 +45,11 @@ public class OrderService {
 	}
 
 	public Order findById(Integer id) throws NotFoundException {
-		log.info("OrderService - findById: id=" + id.toString());
+		log.info("OrderService - findById: id=" + id);
 		Optional<Order> order = repo.findById(id);
 
 		if (!order.isPresent()) {
-			log.error("Order: id=" + id.toString() + " not found.");
+			log.error("Order: id=" + id + " not found.");
 			throw new NotFoundException(id.toString(), Order.class.getSimpleName());
 		}
 
@@ -57,12 +57,13 @@ public class OrderService {
 	}
 
 	public Order save(Order order) {
-		log.info("OrderService - save: id=" + order.getId().toString());
-		return repo.save(order);
+		order = repo.save(order);
+		log.info("OrderService - save: id=" + order.getId());
+		return order;
 	}
 
 	public String pay(Integer orderId, String merchantApiKey) throws NotFoundException {
-		log.info("OrderService - pay: orderId=" + orderId.toString() + " merchantApiKey=" + merchantApiKey);
+		log.info("OrderService - pay: orderId=" + orderId + " merchantApiKey=" + merchantApiKey);
 		Order order = this.findById(orderId);
 		Merchant merchant = merchantService.findByMerchantApiKey(merchantApiKey);
 
@@ -81,11 +82,11 @@ public class OrderService {
 	}
 
 	public String completePayment(PaymentRequestCompletedDTO paymentRequestCompletedDTO) throws NotFoundException {
-		log.info("OrderService - completePayment: orderId=" + paymentRequestCompletedDTO.getId().toString());
+		log.info("OrderService - completePayment: orderId=" + paymentRequestCompletedDTO.getId());
 		Order order = this.findById(paymentRequestCompletedDTO.getId());
 
 		if (paymentRequestCompletedDTO.getStatus().contentEquals("SUCCESS")) {
-			log.info("Order: id=" + order.getId().toString() + " payment_status=SUCCESS");
+			log.info("Order: id=" + order.getId() + " payment_status=SUCCESS");
 
 			order.setOrderStatus(OrderStatus.COMPLETED);
 			order = this.save(order);
@@ -100,7 +101,7 @@ public class OrderService {
 			return responseEntity.getBody();
 
 		} else if (paymentRequestCompletedDTO.getStatus().contentEquals("FAILED")) {
-			log.info("Order: id=" + order.getId().toString() + " payment_status=FAILED");
+			log.info("Order: id=" + order.getId() + " payment_status=FAILED");
 
 			order.setOrderStatus(OrderStatus.FAILED);
 			order = this.save(order);
@@ -113,7 +114,7 @@ public class OrderService {
 
 			return responseEntity.getBody();
 		} else {
-			log.info("Order: id=" + order.getId().toString() + " - Error occured while paying for the order");
+			log.info("Order: id=" + order.getId() + " - Error occured while paying for the order");
 			return "Error occured while paying for the order";
 		}
 	}
@@ -133,8 +134,7 @@ public class OrderService {
 
 			if (order.getOrderStatus() == OrderStatus.CREATED) {
 				if (order.getTicks() < 5) {
-					log.info(
-							"Order: id=" + order.getId().toString() + " tick=" + order.getTicks().toString() + " - OK");
+					log.info("Order: id=" + order.getId() + " tick=" + order.getTicks() + " - OK");
 					order.setTicks(order.getTicks() + 1);
 					this.save(order);
 
@@ -144,7 +144,7 @@ public class OrderService {
 								.getForEntity(merchant.getBankUrl() + "/" + order.getShopOrderId(), String.class);
 
 						if (responseEntity.getBody() == "SUCCESSFUL") {
-							log.info("Order: id=" + order.getId().toString() + " payment_status=SUCCESSFUL");
+							log.info("Order: id=" + order.getId() + " payment_status=SUCCESSFUL");
 							order.setOrderStatus(OrderStatus.COMPLETED);
 							this.save(order);
 
@@ -158,12 +158,11 @@ public class OrderService {
 									String.class);
 						}
 					} catch (Exception e) {
-						log.info("Order: id=" + order.getId().toString() + " - Order doesn't exist");
+						log.info("Order: id=" + order.getId() + " - Order doesn't exist");
 					}
 
 				} else {
-					log.warn("Order: id=" + order.getId().toString() + " tick=" + order.getTicks().toString()
-							+ " - FAILED");
+					log.warn("Order: id=" + order.getId() + " tick=" + order.getTicks() + " - FAILED");
 					order.setOrderStatus(OrderStatus.FAILED);
 					this.save(order);
 

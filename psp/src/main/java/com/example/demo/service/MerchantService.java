@@ -25,11 +25,11 @@ public class MerchantService {
 	}
 
 	public Merchant findById(Integer id) throws NotFoundException {
-		log.info("MerchantService - findById: id=" + id.toString());
+		log.info("MerchantService - findById: id=" + id);
 		Optional<Merchant> merchant = merchantRepository.findById(id);
 
 		if (!merchant.isPresent()) {
-			log.error("Merchant: id=" + id.toString() + " not found.");
+			log.error("Merchant: id=" + id + " not found.");
 			throw new NotFoundException(id.toString(), Merchant.class.getSimpleName());
 		}
 
@@ -37,16 +37,17 @@ public class MerchantService {
 	}
 
 	public Merchant save(Merchant merchant) {
-		log.info("MerchantService - save: id=" + merchant.getId().toString());
-		return merchantRepository.save(merchant);
+		merchant = merchantRepository.save(merchant);
+		log.info("MerchantService - save: id=" + merchant.getId());
+		return merchant;
 	}
 
 	public Merchant remove(Integer merchantId) throws NotFoundException {
-		log.info("MerchantService - remove: id=" + merchantId.toString());
+		log.info("MerchantService - remove: id=" + merchantId);
 		Optional<Merchant> merchant = merchantRepository.findById(merchantId);
 
 		if (!merchant.isPresent()) {
-			log.error("Merchant: id=" + merchantId.toString() + " not found.");
+			log.error("Merchant: id=" + merchantId + " not found.");
 			throw new NotFoundException(merchantId.toString(), Merchant.class.getSimpleName());
 		}
 
@@ -59,7 +60,7 @@ public class MerchantService {
 		Optional<Merchant> merchant = merchantRepository.findByApiKey(apiKey);
 
 		if (!merchant.isPresent()) {
-			log.error("Merchant: apiKey=" + apiKey.toString() + " not found.");
+			log.error("Merchant: apiKey=" + apiKey + " not found.");
 			throw new NotFoundException(apiKey.toString(), Merchant.class.getSimpleName());
 		}
 

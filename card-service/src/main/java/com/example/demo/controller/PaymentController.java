@@ -37,7 +37,7 @@ public class PaymentController {
 	@RequestMapping(value = "/pay/{merchantApiKey}/{orderId}", method = RequestMethod.GET)
 	public ModelAndView pay(@PathVariable String merchantApiKey, @PathVariable Integer orderId)
 			throws NotFoundException {
-		log.info("PaymentController - pay: merchantApiKey=" + merchantApiKey + " orderId=" + orderId.toString());
+		log.info("PaymentController - pay: merchantApiKey=" + merchantApiKey + " orderId=" + orderId);
 		String redirectUrl = orderService.pay(orderId, merchantApiKey);
 		return new ModelAndView("redirect:" + redirectUrl);
 	}
@@ -45,7 +45,7 @@ public class PaymentController {
 	@RequestMapping(value = "/complete", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> completePayment(@RequestBody PaymentRequestCompletedDTO paymentRequestCompletedDTO)
 			throws NotFoundException {
-		log.info("PaymentController - completePayment: orderId=" + paymentRequestCompletedDTO.getId().toString());
+		log.info("PaymentController - completePayment: orderId=" + paymentRequestCompletedDTO.getId());
 		String payment = orderService.completePayment(paymentRequestCompletedDTO);
 		return ResponseEntity.ok(payment);
 	}

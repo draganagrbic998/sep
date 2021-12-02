@@ -19,11 +19,11 @@ public class TransactionService {
 	private TransactionRepository repo;
 
 	public Transaction findByMerchantOrderId(Integer merchantOrderId) throws NotFoundException {
-		log.info("TransactionService - findByMerchantOrderId: merchantOrderId=" + merchantOrderId.toString());
+		log.info("TransactionService - findByMerchantOrderId: merchantOrderId=" + merchantOrderId);
 		Optional<Transaction> transaction = repo.findByMerchantOrderId(merchantOrderId);
 
 		if (!transaction.isPresent()) {
-			log.error("Transaction: merchantOrderId=" + merchantOrderId.toString() + " not found.");
+			log.error("Transaction: merchantOrderId=" + merchantOrderId + " not found.");
 			throw new NotFoundException(merchantOrderId.toString(), Transaction.class.getSimpleName(),
 					"mechantOrderId");
 		}
@@ -32,8 +32,9 @@ public class TransactionService {
 	}
 
 	public Transaction save(Transaction transaction) {
-		log.info("TransactionService - save: id=" + transaction.getId().toString());
-		return repo.save(transaction);
+		transaction = repo.save(transaction);
+		log.info("TransactionService - save: id=" + transaction.getId());
+		return transaction;
 	}
 
 }

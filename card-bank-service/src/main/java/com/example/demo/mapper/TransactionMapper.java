@@ -12,7 +12,7 @@ import lombok.extern.log4j.Log4j2;
 public class TransactionMapper {
 
 	public Transaction toEntity(PaymentRequest paymentRequest) {
-		log.info("TransactionMapper - toEntity: paymentRequestId=" + paymentRequest.getId().toString());
+		log.info("TransactionMapper - toEntity: paymentRequestId=" + paymentRequest.getId());
 		Transaction model = new Transaction();
 
 		model.setMerchantId(paymentRequest.getMerchantId());

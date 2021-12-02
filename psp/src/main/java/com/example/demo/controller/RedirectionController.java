@@ -36,12 +36,12 @@ public class RedirectionController {
 	public ResponseEntity<?> createOrderInPaymentService(@PathVariable String method,
 			@PathVariable Integer orderIdWebshop, @RequestBody OrderCreateDTO orderCreateDTO) throws NotFoundException {
 		log.info("RedirectionController - createOrderInPaymentService: method=" + method + " orderIdWebshop="
-				+ orderIdWebshop.toString());
+				+ orderIdWebshop);
 		Order order = orderService.findById(orderIdWebshop);
 
 		// Kupac mora u roku od 5 minuta da odabere nacin placanja
 		if (order.getTicks() >= 5) {
-			log.error("Order: id=" + order.getId().toString() + " exceeded maximum tick count.");
+			log.error("Order: id=" + order.getId() + " exceeded maximum tick count.");
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 

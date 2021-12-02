@@ -23,7 +23,7 @@ public class MerchantService {
 	}
 
 	public Merchant findOne(Integer id) {
-		log.info("MerchantService - findOne: id=" + id.toString());
+		log.info("MerchantService - findOne: id=" + id);
 		return repo.getById(id);
 	}
 
@@ -33,12 +33,13 @@ public class MerchantService {
 	}
 
 	public Merchant save(Merchant merchant) {
-		log.info("MerchantService - save: id=" + merchant.getId().toString());
-		return repo.save(merchant);
+		merchant = repo.save(merchant);
+		log.info("MerchantService - save: id=" + merchant.getId());
+		return merchant;
 	}
 
 	public void delete(Integer id) {
-		log.info("MerchantService - delete: id=" + id.toString());
+		log.info("MerchantService - delete: id=" + id);
 		repo.deleteById(id);
 	}
 

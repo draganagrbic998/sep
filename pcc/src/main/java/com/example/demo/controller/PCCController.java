@@ -35,7 +35,7 @@ public class PCCController {
 
 	@RequestMapping(value = "/redirect", method = RequestMethod.POST, consumes = "application/json")
 	public ResponseEntity<?> redirect(@RequestBody PCCRequestDTO pccRequestDTO) throws NotFoundException {
-		log.info("PCCController - redirect: acquirerOrderId=" + pccRequestDTO.getAcquirerOrderId().toString());
+		log.info("PCCController - redirect: acquirerOrderId=" + pccRequestDTO.getAcquirerOrderId());
 		String bankId = pccRequestDTO.getPanNumber().replace("-", "").substring(1, 7);
 		String bankUrl = bankService.getBankByPanNumber(bankId).getBankUrl();
 

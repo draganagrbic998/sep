@@ -23,7 +23,7 @@ public class TransactionController {
 
 	@RequestMapping(value = "/{orderId}", method = RequestMethod.GET)
 	private ResponseEntity<String> getTransaction(@PathVariable Integer orderId) throws NotFoundException {
-		log.info("TransactionController - getTransaction: orderId=" + orderId.toString());
+		log.info("TransactionController - getTransaction: orderId=" + orderId);
 		return new ResponseEntity<>(transactionService.findByMerchantOrderId(orderId).getStatus().toString(),
 				HttpStatus.OK);
 	}

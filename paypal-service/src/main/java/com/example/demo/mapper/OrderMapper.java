@@ -30,7 +30,7 @@ public class OrderMapper {
 	}
 
 	public OrderCreatedDTO toDTO(Order model) {
-		log.info("OrderMapper - toDTO: orderId=" + model.getId().toString());
+		log.info("OrderMapper - toDTO: orderId=" + model.getId());
 		OrderCreatedDTO dto = new OrderCreatedDTO();
 
 		dto.setId(model.getId());

@@ -36,7 +36,7 @@ public class PaymentRequestController {
 	@RequestMapping(value = "/confirm/{paymentRequestId}", method = RequestMethod.POST)
 	private String confirmPayment(@RequestBody ClientDTO clientDTO, @PathVariable Integer paymentRequestId)
 			throws NotFoundException {
-		log.info("PaymentRequestController - confirmPayment: paymentRequestId=" + paymentRequestId.toString());
+		log.info("PaymentRequestController - confirmPayment: paymentRequestId=" + paymentRequestId);
 		return paymentRequestService.confirmPaymentRequest(clientDTO, paymentRequestId);
 	}
 

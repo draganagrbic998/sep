@@ -56,11 +56,11 @@ public class PaymentRequestService {
 	private RestTemplate restTemplate;
 
 	public PaymentRequest findById(Integer id) throws NotFoundException {
-		log.info("PaymentRequestService - findById: id=" + id.toString());
+		log.info("PaymentRequestService - findById: id=" + id);
 		Optional<PaymentRequest> paymentRequest = paymentRequestRepository.findById(id);
 
 		if (!paymentRequest.isPresent()) {
-			log.error("PaymentRequest: id=" + id.toString() + " not found.");
+			log.error("PaymentRequest: id=" + id + " not found.");
 			throw new NotFoundException(id.toString(), PaymentRequest.class.getSimpleName());
 		}
 
@@ -68,12 +68,13 @@ public class PaymentRequestService {
 	}
 
 	public PaymentRequest save(PaymentRequest paymentRequest) {
-		log.info("PaymentRequestService - save: id=" + paymentRequest.getId().toString());
-		return paymentRequestRepository.save(paymentRequest);
+		paymentRequest = paymentRequestRepository.save(paymentRequest);
+		log.info("PaymentRequestService - save: id=" + paymentRequest.getId());
+		return paymentRequest;
 	}
 
 	public String confirmPaymentRequest(ClientDTO clientDTO, Integer paymentRequestId) throws NotFoundException {
-		log.info("PaymentRequestService - confirmPaymentRequest: id=" + paymentRequestId.toString());
+		log.info("PaymentRequestService - confirmPaymentRequest: id=" + paymentRequestId);
 		// Proveravamo da li je to klijent ove banke
 		PaymentRequest paymentRequest = this.findById(paymentRequestId);
 		Transaction transaction = transactionMapper.toEntity(paymentRequest);
@@ -217,7 +218,7 @@ public class PaymentRequestService {
 	}
 
 	private void refusePaymentRequest(PaymentRequest paymentRequest) {
-		log.info("PaymentRequestService - refusePaymentRequest: id=" + paymentRequest.getId().toString());
+		log.info("PaymentRequestService - refusePaymentRequest: id=" + paymentRequest.getId());
 		PaymentRequestCompletedDTO paymentRequestCompletedDTO = new PaymentRequestCompletedDTO();
 
 		paymentRequestCompletedDTO.setId(paymentRequest.getMerchantOrderId());

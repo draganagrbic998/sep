@@ -31,7 +31,7 @@ public class PaymentRequestMapper {
 	}
 
 	public PaymentRequestResponseDTO toDTO(PaymentRequest model) {
-		log.info("PCCMapper - toDTO: paymentRequestId=" + model.getId().toString());
+		log.info("PCCMapper - toDTO: paymentRequestId=" + model.getId());
 		PaymentRequestResponseDTO dto = new PaymentRequestResponseDTO();
 
 		dto.setPaymentId(model.getId().toString());

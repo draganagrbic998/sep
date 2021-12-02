@@ -50,19 +50,20 @@ public class OrderService {
 	String clientSecret = "EJZT7rVvs4wBMCghAlPnx96WC-Se44lmQTKuiAXRWNFvFxH-e69d_aSI8gESJPAbbys3CvOmLZttfGPb";
 
 	public Order findById(Integer orderId) {
-		log.info("OrderService - findById: id=" + orderId.toString());
+		log.info("OrderService - findById: id=" + orderId);
 		return repo.getById(orderId);
 	}
 
 	public Order save(Order order) {
-		log.info("OrderService - save: id=" + order.getId().toString());
-		return repo.save(order);
+		order = repo.save(order);
+		log.info("OrderService - save: id=" + order.getId());
+		return order;
 	}
 
 	// Napravimo narudzbu kod paypal-a
 	// Klijent prodavnice onda treba da potvrdi placanje
 	public Order createPayment(Order order) {
-		log.info("OrderService - createPayment: orderId=" + order.getId().toString());
+		log.info("OrderService - createPayment: orderId=" + order.getId());
 
 		Merchant merchant = merchantService.findOneByApiKey(order.getMerchantApiKey());
 
@@ -84,8 +85,8 @@ public class OrderService {
 		payment.setTransactions(transactions);
 
 		RedirectUrls redirectUrls = new RedirectUrls();
-		redirectUrls.setReturnUrl("http://localhost:8086/view/success_url/" + order.getId().toString());
-		redirectUrls.setCancelUrl("http://localhost:8086/view/cancel_url/" + order.getId().toString());
+		redirectUrls.setReturnUrl("http://localhost:8086/view/success_url/" + order.getId());
+		redirectUrls.setCancelUrl("http://localhost:8086/view/cancel_url/" + order.getId());
 		payment.setRedirectUrls(redirectUrls);
 
 		Payment createdPayment;
@@ -183,7 +184,7 @@ public class OrderService {
 		List<Order> orders = repo.findAllByExecuted(false);
 
 		for (Order order : orders) {
-			log.info("Order: id=" + order.getId().toString() + " checking status");
+			log.info("Order: id=" + order.getId() + " checking status");
 
 			Merchant merchant = merchantService.findOneByApiKey(order.getMerchantApiKey());
 
@@ -201,7 +202,7 @@ public class OrderService {
 				String status = (new Gson()).fromJson(details.getBody(), JsonObject.class).get("status").getAsString();
 
 				if (status.equalsIgnoreCase("completed")) {
-					log.info("Order: id=" + order.getId().toString() + " status=COMPLETED");
+					log.info("Order: id=" + order.getId() + " status=COMPLETED");
 					order.setStatus(OrderStatus.COMPLETED);
 					order.setExecuted(true);
 

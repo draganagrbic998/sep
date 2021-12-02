@@ -35,11 +35,11 @@ public class PaymentMethodService {
 	}
 
 	public PaymentMethod findById(Integer id) throws NotFoundException {
-		log.info("PaymentMethodService - findById: id=" + id.toString());
+		log.info("PaymentMethodService - findById: id=" + id);
 		Optional<PaymentMethod> paymentMethod = paymentMethodRepository.findById(id);
 
 		if (!paymentMethod.isPresent()) {
-			log.error("PaymentMethod: id=" + id.toString() + " not found.");
+			log.error("PaymentMethod: id=" + id + " not found.");
 			throw new NotFoundException(id.toString(), PaymentMethod.class.getSimpleName());
 		}
 
@@ -47,16 +47,17 @@ public class PaymentMethodService {
 	}
 
 	public PaymentMethod save(PaymentMethod paymentMethod) {
-		log.info("PaymentMethodService - save: id=" + paymentMethod.getId().toString());
-		return paymentMethodRepository.save(paymentMethod);
+		paymentMethod = paymentMethodRepository.save(paymentMethod);
+		log.info("PaymentMethodService - save: id=" + paymentMethod.getId());
+		return paymentMethod;
 	}
 
 	public PaymentMethod remove(Integer paymentMethodId) throws NotFoundException {
-		log.info("PaymentMethodService - remove: id=" + paymentMethodId.toString());
+		log.info("PaymentMethodService - remove: id=" + paymentMethodId);
 		Optional<PaymentMethod> paymentMethod = paymentMethodRepository.findById(paymentMethodId);
 
 		if (!paymentMethod.isPresent()) {
-			log.error("PaymentMethod: id=" + paymentMethodId.toString() + " not found.");
+			log.error("PaymentMethod: id=" + paymentMethodId + " not found.");
 			throw new NotFoundException(paymentMethodId.toString(), PaymentMethod.class.getSimpleName());
 		}
 

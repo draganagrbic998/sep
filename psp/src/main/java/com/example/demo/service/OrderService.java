@@ -34,11 +34,11 @@ public class OrderService {
 	}
 
 	public Order findById(Integer id) throws NotFoundException {
-		log.info("OrderService - findById: id=" + id.toString());
+		log.info("OrderService - findById: id=" + id);
 		Optional<Order> order = repo.findById(id);
 
 		if (!order.isPresent()) {
-			log.error("Order: id=" + id.toString() + " not found.");
+			log.error("Order: id=" + id + " not found.");
 			throw new NotFoundException(id.toString(), Order.class.getSimpleName());
 		}
 
@@ -46,8 +46,9 @@ public class OrderService {
 	}
 
 	public Order save(Order order) {
-		log.info("OrderService - save: id=" + order.getId().toString());
-		return repo.save(order);
+		order = repo.save(order);
+		log.info("OrderService - save: id=" + order.getId());
+		return order;
 	}
 
 	@Scheduled(fixedDelay = 60000) // svakih 60s proverimo stanje svih kreiranih porudzbina
@@ -59,15 +60,13 @@ public class OrderService {
 			if (order.getStatus() == OrderStatus.CREATED) {
 				// Ako je ispod 5 minuta sve je okej
 				if (order.getTicks() < 5) {
-					log.info(
-							"Order: id=" + order.getId().toString() + " tick=" + order.getTicks().toString() + " - OK");
+					log.info("Order: id=" + order.getId() + " tick=" + order.getTicks() + " - OK");
 					order.setTicks(order.getTicks() + 1);
 					this.save(order);
 					// Javimo WebShop-u da je postupak slanja mikroservisu bio neuspesan
 					// ako klijent nije odabrao nacin placanja u roku od 5 minuta
 				} else {
-					log.warn("Order: id=" + order.getId().toString() + " tick=" + order.getTicks().toString()
-							+ " - FAILED");
+					log.warn("Order: id=" + order.getId() + " tick=" + order.getTicks() + " - FAILED");
 					order.setStatus(OrderStatus.FAILED);
 					this.save(order);
 

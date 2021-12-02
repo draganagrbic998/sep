@@ -48,7 +48,8 @@ public class ClientService {
 	}
 
 	public Client save(Client client) {
-		log.info("ClientService - save: id=" + client.getId().toString());
-		return repo.save(client);
+		client = repo.save(client);
+		log.info("ClientService - save: id=" + client.getId());
+		return client;
 	}
 }

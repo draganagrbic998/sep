@@ -31,8 +31,9 @@ public class BankService {
 	}
 
 	public Bank save(Bank bank) {
-		log.info("BankService - save: id=" + bank.getId().toString());
-		return repo.save(bank);
+		bank = repo.save(bank);
+		log.info("BankService - save: id=" + bank.getId());
+		return bank;
 	}
 
 }
