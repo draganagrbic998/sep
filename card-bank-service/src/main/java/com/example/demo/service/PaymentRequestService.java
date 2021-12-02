@@ -25,6 +25,9 @@ import com.example.demo.model.TransactionStatus;
 import com.example.demo.repo.PaymentRequestRepository;
 import com.example.demo.utils.Utils;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @Service
 public class PaymentRequestService {
 
@@ -52,30 +55,38 @@ public class PaymentRequestService {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	public PaymentRequest save(PaymentRequest paymentRequest) {
-		return paymentRequestRepository.save(paymentRequest);
-	}
-
-	public PaymentRequest getPaymentRequest(Integer id) throws NotFoundException {
+	public PaymentRequest findById(Integer id) throws NotFoundException {
+		log.info("PaymentRequestService - findById: id=" + id.toString());
 		Optional<PaymentRequest> paymentRequest = paymentRequestRepository.findById(id);
 
 		if (!paymentRequest.isPresent()) {
+			log.error("PaymentRequest: id=" + id.toString() + " not found.");
 			throw new NotFoundException(id.toString(), PaymentRequest.class.getSimpleName());
 		}
 
 		return paymentRequest.get();
 	}
 
+	public PaymentRequest save(PaymentRequest paymentRequest) {
+		log.info("PaymentRequestService - save: id=" + paymentRequest.getId().toString());
+		return paymentRequestRepository.save(paymentRequest);
+	}
+
 	public String confirmPaymentRequest(ClientDTO clientDTO, Integer paymentRequestId) throws NotFoundException {
+		log.info("PaymentRequestService - confirmPaymentRequest: id=" + paymentRequestId.toString());
 		// Proveravamo da li je to klijent ove banke
-		PaymentRequest paymentRequest = this.getPaymentRequest(paymentRequestId);
+		PaymentRequest paymentRequest = this.findById(paymentRequestId);
 		Transaction transaction = transactionMapper.toEntity(paymentRequest);
 
+		String clientBankId = this.getBankIdFromPan(clientDTO.getPanNumber());
+
 		// Jeste klijent ove banke
-		if (this.getBankIdFromPan(clientDTO.getPanNumber()).contentEquals(bankId)) {
+		if (clientBankId.contentEquals(bankId)) {
+			log.info("Client: panNumber=" + clientBankId + "... has an account in this bank");
 			Optional<Client> clientOptional = clientService.findClientByPanNumber(clientDTO.getPanNumber());
 
 			if (!clientOptional.isPresent()) {
+				log.error("Client: panNumber=" + clientBankId + "... not found");
 				transaction.setStatus(TransactionStatus.FAILED);
 				this.refusePaymentRequest(paymentRequest);
 
@@ -88,6 +99,7 @@ public class PaymentRequestService {
 
 			if (!client.getCardHolder().equals(clientDTO.getCardHolder()) || !client.getCvv().equals(clientDTO.getCvv())
 					|| !client.getExpirationDate().equals(tempDate)) {
+				log.error("Client: panNumber=" + clientBankId + "... invalid card data entered");
 				transaction.setStatus(TransactionStatus.FAILED);
 				this.refusePaymentRequest(paymentRequest);
 
@@ -96,6 +108,7 @@ public class PaymentRequestService {
 
 			// Proveravamo da li je istekla kartica
 			if (Utils.cardExpired(client)) {
+				log.error("Client: panNumber=" + clientBankId + "... card expired");
 				transaction.setStatus(TransactionStatus.FAILED);
 				this.refusePaymentRequest(paymentRequest);
 
@@ -104,6 +117,7 @@ public class PaymentRequestService {
 
 			// Proveravamo da li ima dovoljno para na racunu
 			if (paymentRequest.getAmount() > client.getAvailableFunds()) {
+				log.error("Client: panNumber=" + clientBankId + "... not enough available funds");
 				transaction.setStatus(TransactionStatus.FAILED);
 				this.refusePaymentRequest(paymentRequest);
 
@@ -114,6 +128,7 @@ public class PaymentRequestService {
 			Client merchant = clientService.getClientByMerchantId(merchantId);
 
 			if (!merchant.getMerchantPassword().equals(paymentRequest.getMerchantPassword())) {
+				log.error("Client: panNumber=" + clientBankId + "... invalid Merchant Password");
 				transaction.setStatus(TransactionStatus.ERROR);
 				this.refusePaymentRequest(paymentRequest);
 
@@ -136,11 +151,14 @@ public class PaymentRequestService {
 			paymentRequestCompletedDTO.setId(paymentRequest.getMerchantOrderId());
 			paymentRequestCompletedDTO.setStatus("SUCCESSFUL");
 
-			restTemplate.exchange(paymentRequest.getCallbackUrl() + "/complete", HttpMethod.POST,
+			log.info("confirmPaymentRequest - notifying card-service @" + paymentRequest.getCallbackUrl());
+			restTemplate.exchange(paymentRequest.getCallbackUrl(), HttpMethod.POST,
 					new HttpEntity<PaymentRequestCompletedDTO>(paymentRequestCompletedDTO), String.class);
 
 			return paymentRequest.getSuccessUrl();
 		} else {
+			log.info("Client: panNumber=" + clientBankId + " doesn't have an account in this bank");
+
 			// Nije klijent ove banke
 			transaction = transactionService.save(transaction);
 
@@ -153,15 +171,19 @@ public class PaymentRequestService {
 			String merchantId = paymentRequest.getMerchantId();
 			Client merchant = clientService.getClientByMerchantId(merchantId);
 			if (!merchant.getMerchantPassword().equals(paymentRequest.getMerchantPassword())) {
+				log.error("Client: panNumber=" + clientBankId + "... invalid Merchant Password");
 				transaction.setStatus(TransactionStatus.ERROR);
 				this.refusePaymentRequest(paymentRequest);
 				return paymentRequest.getErrorUrl();
 			}
 
-			AcquirerResponseDTO response = restTemplate.postForObject(pccURL + "/redirect", request,
-					AcquirerResponseDTO.class);
+			log.info("confirmPaymentRequest - sending PCCRequestDTO to PCC @" + pccURL + "/redirect");
+			AcquirerResponseDTO response = restTemplate
+					.exchange(pccURL + "/redirect", HttpMethod.POST, request, AcquirerResponseDTO.class).getBody();
 
-			if (response.getAuthentificated() && response.getTransactionAutorized()) {
+			if (response.getAuthentificated() && response.getTransactionAuthorized()) {
+				log.info("AcquirerResponseDTO: authentificated=true transactionAuthorized=true");
+
 				merchant.setAvailableFunds(merchant.getAvailableFunds() + paymentRequest.getAmount());
 				clientService.save(merchant);
 
@@ -173,30 +195,36 @@ public class PaymentRequestService {
 				paymentRequestCompletedDTO.setId(paymentRequest.getMerchantOrderId());
 				paymentRequestCompletedDTO.setStatus("SUCCESSFUL");
 
-				restTemplate.exchange(paymentRequest.getCallbackUrl() + "/complete", HttpMethod.POST,
+				log.info("confirmPaymentRequest - notifying card-service @" + paymentRequest.getCallbackUrl());
+				restTemplate.exchange(paymentRequest.getCallbackUrl(), HttpMethod.POST,
 						new HttpEntity<PaymentRequestCompletedDTO>(paymentRequestCompletedDTO), String.class);
 
 				return paymentRequest.getSuccessUrl();
 			}
 
 			if (!response.getAuthentificated()) {
+				log.error("AcquirerResponseDTO: authentificated=false");
 				return paymentRequest.getErrorUrl();
 			}
-			if (!response.getTransactionAutorized()) {
+			if (!response.getTransactionAuthorized()) {
+				log.error("AcquirerResponseDTO: transactionAuthorized=false");
 				return paymentRequest.getFailedUrl();
 			}
 
+			log.error("AcquirerResponseDTO: authentificated=false transactionAuthorized=false");
 			return paymentRequest.getErrorUrl();
 		}
 	}
 
 	private void refusePaymentRequest(PaymentRequest paymentRequest) {
+		log.info("PaymentRequestService - refusePaymentRequest: id=" + paymentRequest.getId().toString());
 		PaymentRequestCompletedDTO paymentRequestCompletedDTO = new PaymentRequestCompletedDTO();
 
 		paymentRequestCompletedDTO.setId(paymentRequest.getMerchantOrderId());
 		paymentRequestCompletedDTO.setStatus("FAILED");
 
-		restTemplate.exchange(paymentRequest.getCallbackUrl() + "/complete", HttpMethod.POST,
+		log.info("confirmPaymentRequest - notifying card-service @" + paymentRequest.getCallbackUrl());
+		restTemplate.exchange(paymentRequest.getCallbackUrl(), HttpMethod.POST,
 				new HttpEntity<PaymentRequestCompletedDTO>(paymentRequestCompletedDTO), String.class);
 	}
 

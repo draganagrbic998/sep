@@ -13,6 +13,9 @@ import com.example.demo.mapper.ClientMapper;
 import com.example.demo.model.Client;
 import com.example.demo.service.ClientService;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @RestController
 @RequestMapping("/clients")
 public class ClientController {
@@ -25,6 +28,7 @@ public class ClientController {
 
 	@RequestMapping(value = "/create", method = RequestMethod.POST, consumes = "application/json")
 	public ResponseEntity<Client> create(@RequestBody ClientDTO dto) {
+		log.info("ClientController - create");
 		return new ResponseEntity<>(service.save(mapper.toEntity(dto)), HttpStatus.CREATED);
 	}
 

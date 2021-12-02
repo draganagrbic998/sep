@@ -9,10 +9,14 @@ import com.example.demo.dto.PCCRequestDTO;
 import com.example.demo.dto.PCCResponseDTO;
 import com.example.demo.model.PaymentRequest;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @Component
 public class PCCMapper {
 
 	public PCCRequestDTO toDTO(Integer transactionId, ClientDTO clientDTO, PaymentRequest paymentRequest) {
+		log.info("PCCMapper - toDTO: transactionId=" + transactionId.toString());
 		PCCRequestDTO dto = new PCCRequestDTO();
 
 		dto.setAcquirerOrderId(transactionId);
@@ -29,6 +33,8 @@ public class PCCMapper {
 	}
 
 	public PCCResponseDTO toSuccessfulPCCResponse(PCCRequestDTO pccRequestDTO) {
+		log.info("PCCMapper - toSuccessfulPCCResponse: acquirerOrderId="
+				+ pccRequestDTO.getAcquirerOrderId().toString());
 		PCCResponseDTO responseDTO = new PCCResponseDTO();
 
 		responseDTO.setAcquirerOrderId(pccRequestDTO.getAcquirerOrderId());
@@ -41,6 +47,8 @@ public class PCCMapper {
 	}
 
 	public PCCResponseDTO toFailedAuthPCCResponse(PCCRequestDTO pccRequestDTO) {
+		log.info("PCCMapper - toFailedAuthPCCResponse: acquirerOrderId="
+				+ pccRequestDTO.getAcquirerOrderId().toString());
 		PCCResponseDTO responseDTO = new PCCResponseDTO();
 
 		responseDTO.setAcquirerOrderId(pccRequestDTO.getAcquirerOrderId());
@@ -53,6 +61,8 @@ public class PCCMapper {
 	}
 
 	public PCCResponseDTO toFailedPaymentPCCResponse(PCCRequestDTO pccRequestDTO) {
+		log.info("PCCMapper - toFailedPaymentPCCResponse: acquirerOrderId="
+				+ pccRequestDTO.getAcquirerOrderId().toString());
 		PCCResponseDTO responseDTO = new PCCResponseDTO();
 
 		responseDTO.setAcquirerOrderId(pccRequestDTO.getAcquirerOrderId());

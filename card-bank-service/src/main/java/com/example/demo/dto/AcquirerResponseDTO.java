@@ -10,6 +10,6 @@ import lombok.Setter;
 public class AcquirerResponseDTO {
 
 	private Boolean authentificated;
-	private Boolean transactionAutorized;
+	private Boolean transactionAuthorized;
 
 }

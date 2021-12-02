@@ -36,7 +36,7 @@ public class PCCController {
 		String bankUrl = bankService.getBankByPanNumber(bankId).getBankUrl();
 
 		// Saljemo banci kupca
-		ResponseEntity<PCCResponseDTO> responseEntity = restTemplate.exchange(bankUrl, HttpMethod.POST,
+		ResponseEntity<PCCResponseDTO> responseEntity = restTemplate.exchange(bankUrl + "/pcc/pay", HttpMethod.POST,
 				new HttpEntity<PCCRequestDTO>(pccRequestDTO), PCCResponseDTO.class);
 
 		// Saljemo banci prodavca

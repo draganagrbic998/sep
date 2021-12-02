@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.example.exception.NotFoundException;
 import com.example.demo.service.TransactionService;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @RestController
 @RequestMapping("/transactions")
 public class TransactionController {
@@ -20,6 +23,7 @@ public class TransactionController {
 
 	@RequestMapping(value = "/{orderId}", method = RequestMethod.GET)
 	private ResponseEntity<String> getTransaction(@PathVariable Integer orderId) throws NotFoundException {
+		log.info("TransactionController - getTransaction: orderId=" + orderId.toString());
 		return new ResponseEntity<>(transactionService.findByMerchantOrderId(orderId).getStatus().toString(),
 				HttpStatus.OK);
 	}

@@ -6,10 +6,14 @@ import com.example.demo.dto.PaymentRequestDTO;
 import com.example.demo.dto.PaymentRequestResponseDTO;
 import com.example.demo.model.PaymentRequest;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @Component
 public class PaymentRequestMapper {
 
 	public PaymentRequest toEntity(PaymentRequestDTO dto) {
+		log.info("PCCMapper - toEntity");
 		PaymentRequest model = new PaymentRequest();
 
 		model.setMerchantId(dto.getMerchantId());
@@ -27,6 +31,7 @@ public class PaymentRequestMapper {
 	}
 
 	public PaymentRequestResponseDTO toDTO(PaymentRequest model) {
+		log.info("PCCMapper - toDTO: paymentRequestId=" + model.getId().toString());
 		PaymentRequestResponseDTO dto = new PaymentRequestResponseDTO();
 
 		dto.setPaymentId(model.getId().toString());
