@@ -29,6 +29,9 @@ import com.paypal.api.payments.Transaction;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @Service
 public class OrderService {
 
@@ -46,17 +49,21 @@ public class OrderService {
 	String clientId = "ASbalrTsNQwyeFRT6r47HW23NQwDpF9V_4IRJIEkhWGmgI2uZ5L7lYgrspWWgWvEYqd8GT1SmF4hcRd4";
 	String clientSecret = "EJZT7rVvs4wBMCghAlPnx96WC-Se44lmQTKuiAXRWNFvFxH-e69d_aSI8gESJPAbbys3CvOmLZttfGPb";
 
-	public Order getOrder(Integer orderId) {
+	public Order findById(Integer orderId) {
+		log.info("OrderService - findById: id=" + orderId.toString());
 		return repo.getById(orderId);
 	}
 
-	public Order saveOrder(Order order) {
+	public Order save(Order order) {
+		log.info("OrderService - save: id=" + order.getId().toString());
 		return repo.save(order);
 	}
 
 	// Napravimo narudzbu kod paypal-a
 	// Klijent prodavnice onda treba da potvrdi placanje
 	public Order createPayment(Order order) {
+		log.info("OrderService - createPayment: orderId=" + order.getId().toString());
+
 		Merchant merchant = merchantService.findOneByApiKey(order.getMerchantApiKey());
 
 		Amount amount = new Amount();
@@ -83,22 +90,27 @@ public class OrderService {
 
 		Payment createdPayment;
 		try {
+			log.info("createPayment - payment create using paypal api");
 			APIContext context = new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox");
 			createdPayment = payment.create(context);
 			if (createdPayment != null) {
+				log.info("createPayment - payment created: payPalOrderId=" + createdPayment.getId());
 				order.setStatus(OrderStatus.CREATED);
 				order.setPayPalOrderId(createdPayment.getId());
 				order = repo.save(order);
 			}
 		} catch (PayPalRESTException e) {
-			System.out.println("Error happened during payment creation!");
+			log.error("createPayment - Error occured during payment creation");
 		}
 		return order;
 	}
 
 	// Poziva se nakon sto klijent odobri placanje
 	public String completePayment(String paymentId, String payerId) {
-		Order order = repo.findByPayPalOrderIdNotNull(paymentId);
+		log.info("OrderService - completePayment: paymentId=" + paymentId + " payedId=" + payerId);
+
+		log.info("completePayment - fetching order by payPalOrderId=" + paymentId);
+		Order order = repo.findByPayPalOrderId(paymentId).get();
 		Merchant merchant = merchantService.findOneByApiKey(order.getMerchantApiKey());
 
 		Payment payment = new Payment();
@@ -109,23 +121,39 @@ public class OrderService {
 		Payment completedPayment = new Payment();
 
 		try {
+			log.info("completePayment - payment execution using paypal api");
 			APIContext context = new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox");
 			completedPayment = payment.execute(context, paymentExecution);
 			if (completedPayment != null) {
 				order.setStatus(OrderStatus.COMPLETED);
 			}
 		} catch (PayPalRESTException e) {
+			log.error("completePayment - Error occured during payment execution");
 			System.err.println(e.getDetails());
 			order.setStatus(OrderStatus.FAILED);
 		}
 
+		RestTemplate restTemplate = new RestTemplate();
+
 		if (order.getStatus().toString().equalsIgnoreCase("COMPLETED")) {
+			log.info("completePayment - payment execution status=COMPLETED");
 			order.setExecuted(true);
 
-			RestTemplate restTemplate = new RestTemplate();
 			PaymentCompletedDTO paymentCompletedDTO = new PaymentCompletedDTO();
 			paymentCompletedDTO.setId(order.getShopOrderId());
 			paymentCompletedDTO.setStatus("COMPLETED");
+
+			log.info("completePayment - notifying WebShop @" + order.getCallbackUrl());
+			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
+					new HttpEntity<PaymentCompletedDTO>(paymentCompletedDTO), String.class);
+		} else {
+			log.error("completePayment - Error occured during payment execution");
+
+			PaymentCompletedDTO paymentCompletedDTO = new PaymentCompletedDTO();
+			paymentCompletedDTO.setId(order.getShopOrderId());
+			paymentCompletedDTO.setStatus("FAILED");
+
+			log.info("completePayment - notifying WebShop @" + order.getCallbackUrl());
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
 					new HttpEntity<PaymentCompletedDTO>(paymentCompletedDTO), String.class);
 		}
@@ -136,11 +164,14 @@ public class OrderService {
 	}
 
 	public String getOrderDetails(int orderId) throws PayPalRESTException {
+		log.info("OrderService - getOrderDetails: orderId=" + orderId);
+
 		Order order = repo.getById(orderId);
 		Merchant merchant = merchantService.findOneByApiKey(order.getMerchantApiKey());
 
 		APIContext context = new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox");
 
+		log.info("getOrderDetails - get payment details using paypal api");
 		Payment payment = Payment.get(context, order.getPayPalOrderId());
 
 		return payment.toJSON();
@@ -148,9 +179,12 @@ public class OrderService {
 
 	@Scheduled(fixedDelay = 300000)
 	public void checkOrders() {
+		log.info("OrderService - checkOrders");
 		List<Order> orders = repo.findAllByExecuted(false);
 
 		for (Order order : orders) {
+			log.info("Order: id=" + order.getId().toString() + " checking status");
+
 			Merchant merchant = merchantService.findOneByApiKey(order.getMerchantApiKey());
 
 			APIContext context = new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox");
@@ -162,10 +196,12 @@ public class OrderService {
 				headers.set("Authorization", "Bearer " + context.fetchAccessToken());
 				HttpEntity entity = new HttpEntity(headers);
 
+				log.info("checkOrders - get payment details using paypal api");
 				ResponseEntity<String> details = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
 				String status = (new Gson()).fromJson(details.getBody(), JsonObject.class).get("status").getAsString();
 
 				if (status.equalsIgnoreCase("completed")) {
+					log.info("Order: id=" + order.getId().toString() + " status=COMPLETED");
 					order.setStatus(OrderStatus.COMPLETED);
 					order.setExecuted(true);
 
@@ -173,11 +209,14 @@ public class OrderService {
 					paymentCompletedDTO.setId(order.getShopOrderId());
 					paymentCompletedDTO.setStatus("COMPLETED");
 
+					log.info("checkOrders - notifying WebShop @" + order.getCallbackUrl());
 					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
 							new HttpEntity<PaymentCompletedDTO>(paymentCompletedDTO), String.class);
 				}
 
 			} catch (Exception e) {
+				log.error("checkOrders - Error occured while obtaining payment details");
+
 				order.setStatus(OrderStatus.FAILED);
 				order.setExecuted(true);
 
@@ -185,11 +224,10 @@ public class OrderService {
 				paymentCompletedDTO.setId(order.getShopOrderId());
 				paymentCompletedDTO.setStatus("FAILED");
 
+				log.info("checkOrders - notifying WebShop @" + order.getCallbackUrl());
 				restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
 						new HttpEntity<PaymentCompletedDTO>(paymentCompletedDTO), String.class);
-
 			}
-
 		}
 
 		repo.saveAll(orders);

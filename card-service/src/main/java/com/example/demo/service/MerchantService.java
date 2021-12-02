@@ -30,7 +30,7 @@ public class MerchantService {
 	}
 
 	public Optional<Merchant> findByMerchantApiKeyOptional(String merchantApiKey) {
-		log.info("MerchantService - findByMerchantApiKeyOptional: apiKey=" + merchantApiKey);
+		log.info("MerchantService - findByMerchantApiKeyOptional: merchantApiKey=" + merchantApiKey);
 		return repo.findByMerchantApiKey(merchantApiKey);
 	}
 

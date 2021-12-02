@@ -10,6 +10,9 @@ import com.example.demo.mapper.MerchantMapper;
 import com.example.demo.model.Merchant;
 import com.example.demo.service.MerchantService;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @RestController
 @RequestMapping(value = "/paypal")
 public class MerchantController {
@@ -22,6 +25,7 @@ public class MerchantController {
 
 	@RequestMapping(value = "/create", method = RequestMethod.POST, consumes = "application/json")
 	public ResponseEntity<Merchant> create(@RequestBody MerchantDTO dto) {
+		log.info("MerchantController - create");
 		return new ResponseEntity<>(service.save(mapper.toEntity(dto)), HttpStatus.CREATED);
 	}
 }
