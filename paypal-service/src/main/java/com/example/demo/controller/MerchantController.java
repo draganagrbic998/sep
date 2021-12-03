@@ -23,7 +23,7 @@ public class MerchantController {
 	@Autowired
 	private MerchantService service;
 
-	@RequestMapping(value = "/create", method = RequestMethod.POST, consumes = "application/json")
+	@PostMapping
 	public ResponseEntity<Merchant> create(@RequestBody MerchantDTO dto) {
 		log.info("MerchantController - create");
 		return new ResponseEntity<>(service.save(mapper.toEntity(dto)), HttpStatus.CREATED);

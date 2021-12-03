@@ -3,9 +3,9 @@ package com.example.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.ClientDTO;
@@ -26,7 +26,7 @@ public class ClientController {
 	@Autowired
 	private ClientService service;
 
-	@RequestMapping(value = "/create", method = RequestMethod.POST, consumes = "application/json")
+	@PostMapping
 	public ResponseEntity<Client> create(@RequestBody ClientDTO dto) {
 		log.info("ClientController - create");
 		return new ResponseEntity<>(service.save(mapper.toEntity(dto)), HttpStatus.CREATED);

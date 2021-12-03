@@ -71,8 +71,8 @@ public class OrderService {
 
 		log.info("pay - create PaymentRequest in bank @" + merchant.getBankUrl());
 		ResponseEntity<PaymentRequestResponseDTO> responseEntity = restTemplate.exchange(
-				merchant.getBankUrl() + "/payment-requests/create", HttpMethod.POST,
-				new HttpEntity<PaymentRequestDTO>(dto), PaymentRequestResponseDTO.class);
+				merchant.getBankUrl() + "/payment-requests", HttpMethod.POST, new HttpEntity<PaymentRequestDTO>(dto),
+				PaymentRequestResponseDTO.class);
 
 		this.save(order);
 

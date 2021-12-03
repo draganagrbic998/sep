@@ -5,9 +5,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -33,7 +33,7 @@ public class PCCController {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	@RequestMapping(value = "/redirect", method = RequestMethod.POST, consumes = "application/json")
+	@PostMapping("/redirect")
 	public ResponseEntity<?> redirect(@RequestBody PCCRequestDTO pccRequestDTO) throws NotFoundException {
 		log.info("PCCController - redirect: acquirerOrderId=" + pccRequestDTO.getAcquirerOrderId());
 		String bankId = pccRequestDTO.getPanNumber().replace("-", "").substring(1, 7);

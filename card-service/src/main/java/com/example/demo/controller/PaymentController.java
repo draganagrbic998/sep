@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -27,14 +26,14 @@ public class PaymentController {
 	@Autowired
 	private OrderService orderService;
 
-	@PostMapping(value = "/create/payment")
+	@PostMapping
 	public OrderCreatedDTO createPayment(@RequestBody OrderDTO orderDTO) {
 		log.info("PaymentController - createPayment");
 		Order order = orderMapper.toEntity(orderDTO);
 		return orderMapper.toDTO(orderService.save(order));
 	}
 
-	@RequestMapping(value = "/pay/{merchantApiKey}/{orderId}", method = RequestMethod.GET)
+	@GetMapping("/pay/{merchantApiKey}/{orderId}")
 	public ModelAndView pay(@PathVariable String merchantApiKey, @PathVariable Integer orderId)
 			throws NotFoundException {
 		log.info("PaymentController - pay: merchantApiKey=" + merchantApiKey + " orderId=" + orderId);
@@ -42,7 +41,7 @@ public class PaymentController {
 		return new ModelAndView("redirect:" + redirectUrl);
 	}
 
-	@RequestMapping(value = "/complete", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping("/complete")
 	public ResponseEntity<String> completePayment(@RequestBody PaymentRequestCompletedDTO paymentRequestCompletedDTO)
 			throws NotFoundException {
 		log.info("PaymentController - completePayment: orderId=" + paymentRequestCompletedDTO.getId());

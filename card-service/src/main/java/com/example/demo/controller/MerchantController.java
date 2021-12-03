@@ -22,7 +22,7 @@ public class MerchantController {
 	@Autowired
 	private MerchantService service;
 
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	@PostMapping
 	public Merchant create(@RequestBody MerchantDTO dto) throws NotFoundException {
 		log.info("MerchantController - create");
 		return service.save(mapper.toEntity(dto));

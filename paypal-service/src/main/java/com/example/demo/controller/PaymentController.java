@@ -24,13 +24,13 @@ public class PaymentController {
 	@Autowired
 	private OrderService orderService;
 
-	@PostMapping(value = "/create/payment")
+	@PostMapping
 	public OrderCreatedDTO create(@RequestBody OrderDTO orderDTO) {
 		log.info("PaymentController - create");
 		return orderMapper.toDTO(orderService.createPayment(orderMapper.toEntity(orderDTO)));
 	}
 
-	@RequestMapping(value = "/pay/{merchantApiKey}/{orderId}", method = RequestMethod.GET)
+	@GetMapping("/pay/{merchantApiKey}/{orderId}")
 	public ModelAndView pay(@PathVariable Integer merchantApiKey, @PathVariable Integer orderId) {
 		log.info("PaymentController - pay: merchantApiKey" + merchantApiKey + " orderId=" + orderId);
 		String redirectUrl = "http://localhost:8086/view/paypal_payment/" + orderId.toString();
@@ -44,7 +44,7 @@ public class PaymentController {
 		return ResponseEntity.ok(payment);
 	}
 
-	@RequestMapping(value = "/getOrder/{orderId}", method = RequestMethod.GET)
+	@GetMapping("/{orderId}")
 	public ResponseEntity<String> getOrderForPaypal(@PathVariable Integer orderId) throws PayPalRESTException {
 		log.info("PaymentController - getOrderForPaypal: orderId=" + orderId);
 		String payment = orderService.getOrderDetails(orderId);

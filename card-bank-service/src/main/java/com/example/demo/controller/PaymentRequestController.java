@@ -25,7 +25,7 @@ public class PaymentRequestController {
 	@Autowired
 	private PaymentRequestService paymentRequestService;
 
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	@PostMapping
 	private ResponseEntity<?> createPayment(@RequestBody PaymentRequestDTO paymentRequestDTO) {
 		log.info("PaymentRequestController - createPayment");
 		PaymentRequest paymentRequest = paymentRequestMapper.toEntity(paymentRequestDTO);
@@ -33,7 +33,7 @@ public class PaymentRequestController {
 				HttpStatus.CREATED);
 	}
 
-	@RequestMapping(value = "/confirm/{paymentRequestId}", method = RequestMethod.POST)
+	@PostMapping("/confirm/{paymentRequestId}")
 	private String confirmPayment(@RequestBody ClientDTO clientDTO, @PathVariable Integer paymentRequestId)
 			throws NotFoundException {
 		log.info("PaymentRequestController - confirmPayment: paymentRequestId=" + paymentRequestId);
