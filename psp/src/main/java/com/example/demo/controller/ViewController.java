@@ -15,6 +15,7 @@ import com.example.demo.model.User;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.PaymentMethodService;
 import com.example.demo.service.UserService;
+import com.example.demo.utils.DatabaseCipher;
 
 import lombok.AllArgsConstructor;
 
@@ -26,6 +27,7 @@ public class ViewController {
 	private final UserService userService;
 	private final OrderService orderService;
 	private final PaymentMethodService paymentMethodService;
+	private final DatabaseCipher cipher;
 
 	@RequestMapping(value = "/selectPaymentMethod/{merchantApiKey}/{orderId}", method = RequestMethod.GET)
 	public String selectPaymentMethod(@PathVariable UUID merchantApiKey, @PathVariable Long orderId, Model model) {
@@ -41,7 +43,7 @@ public class ViewController {
 		model.addAttribute("callbackUrl", o.getCallbackUrl());
 
 		model.addAttribute("paymentMethods", paymentMethods);
-		model.addAttribute("merchantApiKey", merchant.getApiKey());
+		model.addAttribute("merchantApiKey", cipher.decrypt(merchant.getApiKey()));
 
 		return "selectPaymentMethod";
 	}
