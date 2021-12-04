@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,18 +15,17 @@ import com.example.demo.mapper.PaymentMethodMapper;
 import com.example.demo.model.PaymentMethod;
 import com.example.demo.service.PaymentMethodService;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @RestController
 @RequestMapping("/payment-methods")
+@AllArgsConstructor
 public class PaymentMethodController {
 
-	@Autowired
-	private PaymentMethodMapper paymentMethodMapper;
-
-	@Autowired
-	private PaymentMethodService paymentMethodService;
+	private final PaymentMethodMapper paymentMethodMapper;
+	private final PaymentMethodService paymentMethodService;
 
 	@PostMapping
 	private ResponseEntity<PaymentMethod> create(@RequestBody PaymentMethodDTO dto) {

@@ -3,7 +3,6 @@ package com.example.demo.controller;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,18 +17,16 @@ import com.example.demo.service.MerchantService;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.PaymentMethodService;
 
+import lombok.AllArgsConstructor;
+
 @Controller
 @RequestMapping("/view")
+@AllArgsConstructor
 public class ViewController {
 
-	@Autowired
-	private PaymentMethodService paymentMethodService;
-
-	@Autowired
-	private MerchantService merchantService;
-
-	@Autowired
-	private OrderService orderService;
+	private final PaymentMethodService paymentMethodService;
+	private final MerchantService merchantService;
+	private final OrderService orderService;
 
 	@RequestMapping(value = "/selectPaymentMethod/{merchantApiKey}/{orderId}", method = RequestMethod.GET)
 	public String selectPaymentMethod(@PathVariable UUID merchantApiKey, @PathVariable Integer orderId, Model model)

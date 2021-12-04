@@ -12,3 +12,6 @@ insert into payment_method (name) values ('card');
 insert into payment_method (name) values ('qr');
 insert into payment_method (name) values ('paypal');
 insert into payment_method (name) values ('bitcoin');
+
+insert into web_shop (name, url) values ('webshop1', 'url1');
+

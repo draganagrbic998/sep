@@ -1,7 +1,7 @@
 export interface Auth {
     email: string;
     password: string;
-    role: Role[];
+    roles: Role[];
     token: string;
 }
 

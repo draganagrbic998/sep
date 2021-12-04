@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 
@@ -14,20 +13,17 @@ import com.example.demo.model.Merchant;
 import com.example.demo.model.PaymentMethod;
 import com.example.demo.repo.PaymentMethodRepository;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Service
+@AllArgsConstructor
 public class PaymentMethodService {
 
-	@Autowired
-	private MerchantService merchantService;
-
-	@Autowired
-	private PaymentMethodRepository paymentMethodRepository;
-
-	@Autowired
-	private DiscoveryClient discoveryClient;
+	private final MerchantService merchantService;
+	private final PaymentMethodRepository paymentMethodRepository;
+	private final DiscoveryClient discoveryClient;
 
 	public List<PaymentMethod> findAll() {
 		log.info("PaymentMethodService - findAll");

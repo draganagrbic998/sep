@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -19,18 +18,17 @@ import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
 import com.example.demo.service.OrderService;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @RestController
 @RequestMapping("/redirection")
+@AllArgsConstructor
 public class RedirectionController {
 
-	@Autowired
-	private RestTemplate restTemplate;
-
-	@Autowired
-	private OrderService orderService;
+	private final RestTemplate restTemplate;
+	private final OrderService orderService;
 
 	@PostMapping("/{method}/{orderIdWebshop}")
 	public ResponseEntity<?> createOrderInPaymentService(@PathVariable String method,

@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,18 +15,17 @@ import com.example.demo.mapper.MerchantMapper;
 import com.example.demo.model.Merchant;
 import com.example.demo.service.MerchantService;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @RestController
 @RequestMapping("/merchants")
+@AllArgsConstructor
 public class MerchantController {
 
-	@Autowired
-	private MerchantMapper merchantMapper;
-
-	@Autowired
-	private MerchantService merchantService;
+	private final MerchantMapper merchantMapper;
+	private final MerchantService merchantService;
 
 	@PostMapping
 	private ResponseEntity<Merchant> create(@RequestBody MerchantDTO dto) {
@@ -40,7 +38,7 @@ public class MerchantController {
 	public ResponseEntity<Void> remove(@PathVariable Integer merchantId) throws NotFoundException {
 		log.info("MerchantController - remove: id=" + merchantId);
 		merchantService.remove(merchantId);
-		return ResponseEntity.noContent().build();		
+		return ResponseEntity.noContent().build();
 	}
 
 }
