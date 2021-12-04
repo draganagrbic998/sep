@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,9 +18,9 @@ import com.example.demo.repo.PaymentMethodRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
-@Service
 @AllArgsConstructor
+@Service
+@Log4j2
 public class PaymentMethodService {
 
 	private final PaymentMethodRepository repo;
@@ -29,30 +29,12 @@ public class PaymentMethodService {
 
 	@Transactional(readOnly = true)
 	public List<PaymentMethod> read() {
-		log.info("PaymentMethodService - findAll");
+		log.info("PaymentMethodService - read");
 		return repo.findAll();
-	}
-
-	@Transactional(readOnly = true)
-	public PaymentMethod readOne(Long id) {
-		log.info("PaymentMethodService - readOne: id=" + id);
-		Optional<PaymentMethod> paymentMethod = repo.findById(id);
-
-		if (!paymentMethod.isPresent()) {
-			log.error("PaymentMethod: id=" + id + " not found.");
-			throw new NotFoundException(id.toString(), PaymentMethod.class.getSimpleName());
-		}
-
-		return paymentMethod.get();
 	}
 
 	@Transactional
 	public PaymentMethod save(PaymentMethod paymentMethod) {
-		List<String> available = getAllEurekaServices();
-		if (!available.contains(paymentMethod.getName())) {
-			throw new RuntimeException(); // za sad ovako
-		}
-
 		paymentMethod = repo.save(paymentMethod);
 		log.info("PaymentMethodService - save: id=" + paymentMethod.getId());
 		return paymentMethod;
@@ -71,6 +53,14 @@ public class PaymentMethodService {
 		repo.deleteById(id);
 	}
 
+	public List<String> toAdd() {
+		log.info("PaymentMethodService - getAllEurekaServices");
+		return discoveryClient.getServices().stream()
+				.filter(item -> !item.equals("psp") && !item.startsWith("webshop")
+						&& !read().stream().map(pm -> pm.getName()).collect(Collectors.toList()).contains(item))
+				.collect(Collectors.toList());
+	}
+
 	public List<PaymentMethod> getPaymentMethods(UUID merchantApiKey) {
 		log.info("PaymentMethodService - getPaymentMethods: merchantApiKey=" + merchantApiKey.toString());
 		List<PaymentMethod> ret = new ArrayList<>();
@@ -81,23 +71,6 @@ public class PaymentMethodService {
 			ret.add(pm);
 
 		return ret;
-	}
-
-	private List<String> getAllEurekaServices() {
-		log.info("PaymentMethodService - getAllEurekaServices");
-		List<String> services = discoveryClient.getServices();
-		for (String temp : services) {
-			List<ServiceInstance> list = discoveryClient.getInstances(temp);
-			for (ServiceInstance si : list) {
-				System.out.println(temp);
-				System.out.println(si.getUri());
-				System.out.println(si.getHost());
-				System.out.println(si.getPort());
-				System.out.println("=====================");
-			}
-		}
-		services.remove("psp");
-		return services;
 	}
 
 }

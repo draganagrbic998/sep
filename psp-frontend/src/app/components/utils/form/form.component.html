@@ -6,42 +6,74 @@
         <div [class.disabled]="pending">
           <mat-form-field *ngFor="let control of controls">
             <mat-label>{{ capitalize(control) }}</mat-label>
-            <input *ngIf="type(control) === 'text' || type(control) === 'password'" matInput [type]="type(control)"
-              [formControlName]="control" placeholder="Enter {{ control }}" />
-            <mat-select *ngIf="type(control) === 'select' || type(control) === 'multi-select'"
-              [formControlName]="control" placeholder="Select {{ control }}"
-              [multiple]="type(control) === 'multi-select'" [compareWith]="compareOptions">
-              <mat-option *ngFor="let option of options(control) | async"
-                [value]="optionValue(control) ? option[optionValue(control)] : option" >{{
-                option[optionKey(control)] }}</mat-option>
+            <input
+              *ngIf="type(control) === 'text' || type(control) === 'password'"
+              matInput
+              [type]="type(control)"
+              [formControlName]="control"
+              placeholder="Enter {{ control }}"
+            />
+            <mat-select
+              *ngIf="
+                type(control) === 'select' || type(control) === 'multi-select'
+              "
+              [formControlName]="control"
+              placeholder="Select {{ control }}"
+              [multiple]="type(control) === 'multi-select'"
+              [compareWith]="compareOptions"
+            >
+              <mat-option
+                *ngFor="let option of options(control) | async"
+                [value]="
+                  optionValue(control) ? option[optionValue(control)] : option
+                "
+                >{{ optionKey(control) ? option[optionKey(control)] : option }}</mat-option
+              >
             </mat-select>
             <mat-error> {{ capitalize(control) }} is required! </mat-error>
           </mat-form-field>
           <ng-container *ngFor="let control of fileControls">
             <div class="file-input">
-              <input #fileInput type="file" accept="image/*" (change)="
+              <input
+                #fileInput
+                type="file"
+                accept="image/*"
+                (change)="
                   updateFile(control, fileInput.files[0]);
                   fileInput.value = null
-                " />
-              <button mat-stroked-button color="accent" (click)="fileInput.click()">
+                "
+              />
+              <button
+                mat-stroked-button
+                color="accent"
+                (click)="fileInput.click()"
+              >
                 Upload
               </button>
-              <span class="file-status" [class.warning]="
+              <span
+                class="file-status"
+                [class.warning]="
                   !form.value[control] &&
                   form.touched &&
                   validation(control) === 'required'
-                ">
+                "
+              >
                 {{
-                form.value[control]
-                ? capitalize(control) + " provided"
-                : "No " + capitalize(control) + " provided"
+                  form.value[control]
+                    ? capitalize(control) + " provided"
+                    : "No " + capitalize(control) + " provided"
                 }}
               </span>
             </div>
           </ng-container>
         </div>
         <div class="center">
-          <button *ngIf="!pending" mat-raised-button color="primary" (click)="handleSubmit()">
+          <button
+            *ngIf="!pending"
+            mat-raised-button
+            color="primary"
+            (click)="handleSubmit()"
+          >
             Submit
           </button>
           <app-spinner *ngIf="pending"></app-spinner>

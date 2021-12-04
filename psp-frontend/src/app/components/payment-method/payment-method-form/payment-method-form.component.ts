@@ -10,17 +10,17 @@ import { Route } from 'src/app/utils/route';
 export class PaymentMethodFormComponent  {
 
   constructor(
-    private paymentMethodService: PaymentMethodService
+    public service: PaymentMethodService
   ) { }
 
-  service = this.paymentMethodService
   listRoute = Route.PAYMENT_METHODS
   entity = 'Payment Method'
 
-  pending = false;
   formConfig: FormConfig = {
     name: {
-      validation: 'required'
+      validation: 'required',
+      options: this.service.toAdd(),
+      type: 'select'
     }
   }
   style: FormStyle = {

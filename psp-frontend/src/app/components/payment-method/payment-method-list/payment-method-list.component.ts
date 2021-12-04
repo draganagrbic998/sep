@@ -9,11 +9,10 @@ import { Route } from 'src/app/utils/route'
   `
 })
 export class PaymentMethodListComponent {
-  constructor (private paymentMethodService: PaymentMethodService) {}
-
-  service = this.paymentMethodService
+  constructor (public service: PaymentMethodService) {}
 
   editRoute = Route.PAYMENT_METHOD_FORM
+  hideEdit = true
 
   columnMappings: { [key: string]: string } = {
     name: 'Method Name'
