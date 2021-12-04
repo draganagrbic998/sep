@@ -13,8 +13,8 @@ import com.example.demo.service.RoleService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @AllArgsConstructor
+@Log4j2
 @RestController
 @RequestMapping("/roles")
 public class RoleController {

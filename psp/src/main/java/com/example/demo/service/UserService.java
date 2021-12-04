@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,10 +10,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.demo.example.exception.NotFoundException;
 import com.example.demo.dto.Auth;
+import com.example.demo.model.PaymentMethod;
 import com.example.demo.model.User;
 import com.example.demo.repo.UserRepository;
 import com.example.demo.security.TokenUtils;
@@ -21,13 +25,14 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-@AllArgsConstructor
 @Service
+@AllArgsConstructor
 public class UserService implements UserDetailsService {
 
 	private final UserRepository repo;
 	private final AuthenticationManager authManager;
 	private final TokenUtils tokenUtils;
+	private final PasswordEncoder passwordEncoder;
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -36,6 +41,7 @@ public class UserService implements UserDetailsService {
 	}
 
 	public User findByApiKey(String apiKey) {
+		log.info("UserService - findByApiKey: apiKey=" + apiKey);
 		return repo.findByApiKey(apiKey);
 	}
 
@@ -64,8 +70,9 @@ public class UserService implements UserDetailsService {
 
 	@Transactional
 	public User save(User user) {
-		if (user.getId() == null && user.getRole().equals("merchant")) {
+		if (user.getId() == null) {
 			user.setApiKey(UUID.randomUUID().toString());
+			user.setPassword(passwordEncoder.encode(user.getPassword()));
 		}
 
 		user = repo.save(user);
@@ -75,7 +82,14 @@ public class UserService implements UserDetailsService {
 
 	@Transactional
 	public void delete(Long id) {
-		log.info("UserService - remove: id=" + id);
+		log.info("UserService - delete: id=" + id);
+		Optional<User> user = repo.findById(id);
+
+		if (!user.isPresent()) {
+			log.error("User: id=" + id + " not found.");
+			throw new NotFoundException(id.toString(), PaymentMethod.class.getSimpleName());
+		}
+
 		repo.deleteById(id);
 	}
 

@@ -20,8 +20,8 @@ import com.example.demo.service.WebShopService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @AllArgsConstructor
+@Log4j2
 @RestController
 @RequestMapping("/webshops")
 public class WebShopController {
@@ -56,7 +56,7 @@ public class WebShopController {
 		log.info("WebShopController - update: id=" + id);
 
 		if (id == null || dto.getId() == null || id != dto.getId()) {
-			log.error("delete - id is invalid");
+			log.error("update - id is invalid");
 			return ResponseEntity.badRequest().build();
 		}
 		return ResponseEntity.ok(service.save(dto));

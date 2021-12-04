@@ -14,8 +14,8 @@ import com.example.demo.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @AllArgsConstructor
+@Log4j2
 @RestController
 @RequestMapping("/auth")
 public class AuthController {

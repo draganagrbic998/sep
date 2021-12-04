@@ -14,7 +14,7 @@ export class FormService {
   build(config: FormConfig) {
     const data = {}
     for (const control in config) {
-      data[control] = ['', this.buildValidation(config[control].validation)]
+      data[control] = [config[control].type !== 'multi-select' ? '' : [], this.buildValidation(config[control].validation)]
     }
     return this.builder.group(data);
   }

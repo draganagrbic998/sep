@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.demo.example.exception.NotFoundException;
 import com.example.demo.model.PaymentMethod;
@@ -21,18 +22,20 @@ import lombok.extern.log4j.Log4j2;
 @AllArgsConstructor
 public class PaymentMethodService {
 
+	private final PaymentMethodRepository repo;
 	private final UserService userService;
-	private final PaymentMethodRepository paymentMethodRepository;
 	private final DiscoveryClient discoveryClient;
 
-	public List<PaymentMethod> findAll() {
+	@Transactional(readOnly = true)
+	public List<PaymentMethod> read() {
 		log.info("PaymentMethodService - findAll");
-		return paymentMethodRepository.findAll();
+		return repo.findAll();
 	}
 
-	public PaymentMethod findById(Long id) throws NotFoundException {
-		log.info("PaymentMethodService - findById: id=" + id);
-		Optional<PaymentMethod> paymentMethod = paymentMethodRepository.findById(id);
+	@Transactional(readOnly = true)
+	public PaymentMethod readOne(Long id) {
+		log.info("PaymentMethodService - readOne: id=" + id);
+		Optional<PaymentMethod> paymentMethod = repo.findById(id);
 
 		if (!paymentMethod.isPresent()) {
 			log.error("PaymentMethod: id=" + id + " not found.");
@@ -42,31 +45,32 @@ public class PaymentMethodService {
 		return paymentMethod.get();
 	}
 
+	@Transactional
 	public PaymentMethod save(PaymentMethod paymentMethod) {
 		List<String> available = getAllEurekaServices();
 		if (!available.contains(paymentMethod.getName())) {
-
 			throw new RuntimeException(); // za sad ovako
 		}
 
-		paymentMethod = paymentMethodRepository.save(paymentMethod);
+		paymentMethod = repo.save(paymentMethod);
 		log.info("PaymentMethodService - save: id=" + paymentMethod.getId());
 		return paymentMethod;
 	}
 
-	public void remove(Long paymentMethodId) throws NotFoundException {
-		log.info("PaymentMethodService - remove: id=" + paymentMethodId);
-		Optional<PaymentMethod> paymentMethod = paymentMethodRepository.findById(paymentMethodId);
+	@Transactional
+	public void delete(Long id) {
+		log.info("PaymentMethodService - delete: id=" + id);
+		Optional<PaymentMethod> paymentMethod = repo.findById(id);
 
 		if (!paymentMethod.isPresent()) {
-			log.error("PaymentMethod: id=" + paymentMethodId + " not found.");
-			throw new NotFoundException(paymentMethodId.toString(), PaymentMethod.class.getSimpleName());
+			log.error("PaymentMethod: id=" + id + " not found.");
+			throw new NotFoundException(id.toString(), PaymentMethod.class.getSimpleName());
 		}
 
-		paymentMethodRepository.deleteById(paymentMethodId);
+		repo.deleteById(id);
 	}
 
-	public List<PaymentMethod> getPaymentMethods(UUID merchantApiKey) throws NotFoundException {
+	public List<PaymentMethod> getPaymentMethods(UUID merchantApiKey) {
 		log.info("PaymentMethodService - getPaymentMethods: merchantApiKey=" + merchantApiKey.toString());
 		List<PaymentMethod> ret = new ArrayList<>();
 
@@ -78,15 +82,9 @@ public class PaymentMethodService {
 		return ret;
 	}
 
-	// Da bi prilikom dodavanja nacina placanja proverili da li uopste imamo
-	// takav servis na eureci, jer dzaba mi dodajemo ako to nema da radi
-	public List<String> getAllEurekaServices() {
+	private List<String> getAllEurekaServices() {
 		log.info("PaymentMethodService - getAllEurekaServices");
 		List<String> services = discoveryClient.getServices();
-		System.out.println("LENGTH: " + services.size());
-		for (String s : services) {
-			System.out.println(s);
-		}
 		services.remove("psp");
 		return services;
 	}

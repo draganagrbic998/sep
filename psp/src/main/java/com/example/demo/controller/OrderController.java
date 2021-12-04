@@ -14,21 +14,21 @@ import com.example.demo.service.OrderService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+@AllArgsConstructor
 @Log4j2
 @RestController
 @RequestMapping("/orders")
-@AllArgsConstructor
 public class OrderController {
 
-	private final OrderMapper orderMapper;
-	private final OrderService orderService;
+	private final OrderMapper mapper;
+	private final OrderService service;
 
 	@PostMapping
 	private Order create(@RequestBody OrderWebshopDTO orderWebshopDTO) {
 		log.info("OrderController - create");
-		Order o = orderMapper.toEntity(orderWebshopDTO);
+		Order o = mapper.toEntity(orderWebshopDTO);
 		o.setStatus(OrderStatus.CREATED);
-		Order savedOrder = orderService.save(o);
+		Order savedOrder = service.save(o);
 		return savedOrder;
 	}
 

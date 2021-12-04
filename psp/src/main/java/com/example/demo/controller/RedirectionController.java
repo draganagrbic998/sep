@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.demo.example.exception.NotFoundException;
 import com.example.demo.dto.OrderCreateDTO;
 import com.example.demo.dto.OrderCreatedDTO;
 import com.example.demo.model.Order;
@@ -21,21 +20,21 @@ import com.example.demo.service.OrderService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+@AllArgsConstructor
 @Log4j2
 @RestController
 @RequestMapping("/redirection")
-@AllArgsConstructor
 public class RedirectionController {
 
 	private final RestTemplate restTemplate;
 	private final OrderService orderService;
 
 	@PostMapping("/{method}/{orderIdWebshop}")
-	public ResponseEntity<?> createOrderInPaymentService(@PathVariable String method,
-			@PathVariable Integer orderIdWebshop, @RequestBody OrderCreateDTO orderCreateDTO) throws NotFoundException {
+	public ResponseEntity<?> createOrderInPaymentService(@PathVariable String method, @PathVariable Long orderIdWebshop,
+			@RequestBody OrderCreateDTO orderCreateDTO) {
 		log.info("RedirectionController - createOrderInPaymentService: method=" + method + " orderIdWebshop="
 				+ orderIdWebshop);
-		Order order = orderService.findById(orderIdWebshop);
+		Order order = orderService.readOne(orderIdWebshop);
 
 		// Kupac mora u roku od 5 minuta da odabere nacin placanja
 		if (order.getTicks() >= 5) {

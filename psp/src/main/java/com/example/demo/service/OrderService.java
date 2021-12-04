@@ -3,11 +3,11 @@ package com.example.demo.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.demo.example.exception.NotFoundException;
@@ -16,25 +16,26 @@ import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
 import com.example.demo.repo.OrderRepository;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Service
+@AllArgsConstructor
 public class OrderService {
 
-	@Autowired
-	private OrderRepository repo;
+	private final OrderRepository repo;
+	private final RestTemplate restTemplate;
 
-	@Autowired
-	private RestTemplate restTemplate;
-
-	public List<Order> findAll() {
-		log.info("OrderService - findAll");
+	@Transactional(readOnly = true)
+	public List<Order> read() {
+		log.info("OrderService - read");
 		return repo.findAll();
 	}
 
-	public Order findById(Integer id) throws NotFoundException {
-		log.info("OrderService - findById: id=" + id);
+	@Transactional(readOnly = true)
+	public Order readOne(Long id) {
+		log.info("OrderService - readOne: id=" + id);
 		Optional<Order> order = repo.findById(id);
 
 		if (!order.isPresent()) {
@@ -45,6 +46,7 @@ public class OrderService {
 		return order.get();
 	}
 
+	@Transactional
 	public Order save(Order order) {
 		order = repo.save(order);
 		log.info("OrderService - save: id=" + order.getId());
@@ -54,7 +56,7 @@ public class OrderService {
 	@Scheduled(fixedDelay = 60000) // svakih 60s proverimo stanje svih kreiranih porudzbina
 	public void checkOrders() {
 		log.info("OrderService - checkOrders");
-		List<Order> orders = this.findAll();
+		List<Order> orders = this.read();
 
 		for (Order order : orders) {
 			if (order.getStatus() == OrderStatus.CREATED) {

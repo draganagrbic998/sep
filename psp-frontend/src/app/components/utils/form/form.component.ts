@@ -44,10 +44,10 @@ export class FormComponent implements OnInit {
     let temp = Object.keys(this.config.formConfig).filter(
       control => this.config.formConfig[control].type !== 'file'
     )
-    for (const control of temp){
+    for (const control of temp) {
       const hidding = this.config.formConfig[control].hidding
-      if (hidding){
-        if (this.form.get(hidding.field).value !== hidding.value){
+      if (hidding) {
+        if (this.form.get(hidding.field).value !== hidding.value) {
           temp = temp.filter(item => item !== control)
         }
       }
@@ -67,7 +67,7 @@ export class FormComponent implements OnInit {
   }
 
   private async initForm () {
-    if (this.config.title){
+    if (this.config.title) {
       return
     }
     if (this.itemId) {
@@ -83,11 +83,11 @@ export class FormComponent implements OnInit {
     return this.config.formConfig[control].type || 'text'
   }
 
-  optionKey(control: string){
+  optionKey (control: string) {
     return this.config.formConfig[control].optionKey
   }
 
-  optionValue(control: string){
+  optionValue (control: string) {
     return this.config.formConfig[control].optionValue
   }
 
@@ -108,10 +108,10 @@ export class FormComponent implements OnInit {
       this.config.save(this.form.value)
     } else {
       this.save(this.form.value)
-    } 
+    }
   }
 
-  compareOptions(item1: StandardModel, item2: StandardModel){
+  compareOptions (item1: StandardModel, item2: StandardModel) {
     return item1.id === item2.id
   }
 

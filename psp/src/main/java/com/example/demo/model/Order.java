@@ -6,39 +6,42 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Entity
 @Table(name = "order_table")
 public class Order {
 
-	@EqualsAndHashCode.Include
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	protected Integer id;
+	protected Long id;
 
+	@NotNull
 	@Column
 	private Integer orderIdWebshop;
 
+	@NotNull
 	@Column
 	private Double price;
 
+	@NotBlank
 	@Column
 	private String currency;
 
-	@Column
-	private String callbackUrl;
-
+	@NotNull
 	@Column
 	private OrderStatus status;
+
+	@Column
+	private String callbackUrl;
 
 	@Column
 	private Integer ticks;

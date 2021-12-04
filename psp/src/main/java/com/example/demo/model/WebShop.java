@@ -16,7 +16,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "web_shop")
+@Table
 public class WebShop {
 
 	@Id
