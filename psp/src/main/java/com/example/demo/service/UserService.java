@@ -20,6 +20,7 @@ import com.example.demo.model.PaymentMethod;
 import com.example.demo.model.User;
 import com.example.demo.repo.UserRepository;
 import com.example.demo.security.TokenUtils;
+import com.example.demo.utils.DatabaseCipher;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -33,6 +34,7 @@ public class UserService implements UserDetailsService {
 	private final AuthenticationManager authManager;
 	private final TokenUtils tokenUtils;
 	private final PasswordEncoder passwordEncoder;
+	private final DatabaseCipher cipher;
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -42,7 +44,7 @@ public class UserService implements UserDetailsService {
 
 	public User findByApiKey(String apiKey) {
 		log.info("UserService - findByApiKey: apiKey=" + apiKey);
-		return repo.findByApiKey(apiKey);
+		return repo.findByApiKey(cipher.encrypt(apiKey));
 	}
 
 	public Auth login(Auth auth) {
@@ -71,7 +73,7 @@ public class UserService implements UserDetailsService {
 	@Transactional
 	public User save(User user) {
 		if (user.getId() == null) {
-			user.setApiKey(UUID.randomUUID().toString());
+			user.setApiKey(cipher.encrypt(UUID.randomUUID().toString()));
 			user.setPassword(passwordEncoder.encode(user.getPassword()));
 		}
 
