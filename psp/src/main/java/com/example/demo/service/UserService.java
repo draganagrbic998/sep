@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import com.demo.example.exception.NotFoundException;
 import com.example.demo.dto.Auth;
@@ -33,6 +36,7 @@ public class UserService implements UserDetailsService {
 	private final AuthenticationManager authManager;
 	private final TokenUtils tokenUtils;
 	private final PasswordEncoder passwordEncoder;
+	private final RestTemplate restTemplate;
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -75,8 +79,22 @@ public class UserService implements UserDetailsService {
 			user.setPassword(passwordEncoder.encode(user.getPassword()));
 		}
 
-		user = repo.save(user);
 		log.info("UserService - save: id=" + user.getId());
+		repo.save(user);
+
+		try {
+			if (user.getId() == null) {
+				restTemplate.exchange(user.getWebshop() + "/api/users", HttpMethod.POST, new HttpEntity<User>(user),
+						User.class);
+			} else {
+				restTemplate.exchange(user.getWebshop() + "/api/users/" + user.getId(), HttpMethod.PUT,
+						new HttpEntity<User>(user), User.class);
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		return user;
 	}
 

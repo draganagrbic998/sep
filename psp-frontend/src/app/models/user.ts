@@ -6,4 +6,5 @@ export interface User extends StandardModel{
     password: string
     role: string
     methods: PaymentMethod[]
+    webshop: string
 }

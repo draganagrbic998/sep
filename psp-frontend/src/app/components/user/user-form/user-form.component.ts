@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { PaymentMethodService } from 'src/app/services/payment-method.service';
 import { RoleService } from 'src/app/services/role.service';
 import { UserService } from 'src/app/services/user.service';
+import { WebshopService } from 'src/app/services/webshop.service';
 import { FormConfig, FormStyle } from 'src/app/utils/form';
 import { Route } from 'src/app/utils/route';
 
@@ -14,7 +15,8 @@ export class UserFormComponent  {
   constructor(
     private userService: UserService,
     private roleService: RoleService,
-    private paymentMethodService: PaymentMethodService
+    private paymentMethodService: PaymentMethodService,
+    private webshopService: WebshopService
   ) { }
 
   service = this.userService
@@ -43,7 +45,17 @@ export class UserFormComponent  {
       optionKey: 'name',
       hidding: {
         field: 'role',
-        value: 'merchant'
+        values: ['psp-admin', 'ws-admin']
+      }
+    },
+    webshop: {
+      options: this.webshopService.read(),
+      type: 'select',
+      optionKey: 'name',
+      optionValue: 'url',
+      hidding: {
+        field: 'role',
+        values: ['psp-admin']
       }
     }
   }

@@ -47,7 +47,7 @@ export class FormComponent implements OnInit {
     for (const control of temp) {
       const hidding = this.config.formConfig[control].hidding
       if (hidding) {
-        if (this.form.get(hidding.field).value !== hidding.value) {
+        if (hidding.values.includes(this.form.get(hidding.field).value)) {
           temp = temp.filter(item => item !== control)
         }
       }
@@ -112,6 +112,10 @@ export class FormComponent implements OnInit {
   }
 
   compareOptions (item1: StandardModel, item2: StandardModel) {
+    // nemoj standard moduel
+    if (!('id' in item1) || !('id' in item2)){
+      return item1 === item2;
+    }
     return item1.id === item2.id
   }
 

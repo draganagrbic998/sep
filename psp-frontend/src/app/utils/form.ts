@@ -9,7 +9,7 @@ export interface FormConfig {
     optionKey?: string
     hidding?: {
       field: string
-      value: string
+      values: string[]
     }
   }
 }
