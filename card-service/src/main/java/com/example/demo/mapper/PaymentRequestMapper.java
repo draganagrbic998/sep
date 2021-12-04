@@ -2,28 +2,29 @@ package com.example.demo.mapper;
 
 import java.time.LocalDateTime;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.dto.PaymentRequestDTO;
 import com.example.demo.model.Merchant;
 import com.example.demo.model.Order;
-import com.example.demo.service.OrderService;
+import com.example.demo.utils.DatabaseCipher;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Component
+@AllArgsConstructor
 public class PaymentRequestMapper {
 
 	private final String url = "http://localhost:8087/view";
-
-	@Autowired
-	OrderService service;
+	private final DatabaseCipher databaseCipher;
 
 	public PaymentRequestDTO toDTO(Merchant merchant, Order order) {
 		log.info("PaymentRequestMapper - toDTO: merchantId=" + merchant.getMerchantId() + " orderId=" + order.getId());
 		PaymentRequestDTO dto = new PaymentRequestDTO();
+
+		merchant = databaseCipher.decrypt(merchant);
 
 		dto.setMerchantId(merchant.getMerchantId());
 		dto.setMerchantPassword(merchant.getMerchantPassword());

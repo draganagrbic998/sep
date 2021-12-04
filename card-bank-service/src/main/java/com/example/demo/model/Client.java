@@ -30,7 +30,7 @@ public class Client {
 	private String cardHolder;
 
 	@Column(nullable = false)
-	private Integer cvv;
+	private String cvv;
 
 	@Column(nullable = false)
 	private String expirationDate;

@@ -1,22 +1,22 @@
 package com.example.demo.mapper;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.dto.OrderCreatedDTO;
 import com.example.demo.dto.OrderDTO;
 import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
-import com.example.demo.service.OrderService;
+import com.example.demo.utils.DatabaseCipher;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Component
+@AllArgsConstructor
 public class OrderMapper {
 
-	@Autowired
-	OrderService service;
+	private final DatabaseCipher databaseCipher;
 
 	public Order toEntity(OrderDTO dto) {
 		log.info("OrderMapper - toEntity");
@@ -30,7 +30,7 @@ public class OrderMapper {
 		model.setOrderStatus(OrderStatus.CREATED);
 		model.setTicks(0);
 
-		return model;
+		return this.databaseCipher.encrypt(model);
 	}
 
 	public OrderCreatedDTO toDTO(Order model) {

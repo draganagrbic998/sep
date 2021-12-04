@@ -13,7 +13,7 @@ public class PCCRequestDTO {
 
 	private String panNumber;
 	private String cardHolder;
-	private Integer cvv;
+	private String cvv;
 	private String mm;
 	private String yy;
 	private Integer acquirerOrderId;

@@ -11,7 +11,7 @@ public class ClientDTO {
 
 	private String panNumber;
 	private String cardHolder;
-	private Integer cvv;
+	private String cvv;
 	private String mm;
 	private String yy;
 

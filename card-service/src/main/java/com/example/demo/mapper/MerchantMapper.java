@@ -1,20 +1,20 @@
 package com.example.demo.mapper;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.dto.MerchantDTO;
 import com.example.demo.model.Merchant;
-import com.example.demo.service.MerchantService;
+import com.example.demo.utils.DatabaseCipher;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Component
+@AllArgsConstructor
 public class MerchantMapper {
 
-	@Autowired
-	MerchantService service;
+	private final DatabaseCipher databaseCipher;
 
 	public Merchant toEntity(MerchantDTO dto) {
 		log.info("MerchantMapper - toEntity");
@@ -25,7 +25,7 @@ public class MerchantMapper {
 		model.setMerchantPassword(dto.getMerchantPassword());
 		model.setBankUrl(dto.getBankUrl());
 
-		return model;
+		return this.databaseCipher.encrypt(model);
 	}
 
 }

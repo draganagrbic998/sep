@@ -4,12 +4,17 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.dto.MerchantDTO;
 import com.example.demo.model.Merchant;
+import com.example.demo.utils.DatabaseCipher;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Component
+@AllArgsConstructor
 public class MerchantMapper {
+
+	private final DatabaseCipher databaseCipher;
 
 	public Merchant toEntity(MerchantDTO dto) {
 		log.info("MerchantMapper - toEntity");
@@ -19,7 +24,7 @@ public class MerchantMapper {
 		model.setClientSecret(dto.getClientSecret());
 		model.setMerchantApiKey(dto.getMerchantApiKey());
 
-		return model;
+		return this.databaseCipher.encrypt(model);
 	}
 
 }
