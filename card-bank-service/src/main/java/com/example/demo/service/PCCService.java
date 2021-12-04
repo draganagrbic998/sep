@@ -9,6 +9,7 @@ import com.example.demo.dto.PCCRequestDTO;
 import com.example.demo.dto.PCCResponseDTO;
 import com.example.demo.mapper.PCCMapper;
 import com.example.demo.model.Client;
+import com.example.demo.utils.DatabaseCipher;
 import com.example.demo.utils.Utils;
 
 import lombok.extern.log4j.Log4j2;
@@ -23,6 +24,9 @@ public class PCCService {
 	@Autowired
 	private ClientService clientService;
 
+	@Autowired
+	private DatabaseCipher cipher;
+
 	public PCCResponseDTO pay(PCCRequestDTO pccRequestDTO) {
 		log.info("PCCService - pay: acquirerOrderId=" + pccRequestDTO.getAcquirerOrderId());
 
@@ -35,7 +39,7 @@ public class PCCService {
 			return pccMapper.toFailedAuthPCCResponse(pccRequestDTO);
 		}
 
-		Client client = clientOptional.get();
+		Client client = cipher.decrypt(clientOptional.get());
 
 		String tempDate = pccRequestDTO.getMm() + "/" + pccRequestDTO.getYy();
 

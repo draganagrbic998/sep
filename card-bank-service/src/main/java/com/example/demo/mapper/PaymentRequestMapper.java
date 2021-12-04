@@ -5,12 +5,17 @@ import org.springframework.stereotype.Component;
 import com.example.demo.dto.PaymentRequestDTO;
 import com.example.demo.dto.PaymentRequestResponseDTO;
 import com.example.demo.model.PaymentRequest;
+import com.example.demo.utils.DatabaseCipher;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Component
+@AllArgsConstructor
 public class PaymentRequestMapper {
+
+	private final DatabaseCipher cipher;
 
 	public PaymentRequest toEntity(PaymentRequestDTO dto) {
 		log.info("PCCMapper - toEntity");
@@ -27,7 +32,7 @@ public class PaymentRequestMapper {
 		model.setFailedUrl(dto.getFailedUrl());
 		model.setErrorUrl(dto.getErrorUrl());
 
-		return model;
+		return cipher.encrypt(model);
 	}
 
 	public PaymentRequestResponseDTO toDTO(PaymentRequest model) {

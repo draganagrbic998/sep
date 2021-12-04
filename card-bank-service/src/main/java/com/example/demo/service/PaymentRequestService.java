@@ -23,6 +23,7 @@ import com.example.demo.model.PaymentRequest;
 import com.example.demo.model.Transaction;
 import com.example.demo.model.TransactionStatus;
 import com.example.demo.repo.PaymentRequestRepository;
+import com.example.demo.utils.DatabaseCipher;
 import com.example.demo.utils.Utils;
 
 import lombok.extern.log4j.Log4j2;
@@ -55,6 +56,9 @@ public class PaymentRequestService {
 	@Autowired
 	private RestTemplate restTemplate;
 
+	@Autowired
+	private DatabaseCipher cipher;
+
 	public PaymentRequest findById(Integer id) throws NotFoundException {
 		log.info("PaymentRequestService - findById: id=" + id);
 		Optional<PaymentRequest> paymentRequest = paymentRequestRepository.findById(id);
@@ -84,7 +88,8 @@ public class PaymentRequestService {
 		// Jeste klijent ove banke
 		if (clientBankId.contentEquals(bankId)) {
 			log.info("Client: panNumber=" + clientBankId + "... has an account in this bank");
-			Optional<Client> clientOptional = clientService.findClientByPanNumber(clientDTO.getPanNumber());
+			Optional<Client> clientOptional = clientService
+					.findClientByPanNumber(cipher.encrypt(clientDTO.getPanNumber()));
 
 			if (!clientOptional.isPresent()) {
 				log.error("Client: panNumber=" + clientBankId + "... not found");
@@ -96,6 +101,9 @@ public class PaymentRequestService {
 
 			Client client = clientOptional.get();
 			transaction.setPanNumber(client.getPanNumber());
+
+			client = cipher.decrypt(client);
+
 			String tempDate = clientDTO.getMm() + "/" + clientDTO.getYy();
 
 			if (!client.getCardHolder().equals(clientDTO.getCardHolder()) || !client.getCvv().equals(clientDTO.getCvv())

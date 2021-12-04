@@ -4,12 +4,17 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.model.PaymentRequest;
 import com.example.demo.model.Transaction;
+import com.example.demo.utils.DatabaseCipher;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Component
+@AllArgsConstructor
 public class TransactionMapper {
+
+	private final DatabaseCipher cipher;
 
 	public Transaction toEntity(PaymentRequest paymentRequest) {
 		log.info("TransactionMapper - toEntity: paymentRequestId=" + paymentRequest.getId());
@@ -21,7 +26,7 @@ public class TransactionMapper {
 		model.setMerchantOrderId(paymentRequest.getMerchantOrderId());
 		model.setMerchantTimestamp(paymentRequest.getMerchantTimestamp());
 
-		return model;
+		return cipher.encrypt(model);
 	}
 
 }

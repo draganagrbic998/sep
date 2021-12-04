@@ -6,12 +6,17 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.dto.ClientDTO;
 import com.example.demo.model.Client;
+import com.example.demo.utils.DatabaseCipher;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Component
+@AllArgsConstructor
 public class ClientMapper {
+
+	private final DatabaseCipher cipher;
 
 	public Client toEntity(ClientDTO dto) {
 		log.info("PCCMapper - toEntity");
@@ -26,7 +31,7 @@ public class ClientMapper {
 		model.setReservedFunds(Double.valueOf(0));
 		model.setMerchantPassword(UUID.randomUUID().toString());
 
-		return model;
+		return cipher.encrypt(model);
 	}
 
 }
