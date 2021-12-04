@@ -1,12 +1,11 @@
 export interface Auth {
     email: string;
     password: string;
-    roles: Role[];
+    role: RoleAuth;
     token: string;
 }
 
-export enum Role {
-    ADMIN = 'admin',
-    SELLER = 'seller',
-    CUSTOMER = 'customer'
+export enum RoleAuth {
+    WS_ADMIN = 'ws-admin',
+    MERCHANT = 'merchant'
 }

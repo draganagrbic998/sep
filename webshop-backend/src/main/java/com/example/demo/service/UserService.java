@@ -45,6 +45,11 @@ public class UserService implements UserDetailsService {
 				.getPrincipal(), tokenUtils.generateToken(auth.getEmail()));
 	}
 
+	public User save(User user) {
+		user.setId(null);
+		return repo.save(user);
+	}
+
 	public User getLoggedInUser() {
 		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}

@@ -44,12 +44,12 @@ public class DatabaseCipher {
 	}
 
 	public User encrypt(User u) {
-		u.setMerchantApiKey(this.encrypt(u.getMerchantApiKey()));
+		u.setApiKey(this.encrypt(u.getApiKey()));
 		return u;
 	}
 
 	public User decrypt(User u) {
-		u.setMerchantApiKey(this.decrypt(u.getMerchantApiKey()));
+		u.setApiKey(this.decrypt(u.getApiKey()));
 		return u;
 	}
 

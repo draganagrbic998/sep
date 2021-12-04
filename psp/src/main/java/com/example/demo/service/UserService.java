@@ -81,20 +81,16 @@ public class UserService implements UserDetailsService {
 			user.setPassword(passwordEncoder.encode(user.getPassword()));
 		}
 
+		user = repo.save(user);
 		log.info("UserService - save: id=" + user.getId());
-		repo.save(user);
 
-		try {
-			if (user.getId() == null) {
+		if (!user.getRole().equals("psp-admin")) {
+			try {
 				restTemplate.exchange(user.getWebshop() + "/api/users", HttpMethod.POST, new HttpEntity<User>(user),
 						User.class);
-			} else {
-				restTemplate.exchange(user.getWebshop() + "/api/users/" + user.getId(), HttpMethod.PUT,
-						new HttpEntity<User>(user), User.class);
-
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 
 		return user;
