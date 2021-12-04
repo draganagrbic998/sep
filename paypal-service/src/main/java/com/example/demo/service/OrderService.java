@@ -18,6 +18,7 @@ import com.example.demo.model.Merchant;
 import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
 import com.example.demo.repo.OrderRepository;
+import com.example.demo.utils.DatabaseCipher;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.paypal.api.payments.Amount;
@@ -44,6 +45,9 @@ public class OrderService {
 	@Autowired
 	private MerchantService merchantService;
 
+	@Autowired
+	private DatabaseCipher cipher;
+
 	// Ovo ce biti metnuto u bazu u jednom trenutku
 	// Svaki merchant ce ima svoje. Ovo nabavimo za testiranje na paypal-ov sajt.
 	String clientId = "ASbalrTsNQwyeFRT6r47HW23NQwDpF9V_4IRJIEkhWGmgI2uZ5L7lYgrspWWgWvEYqd8GT1SmF4hcRd4";
@@ -65,7 +69,7 @@ public class OrderService {
 	public Order createPayment(Order order) {
 		log.info("OrderService - createPayment: orderId=" + order.getId());
 
-		Merchant merchant = merchantService.findOneByApiKey(order.getMerchantApiKey());
+		Merchant merchant = cipher.decrypt(merchantService.findOneByApiKey(order.getMerchantApiKey()));
 
 		Amount amount = new Amount();
 		amount.setCurrency(order.getCurrency());
@@ -97,7 +101,7 @@ public class OrderService {
 			if (createdPayment != null) {
 				log.info("createPayment - payment created: payPalOrderId=" + createdPayment.getId());
 				order.setStatus(OrderStatus.CREATED);
-				order.setPayPalOrderId(createdPayment.getId());
+				order.setPayPalOrderId(cipher.encrypt(createdPayment.getId()));
 				order = repo.save(order);
 			}
 		} catch (PayPalRESTException e) {
@@ -111,8 +115,8 @@ public class OrderService {
 		log.info("OrderService - completePayment: paymentId=" + paymentId + " payedId=" + payerId);
 
 		log.info("completePayment - fetching order by payPalOrderId=" + paymentId);
-		Order order = repo.findByPayPalOrderId(paymentId).get();
-		Merchant merchant = merchantService.findOneByApiKey(order.getMerchantApiKey());
+		Order order = repo.findByPayPalOrderId(cipher.encrypt(paymentId)).get();
+		Merchant merchant = cipher.decrypt(merchantService.findOneByApiKey(order.getMerchantApiKey()));
 
 		Payment payment = new Payment();
 		payment.setId(paymentId);
@@ -168,12 +172,12 @@ public class OrderService {
 		log.info("OrderService - getOrderDetails: orderId=" + orderId);
 
 		Order order = repo.getById(orderId);
-		Merchant merchant = merchantService.findOneByApiKey(order.getMerchantApiKey());
+		Merchant merchant = cipher.decrypt(merchantService.findOneByApiKey(order.getMerchantApiKey()));
 
 		APIContext context = new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox");
 
 		log.info("getOrderDetails - get payment details using paypal api");
-		Payment payment = Payment.get(context, order.getPayPalOrderId());
+		Payment payment = Payment.get(context, cipher.decrypt(order.getPayPalOrderId()));
 
 		return payment.toJSON();
 	}
@@ -186,12 +190,13 @@ public class OrderService {
 		for (Order order : orders) {
 			log.info("Order: id=" + order.getId() + " checking status");
 
-			Merchant merchant = merchantService.findOneByApiKey(order.getMerchantApiKey());
+			Merchant merchant = cipher.decrypt(merchantService.findOneByApiKey(order.getMerchantApiKey()));
 
 			APIContext context = new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox");
 
 			try {
-				String apiUrl = "https://api.sandbox.paypal.com/v2/checkout/orders/" + order.getPayPalOrderId();
+				String apiUrl = "https://api.sandbox.paypal.com/v2/checkout/orders/"
+						+ cipher.decrypt(order.getPayPalOrderId());
 				HttpHeaders headers = new HttpHeaders();
 				headers.setContentType(MediaType.APPLICATION_JSON);
 				headers.set("Authorization", "Bearer " + context.fetchAccessToken());

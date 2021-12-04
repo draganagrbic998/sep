@@ -7,12 +7,17 @@ import org.springframework.stereotype.Component;
 import com.example.demo.dto.OrderCreatedDTO;
 import com.example.demo.dto.OrderDTO;
 import com.example.demo.model.Order;
+import com.example.demo.utils.DatabaseCipher;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Component
+@AllArgsConstructor
 public class OrderMapper {
+
+	private final DatabaseCipher databaseCipher;
 
 	public Order toEntity(OrderDTO dto) {
 		log.info("OrderMapper - toEntity");
@@ -26,7 +31,7 @@ public class OrderMapper {
 		model.setExecuted(false);
 		model.setCreatedTimestamp(LocalDateTime.now());
 
-		return model;
+		return this.databaseCipher.encrypt(model);
 	}
 
 	public OrderCreatedDTO toDTO(Order model) {
