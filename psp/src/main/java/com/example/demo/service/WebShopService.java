@@ -1,10 +1,13 @@
 package com.example.demo.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.demo.example.exception.NotFoundException;
+import com.example.demo.model.PaymentMethod;
 import com.example.demo.model.WebShop;
 import com.example.demo.repo.WebShopRepository;
 
@@ -39,7 +42,14 @@ public class WebShopService {
 
 	@Transactional
 	public void delete(Long id) {
-		log.info("WebShopService - remove: id=" + id);
+		log.info("WebShopService - delete: id=" + id);
+		Optional<WebShop> webshop = repo.findById(id);
+
+		if (!webshop.isPresent()) {
+			log.error("WebShop: id=" + id + " not found.");
+			throw new NotFoundException(id.toString(), PaymentMethod.class.getSimpleName());
+		}
+
 		repo.deleteById(id);
 	}
 

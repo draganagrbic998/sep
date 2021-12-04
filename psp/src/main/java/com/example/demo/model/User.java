@@ -34,11 +34,12 @@ public class User implements UserDetails {
 	private Long id;
 
 	@NotBlank
+	@Column
 	private String role;
 
-	@Column(unique = true)
 	@NotBlank
 	@Email
+	@Column(unique = true)
 	private String email;
 
 	@Column

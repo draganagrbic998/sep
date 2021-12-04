@@ -20,8 +20,8 @@ import com.example.demo.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @AllArgsConstructor
+@Log4j2
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -45,7 +45,7 @@ public class UserController {
 		log.info("UserController - create");
 
 		if (dto.getId() != null) {
-			log.error("delete - dto id not null");
+			log.error("create - dto id not null");
 			return ResponseEntity.badRequest().build();
 		}
 		return ResponseEntity.ok(service.save(dto));
@@ -56,7 +56,7 @@ public class UserController {
 		log.info("UserController - update: id=" + id);
 
 		if (id == null || dto.getId() == null || id != dto.getId()) {
-			log.error("delete - id is invalid");
+			log.error("update - id is invalid");
 			return ResponseEntity.badRequest().build();
 		}
 		return ResponseEntity.ok(service.save(dto));

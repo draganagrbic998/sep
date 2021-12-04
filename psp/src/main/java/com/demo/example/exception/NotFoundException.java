@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class NotFoundException extends Exception {
+public class NotFoundException extends RuntimeException {
 	private static final long serialVersionUID = 1871256143128415320L;
 	private String id;
 	private String className;
