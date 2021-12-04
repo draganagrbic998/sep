@@ -28,6 +28,10 @@ export class ListComponent implements OnInit {
     return Object.keys(this.config.columnMappings).concat('Actions')
   }
 
+  create () {
+    this.router.navigate([`${this.config.editRoute}/new`])
+  }
+
   edit (item: StandardModel) {
     this.router.navigate([`${this.config.editRoute}/${item.id}`])
   }

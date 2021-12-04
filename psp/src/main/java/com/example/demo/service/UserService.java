@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import java.util.List;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -7,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.Auth;
 import com.example.demo.model.User;
@@ -40,6 +43,31 @@ public class UserService implements UserDetailsService {
 
 	public User getLoggedInUser() {
 		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	}
+
+	@Transactional(readOnly = true)
+	public List<User> read() {
+		log.info("UserService - read");
+		return repo.findAll();
+	}
+
+	@Transactional(readOnly = true)
+	public User readOne(Long id) {
+		log.info("UserService - readOne: id=" + id);
+		return repo.findById(id).get();
+	}
+
+	@Transactional
+	public User save(User user) {
+		user = repo.save(user);
+		log.info("UserService - save: id=" + user.getId());
+		return user;
+	}
+
+	@Transactional
+	public void delete(Long id) {
+		log.info("UserService - remove: id=" + id);
+		repo.deleteById(id);
 	}
 
 }

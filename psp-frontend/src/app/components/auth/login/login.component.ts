@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { Router } from '@angular/router'
-import { Auth, Role } from 'src/app/models/auth'
+import { Auth, RoleAuth } from 'src/app/models/auth'
 import { AuthService } from 'src/app/services/auth.service'
 import { StorageService } from 'src/app/services/storage.service'
 import { FormConfig, FormStyle } from 'src/app/utils/form'
@@ -54,7 +54,7 @@ export class LoginComponent implements OnInit {
       this.pending = false
       this.storageService.setAuth(res)
 
-      if (res.roles[0] === Role.PSP_ADMIN) {
+      if (res.roles[0] === RoleAuth.PSP_ADMIN) {
         this.router.navigate([Route.WEBSHOPS])
       } else {
         alert('AHA')

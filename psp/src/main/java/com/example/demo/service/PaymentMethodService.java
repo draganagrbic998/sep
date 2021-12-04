@@ -30,7 +30,7 @@ public class PaymentMethodService {
 		return paymentMethodRepository.findAll();
 	}
 
-	public PaymentMethod findById(Integer id) throws NotFoundException {
+	public PaymentMethod findById(Long id) throws NotFoundException {
 		log.info("PaymentMethodService - findById: id=" + id);
 		Optional<PaymentMethod> paymentMethod = paymentMethodRepository.findById(id);
 
@@ -43,12 +43,17 @@ public class PaymentMethodService {
 	}
 
 	public PaymentMethod save(PaymentMethod paymentMethod) {
+		List<String> available = getAllEurekaServices();
+		if (!available.contains(paymentMethod.getName())) {
+			throw new RuntimeException(); // za sad ovako
+		}
+
 		paymentMethod = paymentMethodRepository.save(paymentMethod);
 		log.info("PaymentMethodService - save: id=" + paymentMethod.getId());
 		return paymentMethod;
 	}
 
-	public void remove(Integer paymentMethodId) throws NotFoundException {
+	public void remove(Long paymentMethodId) throws NotFoundException {
 		log.info("PaymentMethodService - remove: id=" + paymentMethodId);
 		Optional<PaymentMethod> paymentMethod = paymentMethodRepository.findById(paymentMethodId);
 

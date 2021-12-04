@@ -19,21 +19,21 @@ export class ToolbarComponent {
     return this.router.url.includes(Route.LOGIN);
   }
 
-  get products() {
+  get webshops() {
     return this.router.url.includes(Route.WEBSHOPS);
   }
 
-  get cart() {
-    return this.router.url.includes(Route.CART);
+  get paymentMethods() {
+    return this.router.url.includes(Route.PAYMENT_METHODS);
   }
 
-  get orders() {
-    return this.router.url.includes(Route.ORDERS);
+  get users() {
+    return this.router.url.includes(Route.USERS);
   }
 
-  productsLink = Route.WEBSHOPS;
-  cartLink = Route.CART;
-  ordersLink = Route.ORDERS;
+  webshopsLink = Route.WEBSHOPS;
+  paymentMethodsLink = Route.PAYMENT_METHODS;
+  usersLink = Route.USERS;
 
   logout() {
     this.storageService.removeAuth();

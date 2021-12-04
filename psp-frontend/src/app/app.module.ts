@@ -16,6 +16,10 @@ import { DeleteConfirmationComponent } from './components/utils/delete-confirmat
 import { WebshopListComponent } from './components/webshop/webshop-list/webshop-list.component';
 import { ListComponent } from './components/utils/list/list.component';
 import { WebshopFormComponent } from './components/webshop/webshop-form/webshop-form.component';
+import { PaymentMethodListComponent } from './components/payment-method/payment-method-list/payment-method-list.component';
+import { PaymentMethodFormComponent } from './components/payment-method/payment-method-form/payment-method-form.component';
+import { UserFormComponent } from './components/user/user-form/user-form.component';
+import { UserListComponent } from './components/user/user-list/user-list.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +31,11 @@ import { WebshopFormComponent } from './components/webshop/webshop-form/webshop-
     DeleteConfirmationComponent,
     WebshopListComponent,
     ListComponent,
-    WebshopFormComponent
+    WebshopFormComponent,
+    PaymentMethodListComponent,
+    PaymentMethodFormComponent,
+    UserFormComponent,
+    UserListComponent
   ],
   imports: [
     BrowserModule,

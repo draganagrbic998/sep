@@ -1,4 +1,12 @@
-<div>
+
+<div class="table">
+    <div class="create">
+        <span></span>
+        <button mat-raised-button color="primary" (click)="create()">
+            <mat-icon>add_circle_outline</mat-icon>Add
+        </button>
+    </div>
+    
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
         <ng-container *ngFor="let column of columns" [matColumnDef]="column">

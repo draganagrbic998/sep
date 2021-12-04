@@ -1,7 +1,15 @@
-div {
+.table {
   padding: 5em;
 }
 
-table{
-    width: 100%;
+table {
+  width: 100%;
+}
+
+.create {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1em;
 }

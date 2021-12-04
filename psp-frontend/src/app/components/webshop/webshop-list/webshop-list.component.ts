@@ -4,8 +4,7 @@ import { Route } from 'src/app/utils/route'
 
 @Component({
   selector: 'app-webshop-list',
-  templateUrl: './webshop-list.component.html',
-  styleUrls: ['./webshop-list.component.scss']
+  template: `<app-list [config]="this"></app-list>`
 })
 export class WebshopListComponent {
   constructor (
