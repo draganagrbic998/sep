@@ -15,6 +15,7 @@ import { ToolbarComponent } from './components/utils/toolbar/toolbar.component';
 import { DeleteConfirmationComponent } from './components/utils/delete-confirmation/delete-confirmation.component';
 import { WebshopListComponent } from './components/webshop/webshop-list/webshop-list.component';
 import { ListComponent } from './components/utils/list/list.component';
+import { WebshopFormComponent } from './components/webshop/webshop-form/webshop-form.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { ListComponent } from './components/utils/list/list.component';
     ToolbarComponent,
     DeleteConfirmationComponent,
     WebshopListComponent,
-    ListComponent
+    ListComponent,
+    WebshopFormComponent
   ],
   imports: [
     BrowserModule,

@@ -1,6 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core'
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
 import { MatTableDataSource } from '@angular/material/table'
+import { Router } from '@angular/router'
 import { StandardModel } from 'src/app/models/standard-model'
+import { StandardRestService } from 'src/app/services/standard-rest.service'
+import { DIALOG_CONFIG } from 'src/app/utils/popup'
+import { DeleteConfirmationComponent } from '../delete-confirmation/delete-confirmation.component'
 
 @Component({
   selector: 'app-list',
@@ -8,23 +13,45 @@ import { StandardModel } from 'src/app/models/standard-model'
   styleUrls: ['./list.component.scss']
 })
 export class ListComponent implements OnInit {
-  constructor () {}
+  constructor (private dialog: MatDialog, private router: Router) {}
 
   dataSource: MatTableDataSource<StandardModel>
 
   @Input() config: {
-    data: StandardModel[]
     columnMappings: { [key: string]: string }
     hideCrudButtons?: boolean
-    edit: (item: StandardModel) => void
-    delete: (item: StandardModel) => void
+    editRoute: string
+    service: StandardRestService<StandardModel>
   }
 
   get columns () {
     return Object.keys(this.config.columnMappings).concat('Actions')
   }
 
+  edit (item: StandardModel) {
+    this.router.navigate([`${this.config.editRoute}/${item.id}`])
+  }
+
+  async delete (item: StandardModel) {
+    const options: MatDialogConfig = {
+      ...DIALOG_CONFIG,
+      ...{ data: () => this.config.service.delete(item.id) }
+    }
+    const res = await this.dialog
+      .open(DeleteConfirmationComponent, options)
+      .afterClosed()
+      .toPromise()
+    if (res) {
+      this.readData()
+    }
+  }
+
   ngOnInit () {
-    this.dataSource = new MatTableDataSource(this.config.data)
+    this.readData()
+  }
+
+  private async readData () {
+    const data = await this.config.service.read().toPromise()
+    this.dataSource = new MatTableDataSource(data)
   }
 }

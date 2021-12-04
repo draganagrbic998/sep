@@ -3,6 +3,7 @@ package com.example.demo.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.model.WebShop;
 import com.example.demo.repo.WebShopRepository;
@@ -17,17 +18,26 @@ public class WebShopService {
 
 	private final WebShopRepository repo;
 
+	@Transactional(readOnly = true)
 	public List<WebShop> read() {
 		log.info("WebShopService - read");
 		return repo.findAll();
 	}
 
+	@Transactional(readOnly = true)
+	public WebShop readOne(Long id) {
+		log.info("WebShopService - readOne: id=" + id);
+		return repo.findById(id).get();
+	}
+
+	@Transactional
 	public WebShop save(WebShop webShop) {
 		webShop = repo.save(webShop);
 		log.info("WebShopService - save: id=" + webShop.getId());
 		return webShop;
 	}
 
+	@Transactional
 	public void delete(Long id) {
 		log.info("WebShopService - remove: id=" + id);
 		repo.deleteById(id);

@@ -1,7 +1,7 @@
 export enum Route {
     LOGIN = 'login',
     WEBSHOPS = 'webshops',
-    PRODUCT_FORM = 'product_form',
+    WEBSHOP_FORM = 'webshop_form',
     CART = 'cart',
     ORDERS = 'orders'
 }

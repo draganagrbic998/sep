@@ -8,10 +8,10 @@
                 <span *ngIf="column !== 'Actions'">{{element[column]}}</span>
 
                 <span *ngIf="column === 'Actions'">
-                    <button mat-icon-button color="primary" (click)="config.edit(element)">
+                    <button mat-icon-button color="primary" (click)="edit(element)">
                         <mat-icon>edit</mat-icon>
                     </button>
-                    <button mat-icon-button color="warn" (click)="config.delete(element)">
+                    <button mat-icon-button color="warn" (click)="delete(element)">
                         <mat-icon>delete</mat-icon>
                     </button>
                 </span>

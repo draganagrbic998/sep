@@ -34,6 +34,12 @@ public class WebShopController {
 		return ResponseEntity.ok(service.read());
 	}
 
+	@GetMapping("/{id}")
+	public ResponseEntity<WebShop> readOne(@PathVariable Long id) {
+		log.info("WebShopController - readOne: id=" + id);
+		return ResponseEntity.ok(service.readOne(id));
+	}
+
 	@PostMapping
 	public ResponseEntity<WebShop> create(@Valid @RequestBody WebShop dto) {
 		log.info("WebShopController - create");

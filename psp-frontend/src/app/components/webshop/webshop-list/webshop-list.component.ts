@@ -1,35 +1,26 @@
-import { Component, OnInit } from '@angular/core'
-import { WebShop } from 'src/app/models/webshop'
+import { Component } from '@angular/core'
 import { WebshopService } from 'src/app/services/webshop.service'
+import { Route } from 'src/app/utils/route'
 
 @Component({
   selector: 'app-webshop-list',
   templateUrl: './webshop-list.component.html',
   styleUrls: ['./webshop-list.component.scss']
 })
-export class WebshopListComponent implements OnInit {
-  constructor (private webshopService: WebshopService) {}
+export class WebshopListComponent {
+  constructor (
+    private webshopService: WebshopService
+  ) {}
 
-  data: WebShop[]
+  get service () {
+    return this.webshopService
+  }
+
+  editRoute = Route.WEBSHOP_FORM
 
   columnMappings: { [key: string]: string } = {
     name: 'Shop Name',
     url: 'Shop Site'
   }
 
-  edit(webshop: WebShop){
-    alert('EDIT')
-  }
-
-  delete(webshop: WebShop){
-    alert('DELETE')
-  }
-
-  ngOnInit () {
-    this.readWebshops()
-  }
-
-  private async readWebshops () {
-    this.data = await this.webshopService.read().toPromise()
-  }
 }
