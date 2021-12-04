@@ -19,8 +19,10 @@ export class ListComponent implements OnInit {
 
   @Input() config: {
     columnMappings: { [key: string]: string }
-    hideCrudButtons?: boolean
-    editRoute: string
+    hideCreate?: boolean
+    hideEdit?: boolean
+    hideDelete?: boolean
+    editRoute?: string
     service: StandardRestService<StandardModel>
   }
 

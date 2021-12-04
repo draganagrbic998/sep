@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,6 +86,16 @@ public class PaymentMethodService {
 	private List<String> getAllEurekaServices() {
 		log.info("PaymentMethodService - getAllEurekaServices");
 		List<String> services = discoveryClient.getServices();
+		for (String temp : services) {
+			List<ServiceInstance> list = discoveryClient.getInstances(temp);
+			for (ServiceInstance si : list) {
+				System.out.println(temp);
+				System.out.println(si.getUri());
+				System.out.println(si.getHost());
+				System.out.println(si.getPort());
+				System.out.println("=====================");
+			}
+		}
 		services.remove("psp");
 		return services;
 	}

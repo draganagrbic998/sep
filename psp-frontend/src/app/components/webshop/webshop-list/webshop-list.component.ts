@@ -1,6 +1,5 @@
 import { Component } from '@angular/core'
 import { WebshopService } from 'src/app/services/webshop.service'
-import { Route } from 'src/app/utils/route'
 
 @Component({
   selector: 'app-webshop-list',
@@ -8,14 +7,12 @@ import { Route } from 'src/app/utils/route'
 })
 export class WebshopListComponent {
   constructor (
-    private webshopService: WebshopService
+    public service: WebshopService
   ) {}
 
-  get service () {
-    return this.webshopService
-  }
-
-  editRoute = Route.WEBSHOP_FORM
+  hideCreate = true;
+  hideEdit = true;
+  hideDelete = true;
 
   columnMappings: { [key: string]: string } = {
     name: 'Shop Name',

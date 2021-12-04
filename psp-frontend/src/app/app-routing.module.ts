@@ -5,7 +5,6 @@ import { PaymentMethodFormComponent } from './components/payment-method/payment-
 import { PaymentMethodListComponent } from './components/payment-method/payment-method-list/payment-method-list.component'
 import { UserFormComponent } from './components/user/user-form/user-form.component'
 import { UserListComponent } from './components/user/user-list/user-list.component'
-import { WebshopFormComponent } from './components/webshop/webshop-form/webshop-form.component'
 import { WebshopListComponent } from './components/webshop/webshop-list/webshop-list.component'
 import { Route } from './utils/route'
 
@@ -17,10 +16,6 @@ const routes: Routes = [
   {
     path: Route.WEBSHOPS,
     component: WebshopListComponent
-  },
-  {
-    path: `${Route.WEBSHOP_FORM}/:id`,
-    component: WebshopFormComponent
   },
   {
     path: Route.PAYMENT_METHODS,

@@ -1,6 +1,6 @@
 
 <div class="table">
-    <div class="create">
+    <div *ngIf="!config.hideCreate" class="create">
         <span></span>
         <button mat-raised-button color="primary" (click)="create()">
             <mat-icon>add_circle_outline</mat-icon>Add
@@ -16,10 +16,10 @@
                 <span *ngIf="column !== 'Actions'">{{element[column]}}</span>
 
                 <span *ngIf="column === 'Actions'">
-                    <button mat-icon-button color="primary" (click)="edit(element)">
+                    <button *ngIf="!config.hideEdit" mat-icon-button color="primary" (click)="edit(element)">
                         <mat-icon>edit</mat-icon>
                     </button>
-                    <button mat-icon-button color="warn" (click)="delete(element)">
+                    <button *ngIf="!config.hideDelete" mat-icon-button color="warn" (click)="delete(element)">
                         <mat-icon>delete</mat-icon>
                     </button>
                 </span>
