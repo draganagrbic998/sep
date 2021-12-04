@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,9 +26,9 @@ import com.example.demo.utils.DatabaseCipher;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
-@Service
 @AllArgsConstructor
+@Service
+@Log4j2
 public class UserService implements UserDetailsService {
 
 	private final UserRepository repo;
@@ -83,16 +81,6 @@ public class UserService implements UserDetailsService {
 
 		user = repo.save(user);
 		log.info("UserService - save: id=" + user.getId());
-
-		if (!user.getRole().equals("psp-admin")) {
-			try {
-				restTemplate.exchange(user.getWebshop() + "/api/users", HttpMethod.POST, new HttpEntity<User>(user),
-						User.class);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
 		return user;
 	}
 

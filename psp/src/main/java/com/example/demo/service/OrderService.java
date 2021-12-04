@@ -19,9 +19,9 @@ import com.example.demo.repo.OrderRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
-@Service
 @AllArgsConstructor
+@Service
+@Log4j2
 public class OrderService {
 
 	private final OrderRepository repo;
@@ -73,7 +73,7 @@ public class OrderService {
 					this.save(order);
 
 					OrderStatusUpdateDTO orderStatusUpdateDTO = new OrderStatusUpdateDTO();
-					orderStatusUpdateDTO.setId(order.getOrderIdWebshop());
+					orderStatusUpdateDTO.setId(order.getWebshopId());
 					orderStatusUpdateDTO.setStatus("FAILED");
 
 					log.info("checkOrders - notifying WebShop @" + order.getCallbackUrl());

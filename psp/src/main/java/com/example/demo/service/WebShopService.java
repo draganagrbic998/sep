@@ -11,9 +11,9 @@ import com.example.demo.model.WebShop;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
-@Service
 @AllArgsConstructor
+@Service
+@Log4j2
 public class WebShopService {
 
 	private final DiscoveryClient discoveryClient;

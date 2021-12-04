@@ -57,7 +57,7 @@ export class LoginComponent implements OnInit {
       if (res.role === RoleAuth.PSP_ADMIN) {
         this.router.navigate([Route.WEBSHOPS])
       } else {
-        alert('AHA')
+        throw new Error()
       }
     } catch {
       this.pending = false

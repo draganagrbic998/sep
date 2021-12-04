@@ -34,13 +34,13 @@ public class ViewController {
 		List<PaymentMethod> paymentMethods = paymentMethodService.getPaymentMethods(merchantApiKey);
 
 		User merchant = userService.findByApiKey(merchantApiKey.toString());
-		Order o = orderService.readOne(orderId);
+		Order order = orderService.readOne(orderId);
 
-		model.addAttribute("orderIdPSP", o.getId());
-		model.addAttribute("orderIdWebShop", o.getOrderIdWebshop());
-		model.addAttribute("orderPrice", o.getPrice());
-		model.addAttribute("orderCurrency", o.getCurrency());
-		model.addAttribute("callbackUrl", o.getCallbackUrl());
+		model.addAttribute("orderIdPSP", order.getId());
+		model.addAttribute("orderIdWebShop", order.getWebshopId());
+		model.addAttribute("orderPrice", order.getPrice());
+		model.addAttribute("orderCurrency", order.getCurrency());
+		model.addAttribute("callbackUrl", order.getCallbackUrl());
 
 		model.addAttribute("paymentMethods", paymentMethods);
 		model.addAttribute("merchantApiKey", cipher.decrypt(merchant.getApiKey()));

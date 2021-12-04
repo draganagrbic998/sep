@@ -15,9 +15,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @AllArgsConstructor
-@Log4j2
 @RestController
 @RequestMapping("/auth")
+@Log4j2
 public class AuthController {
 
 	private final UserService service;

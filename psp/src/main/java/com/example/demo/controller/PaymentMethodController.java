@@ -25,12 +25,6 @@ public class PaymentMethodController {
 
 	private final PaymentMethodService service;
 
-	@GetMapping("/to_add")
-	public ResponseEntity<List<String>> toAdd() {
-		log.info("PaymentMethodController - toAdd");
-		return ResponseEntity.ok(service.toAdd());
-	}
-
 	@GetMapping
 	public ResponseEntity<List<PaymentMethod>> read() {
 		log.info("PaymentMethodController - read");
@@ -58,6 +52,12 @@ public class PaymentMethodController {
 		}
 		service.delete(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping("/to_add")
+	public ResponseEntity<List<String>> toAdd() {
+		log.info("PaymentMethodController - toAdd");
+		return ResponseEntity.ok(service.toAdd());
 	}
 
 }

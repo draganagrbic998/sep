@@ -11,9 +11,9 @@ import com.example.demo.repo.RoleRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
-@Service
 @AllArgsConstructor
+@Service
+@Log4j2
 public class RoleService {
 
 	private final RoleRepository repo;

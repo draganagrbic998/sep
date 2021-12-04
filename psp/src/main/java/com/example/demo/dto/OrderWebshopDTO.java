@@ -4,12 +4,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
 public class OrderWebshopDTO {
 
-	private Integer id;
+	private Long id;
 	private Double price;
 	private String currency;
 	private String callbackUrl;

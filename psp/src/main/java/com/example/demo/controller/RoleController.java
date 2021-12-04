@@ -14,9 +14,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @AllArgsConstructor
-@Log4j2
 @RestController
 @RequestMapping("/roles")
+@Log4j2
 public class RoleController {
 
 	private final RoleService service;

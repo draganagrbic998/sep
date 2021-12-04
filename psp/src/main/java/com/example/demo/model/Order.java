@@ -26,7 +26,11 @@ public class Order {
 
 	@NotNull
 	@Column
-	private Integer orderIdWebshop;
+	private Long webshopId;
+
+	@NotNull
+	@Column
+	private OrderStatus status;
 
 	@NotNull
 	@Column
@@ -35,10 +39,6 @@ public class Order {
 	@NotBlank
 	@Column
 	private String currency;
-
-	@NotNull
-	@Column
-	private OrderStatus status;
 
 	@Column
 	private String callbackUrl;

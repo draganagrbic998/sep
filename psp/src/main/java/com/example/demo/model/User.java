@@ -49,9 +49,6 @@ public class User implements UserDetails {
 	@Column(unique = true)
 	private String apiKey;
 
-	@Column
-	private String webshop;
-
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<PaymentMethod> methods = new HashSet<PaymentMethod>();
 
