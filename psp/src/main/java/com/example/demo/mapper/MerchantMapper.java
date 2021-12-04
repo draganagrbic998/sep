@@ -19,7 +19,6 @@ public class MerchantMapper {
 
 		model.setName(dto.getName());
 		model.setApiKey(UUID.randomUUID().toString());
-		model.setActive(true);
 
 		return model;
 	}

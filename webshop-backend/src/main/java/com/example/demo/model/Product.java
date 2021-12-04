@@ -6,7 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -50,7 +50,7 @@ public class Product {
 	@NotBlank
 	private String imageLocation;
 
-	@OneToOne
+	@ManyToOne	//imala sam pre OneToOne
 	@JoinColumn(name = "user_id")
 	@NotNull
 	private User user;

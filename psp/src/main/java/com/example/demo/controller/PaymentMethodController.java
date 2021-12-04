@@ -37,9 +37,10 @@ public class PaymentMethodController {
 	}
 
 	@DeleteMapping("/{paymentMethodId}")
-	public ResponseEntity<?> remove(@PathVariable Integer paymentMethodId) throws NotFoundException {
+	public ResponseEntity<Void> remove(@PathVariable Integer paymentMethodId) throws NotFoundException {
 		log.info("PaymentMethodController - remove: id=" + paymentMethodId);
-		return new ResponseEntity<>(paymentMethodService.remove(paymentMethodId), HttpStatus.NO_CONTENT);
+		paymentMethodService.remove(paymentMethodId);
+		return ResponseEntity.noContent().build();
 	}
 
 }

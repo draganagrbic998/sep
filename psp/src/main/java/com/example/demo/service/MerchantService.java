@@ -42,7 +42,7 @@ public class MerchantService {
 		return merchant;
 	}
 
-	public Merchant remove(Integer merchantId) throws NotFoundException {
+	public void remove(Integer merchantId) throws NotFoundException {
 		log.info("MerchantService - remove: id=" + merchantId);
 		Optional<Merchant> merchant = merchantRepository.findById(merchantId);
 
@@ -51,8 +51,7 @@ public class MerchantService {
 			throw new NotFoundException(merchantId.toString(), Merchant.class.getSimpleName());
 		}
 
-		merchant.get().setActive(false);
-		return merchantRepository.save(merchant.get());
+		merchantRepository.deleteById(merchantId);
 	}
 
 	public Merchant findByApiKey(String apiKey) throws NotFoundException {

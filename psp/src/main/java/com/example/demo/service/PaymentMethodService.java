@@ -52,7 +52,7 @@ public class PaymentMethodService {
 		return paymentMethod;
 	}
 
-	public PaymentMethod remove(Integer paymentMethodId) throws NotFoundException {
+	public void remove(Integer paymentMethodId) throws NotFoundException {
 		log.info("PaymentMethodService - remove: id=" + paymentMethodId);
 		Optional<PaymentMethod> paymentMethod = paymentMethodRepository.findById(paymentMethodId);
 
@@ -61,8 +61,7 @@ public class PaymentMethodService {
 			throw new NotFoundException(paymentMethodId.toString(), PaymentMethod.class.getSimpleName());
 		}
 
-		paymentMethod.get().setActive(false);
-		return this.save(paymentMethod.get());
+		paymentMethodRepository.deleteById(paymentMethodId);
 	}
 
 	public List<PaymentMethod> getPaymentMethods(UUID merchantApiKey) throws NotFoundException {

@@ -16,7 +16,6 @@ public class PaymentMethodMapper {
 		PaymentMethod model = new PaymentMethod();
 
 		model.setName(dto.getName());
-		model.setActive(true);
 
 		return model;
 	}

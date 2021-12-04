@@ -11,39 +11,32 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Where;
-
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@Where(clause = "active=true")
 @Table(name = "merchant")
 public class Merchant {
 
-	@EqualsAndHashCode.Include
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	protected Integer id;
 
-	@Column(nullable = false)
+	@NotNull
+	@Column
 	private String name;
 
-	@Column(nullable = false, unique = true)
+	@NotNull
+	@Column(unique = true)
 	private String apiKey;
 
 	@ManyToMany(fetch = FetchType.EAGER)
-	private Set<PaymentMethod> methods;
+	private Set<PaymentMethod> methods = new HashSet<PaymentMethod>();
 
-	@Column(nullable = false)
-	private Boolean active;
-
-	public Merchant() {
-		this.methods = new HashSet<PaymentMethod>();
-	}
 }

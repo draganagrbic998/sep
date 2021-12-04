@@ -37,9 +37,10 @@ public class MerchantController {
 	}
 
 	@DeleteMapping("/{merchantId}")
-	public ResponseEntity<?> remove(@PathVariable Integer merchantId) throws NotFoundException {
+	public ResponseEntity<Void> remove(@PathVariable Integer merchantId) throws NotFoundException {
 		log.info("MerchantController - remove: id=" + merchantId);
-		return new ResponseEntity<>(merchantService.remove(merchantId), HttpStatus.NO_CONTENT);
+		merchantService.remove(merchantId);
+		return ResponseEntity.noContent().build();		
 	}
 
 }
