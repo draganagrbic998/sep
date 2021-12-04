@@ -46,6 +46,9 @@ public class User implements UserDetails {
 	@NotBlank
 	private String password;
 
+	@Column(unique = true)
+	private String merchantApiKey;
+
 	@Override
 	public Set<Role> getAuthorities() {
 		return roles;

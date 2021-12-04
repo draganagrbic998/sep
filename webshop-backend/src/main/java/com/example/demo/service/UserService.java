@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.Auth;
 import com.example.demo.model.User;
@@ -24,6 +25,12 @@ public class UserService implements UserDetailsService {
 	private final UserRepository repo;
 	private final AuthenticationManager authManager;
 	private final TokenUtils tokenUtils;
+
+	@Transactional(readOnly = true)
+	public User readOne(Long id) {
+		log.info("UserService - readOne: id=" + id);
+		return repo.findById(id).get();
+	}
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

@@ -10,6 +10,8 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
+import com.example.demo.model.User;
+
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -41,16 +43,14 @@ public class DatabaseCipher {
 		}
 	}
 
-//	public Order encrypt(Order o) {
-//		o.setPayPalOrderId(this.encrypt(o.getPayPalOrderId()));
-//		o.setMerchantApiKey(this.encrypt(o.getMerchantApiKey()));
-//		return o;
-//	}
-//
-//	public Order decrypt(Order o) {
-//		o.setPayPalOrderId(this.decrypt(o.getPayPalOrderId()));
-//		o.setMerchantApiKey(this.decrypt(o.getMerchantApiKey()));
-//		return o;
-//	}
+	public User encrypt(User u) {
+		u.setMerchantApiKey(this.encrypt(u.getMerchantApiKey()));
+		return u;
+	}
+
+	public User decrypt(User u) {
+		u.setMerchantApiKey(this.decrypt(u.getMerchantApiKey()));
+		return u;
+	}
 
 }
