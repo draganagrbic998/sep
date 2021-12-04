@@ -9,8 +9,8 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 
 import com.demo.example.exception.NotFoundException;
-import com.example.demo.model.Merchant;
 import com.example.demo.model.PaymentMethod;
+import com.example.demo.model.User;
 import com.example.demo.repo.PaymentMethodRepository;
 
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ import lombok.extern.log4j.Log4j2;
 @AllArgsConstructor
 public class PaymentMethodService {
 
-	private final MerchantService merchantService;
+	private final UserService userService;
 	private final PaymentMethodRepository paymentMethodRepository;
 	private final DiscoveryClient discoveryClient;
 
@@ -45,6 +45,7 @@ public class PaymentMethodService {
 	public PaymentMethod save(PaymentMethod paymentMethod) {
 		List<String> available = getAllEurekaServices();
 		if (!available.contains(paymentMethod.getName())) {
+
 			throw new RuntimeException(); // za sad ovako
 		}
 
@@ -69,7 +70,7 @@ public class PaymentMethodService {
 		log.info("PaymentMethodService - getPaymentMethods: merchantApiKey=" + merchantApiKey.toString());
 		List<PaymentMethod> ret = new ArrayList<>();
 
-		Merchant merchant = merchantService.findByApiKey(merchantApiKey.toString());
+		User merchant = userService.findByApiKey(merchantApiKey.toString());
 
 		for (PaymentMethod pm : merchant.getMethods())
 			ret.add(pm);
@@ -82,6 +83,10 @@ public class PaymentMethodService {
 	public List<String> getAllEurekaServices() {
 		log.info("PaymentMethodService - getAllEurekaServices");
 		List<String> services = discoveryClient.getServices();
+		System.out.println("LENGTH: " + services.size());
+		for (String s : services) {
+			System.out.println(s);
+		}
 		services.remove("psp");
 		return services;
 	}

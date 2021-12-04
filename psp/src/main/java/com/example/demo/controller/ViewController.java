@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.demo.example.exception.NotFoundException;
-import com.example.demo.model.Merchant;
 import com.example.demo.model.Order;
 import com.example.demo.model.PaymentMethod;
-import com.example.demo.service.MerchantService;
+import com.example.demo.model.User;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.PaymentMethodService;
+import com.example.demo.service.UserService;
 
 import lombok.AllArgsConstructor;
 
@@ -24,8 +24,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ViewController {
 
+	private final UserService userService;
 	private final PaymentMethodService paymentMethodService;
-	private final MerchantService merchantService;
 	private final OrderService orderService;
 
 	@RequestMapping(value = "/selectPaymentMethod/{merchantApiKey}/{orderId}", method = RequestMethod.GET)
@@ -33,7 +33,7 @@ public class ViewController {
 			throws NotFoundException {
 		List<PaymentMethod> paymentMethods = paymentMethodService.getPaymentMethods(merchantApiKey);
 
-		Merchant merchant = merchantService.findByApiKey(merchantApiKey.toString());
+		User merchant = userService.findByApiKey(merchantApiKey.toString());
 		Order o = orderService.findById(orderId);
 
 		model.addAttribute("orderIdPSP", o.getId());

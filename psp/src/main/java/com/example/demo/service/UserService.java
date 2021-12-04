@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,6 +35,10 @@ public class UserService implements UserDetailsService {
 		return repo.findByEmail(email);
 	}
 
+	public User findByApiKey(String apiKey) {
+		return repo.findByApiKey(apiKey);
+	}
+
 	public Auth login(Auth auth) {
 		log.info("UserService - login: auth_email=" + auth.getEmail());
 		return new Auth((User) authManager
@@ -59,6 +64,10 @@ public class UserService implements UserDetailsService {
 
 	@Transactional
 	public User save(User user) {
+		if (user.getId() == null && user.getRole().equals("merchant")) {
+			user.setApiKey(UUID.randomUUID().toString());
+		}
+
 		user = repo.save(user);
 		log.info("UserService - save: id=" + user.getId());
 		return user;
