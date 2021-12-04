@@ -10,6 +10,9 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
+import com.example.demo.model.Merchant;
+import com.example.demo.model.Order;
+
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -41,22 +44,30 @@ public class DatabaseCipher {
 		}
 	}
 
-//	public Patient encrypt(Patient patient) {
-//		patient.setInsuredNumber(this.encrypt(patient.getInsuredNumber()));
-//		patient.setFirstName(this.encrypt(patient.getFirstName()));
-//		patient.setLastName(this.encrypt(patient.getLastName()));
-//		patient.setAddress(this.encrypt(patient.getAddress()));
-//		patient.setCity(this.encrypt(patient.getCity()));
-//		return patient;
-//	}
-//
-//	public Patient decrypt(Patient patient) {
-//		patient.setInsuredNumber(this.decrypt(patient.getInsuredNumber()));
-//		patient.setFirstName(this.decrypt(patient.getFirstName()));
-//		patient.setLastName(this.decrypt(patient.getLastName()));
-//		patient.setAddress(this.decrypt(patient.getAddress()));
-//		patient.setCity(this.decrypt(patient.getCity()));
-//		return patient;
-//	}
+	public Merchant encrypt(Merchant m) {
+		m.setClientId(this.encrypt(m.getClientId()));
+		m.setClientSecret(this.encrypt(m.getClientSecret()));
+		m.setMerchantApiKey(this.encrypt(m.getMerchantApiKey()));
+		return m;
+	}
+
+	public Merchant decrypt(Merchant m) {
+		m.setClientId(this.decrypt(m.getClientId()));
+		m.setClientSecret(this.decrypt(m.getClientSecret()));
+		m.setMerchantApiKey(this.decrypt(m.getMerchantApiKey()));
+		return m;
+	}
+
+	public Order encrypt(Order o) {
+		o.setPayPalOrderId(this.encrypt(o.getPayPalOrderId()));
+		o.setMerchantApiKey(this.encrypt(o.getMerchantApiKey()));
+		return o;
+	}
+
+	public Order decrypt(Order o) {
+		o.setPayPalOrderId(this.decrypt(o.getPayPalOrderId()));
+		o.setMerchantApiKey(this.decrypt(o.getMerchantApiKey()));
+		return o;
+	}
 
 }
