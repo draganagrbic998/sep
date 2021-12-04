@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
-import { map } from 'rxjs';
 import { PaymentMethodService } from 'src/app/services/payment-method.service';
 import { RoleService } from 'src/app/services/role.service';
 import { UserService } from 'src/app/services/user.service';
-import { WebshopService } from 'src/app/services/webshop.service';
 import { FormConfig, FormStyle } from 'src/app/utils/form';
 import { Route } from 'src/app/utils/route';
 
