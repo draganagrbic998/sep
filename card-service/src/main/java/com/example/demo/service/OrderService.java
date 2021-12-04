@@ -20,6 +20,7 @@ import com.example.demo.model.Merchant;
 import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
 import com.example.demo.repo.OrderRepository;
+import com.example.demo.utils.DatabaseCipher;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -38,6 +39,9 @@ public class OrderService {
 
 	@Autowired
 	private PaymentRequestMapper paymentRequestMapper;
+
+	@Autowired
+	private DatabaseCipher cipher;
 
 	public List<Order> findAll() {
 		log.info("OrderService - findAll");
@@ -65,7 +69,7 @@ public class OrderService {
 	public String pay(Integer orderId, String merchantApiKey) throws NotFoundException {
 		log.info("OrderService - pay: orderId=" + orderId + " merchantApiKey=" + merchantApiKey);
 		Order order = this.findById(orderId);
-		Merchant merchant = merchantService.findByMerchantApiKey(merchantApiKey);
+		Merchant merchant = merchantService.findByMerchantApiKey(cipher.encrypt(merchantApiKey));
 
 		PaymentRequestDTO dto = paymentRequestMapper.toDTO(merchant, order);
 
@@ -130,7 +134,8 @@ public class OrderService {
 		List<Order> orders = this.findAll();
 
 		for (Order order : orders) {
-			Merchant merchant = merchantService.findByMerchantApiKeyOptional(order.getMerchantApiKey()).get();
+			Merchant merchant = cipher
+					.decrypt(merchantService.findByMerchantApiKeyOptional(order.getMerchantApiKey()).get());
 
 			if (order.getOrderStatus() == OrderStatus.CREATED) {
 				if (order.getTicks() < 5) {
