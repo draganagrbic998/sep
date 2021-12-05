@@ -168,10 +168,10 @@
 						'yy' : $('#yy').val()
 					}),
 					success : function(res) {
-						alert('DONE');
+						window.location.href = res.body;
 					},
-					error : function(odgovor) {
-						alert(odgovor.responseText);
+					error : function(res) {
+						alert(res.responseText);
 					}
 				});
 			});

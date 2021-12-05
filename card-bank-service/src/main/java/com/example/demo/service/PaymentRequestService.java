@@ -139,6 +139,11 @@ public class PaymentRequestService {
 				return paymentRequest.getFailedUrl();
 			}
 
+			// Ako su klijent i prodavac ista osoba onda client i ovaj merchant budu isti
+			// objekat iako se zasebno uzimaju iz bazu
+			// gore imamo decrypt od klijenta i onda on ladno dekriptuje i merchanta ovde
+			client = cipher.encrypt(client);
+
 			String merchantId = paymentRequest.getMerchantId();
 			Client merchant = clientService.getClientByMerchantId(merchantId);
 
@@ -154,7 +159,7 @@ public class PaymentRequestService {
 					DateTimeFormatter.ofPattern("dd.MM.yyyy").format(LocalDate.now())).getValue().doubleValue();
 
 			client.setAvailableFunds(client.getAvailableFunds() - (paymentRequest.getAmount() * rate));
-			clientService.save(cipher.encrypt(client));
+			clientService.save(client);
 
 			merchant.setAvailableFunds(merchant.getAvailableFunds() + (paymentRequest.getAmount() * rate));
 			clientService.save(merchant);
@@ -165,7 +170,7 @@ public class PaymentRequestService {
 			PaymentRequestCompletedDTO paymentRequestCompletedDTO = new PaymentRequestCompletedDTO();
 
 			paymentRequestCompletedDTO.setId(paymentRequest.getMerchantOrderId());
-			paymentRequestCompletedDTO.setStatus("SUCCESSFUL");
+			paymentRequestCompletedDTO.setStatus("SUCCESS");
 
 			log.info("confirmPaymentRequest - notifying card-service @" + paymentRequest.getCallbackUrl());
 			restTemplate.exchange(paymentRequest.getCallbackUrl(), HttpMethod.POST,
@@ -209,7 +214,7 @@ public class PaymentRequestService {
 				PaymentRequestCompletedDTO paymentRequestCompletedDTO = new PaymentRequestCompletedDTO();
 
 				paymentRequestCompletedDTO.setId(paymentRequest.getMerchantOrderId());
-				paymentRequestCompletedDTO.setStatus("SUCCESSFUL");
+				paymentRequestCompletedDTO.setStatus("SUCCESS");
 
 				log.info("confirmPaymentRequest - notifying card-service @" + paymentRequest.getCallbackUrl());
 				restTemplate.exchange(paymentRequest.getCallbackUrl(), HttpMethod.POST,

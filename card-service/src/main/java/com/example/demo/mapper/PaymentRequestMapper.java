@@ -36,7 +36,7 @@ public class PaymentRequestMapper {
 		dto.setSuccessUrl(url + "/success_url");
 		dto.setFailedUrl(url + "/failed_url");
 		dto.setErrorUrl(url + "/error_url");
-		dto.setCallbackUrl("http://localhost:8762/card-service/card/complete");
+		dto.setCallbackUrl("http://localhost:8087/complete");
 
 		return dto;
 	}
