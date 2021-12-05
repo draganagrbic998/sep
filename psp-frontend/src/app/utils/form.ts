@@ -2,7 +2,7 @@ import { Observable } from 'rxjs'
 
 export interface FormConfig {
   [control: string]: {
-    type?: 'text' | 'password' | 'file' | 'select' | 'multi-select'
+    type?: 'text' | 'password' | 'select' | 'multi-select'
     validation?: 'none' | 'required' | 'price'
     options?: Observable<unknown[]>
     optionValue?: string
@@ -11,6 +11,7 @@ export interface FormConfig {
       field: string
       values: string[]
     }
+    hide?: boolean
   }
 }
 
