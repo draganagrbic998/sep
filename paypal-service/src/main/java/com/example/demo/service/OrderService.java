@@ -149,7 +149,7 @@ public class OrderService {
 			paymentCompletedDTO.setStatus("COMPLETED");
 
 			log.info("completePayment - notifying WebShop @" + order.getCallbackUrl());
-			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
+			restTemplate.exchange(order.getCallbackUrl() + "/" + order.getShopOrderId(), HttpMethod.PUT,
 					new HttpEntity<PaymentCompletedDTO>(paymentCompletedDTO), String.class);
 		} else {
 			log.error("completePayment - Error occured during payment execution");
@@ -159,7 +159,7 @@ public class OrderService {
 			paymentCompletedDTO.setStatus("FAILED");
 
 			log.info("completePayment - notifying WebShop @" + order.getCallbackUrl());
-			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
+			restTemplate.exchange(order.getCallbackUrl() + "/" + order.getShopOrderId(), HttpMethod.PUT,
 					new HttpEntity<PaymentCompletedDTO>(paymentCompletedDTO), String.class);
 		}
 
@@ -216,7 +216,7 @@ public class OrderService {
 					paymentCompletedDTO.setStatus("COMPLETED");
 
 					log.info("checkOrders - notifying WebShop @" + order.getCallbackUrl());
-					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
+					restTemplate.exchange(order.getCallbackUrl() + "/" + order.getShopOrderId(), HttpMethod.PUT,
 							new HttpEntity<PaymentCompletedDTO>(paymentCompletedDTO), String.class);
 				}
 
@@ -231,7 +231,7 @@ public class OrderService {
 				paymentCompletedDTO.setStatus("FAILED");
 
 				log.info("checkOrders - notifying WebShop @" + order.getCallbackUrl());
-				restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
+				restTemplate.exchange(order.getCallbackUrl() + "/" + order.getShopOrderId(), HttpMethod.PUT,
 						new HttpEntity<PaymentCompletedDTO>(paymentCompletedDTO), String.class);
 			}
 		}
