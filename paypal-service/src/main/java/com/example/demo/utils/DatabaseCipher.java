@@ -47,14 +47,14 @@ public class DatabaseCipher {
 	public Merchant encrypt(Merchant m) {
 		m.setClientId(this.encrypt(m.getClientId()));
 		m.setClientSecret(this.encrypt(m.getClientSecret()));
-		m.setMerchantApiKey(this.encrypt(m.getMerchantApiKey()));
+		// m.setMerchantApiKey(this.encrypt(m.getMerchantApiKey()));
 		return m;
 	}
 
 	public Merchant decrypt(Merchant m) {
 		m.setClientId(this.decrypt(m.getClientId()));
 		m.setClientSecret(this.decrypt(m.getClientSecret()));
-		m.setMerchantApiKey(this.decrypt(m.getMerchantApiKey()));
+		// m.setMerchantApiKey(this.decrypt(m.getMerchantApiKey()));
 		return m;
 	}
 

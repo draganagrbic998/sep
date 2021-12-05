@@ -97,8 +97,7 @@
 		<div class="col-lg-5 mx-auto">
 			<div class="bg-white rounded-lg shadow-sm p-5 container-card">
 				<div>
-					<form th:action="@{'http://localhost:8086/merchant}"
-						id="registration" role="form" method="POST">
+					<form>
 						<div class="input-group form-group">
 							<div class="input-group-prepend">
 								<span class="input-group-text"><i class="fas fa-cog icon"></i></span>
@@ -121,7 +120,7 @@
 							<input id="clientSecret" name="clientSecret" type="text"
 								class="form-control" placeholder="Paypal client secret">
 						</div>
-						<button type="submit"
+						<button type="submit" id="registration"
 							class="subscribe btn btn-boja btn-block shadow-sm"
 							style="margin: auto; max-width: 100px;">Register</button>
 					</form>
@@ -130,38 +129,27 @@
 		</div>
 	</div>
 	<script>
-		$(document).ready(function(){
-			$('#registration').submit(function (e) {
-				handleFormRegister(e, formId);
+	$(document).ready(function() {
+		$("#registration").click(function(e) {
+			e.preventDefault();
+			$.ajax({
+				type : 'POST',
+				url : 'http://localhost:8086/merchants',
+				contentType : "application/json",
+				data : JSON.stringify({
+					'merchantApiKey' : $('#merchantApiKey').val(),
+					'clientId' : $('#clientId').val(),
+					'clientSecret' : $('#clientSecret').val()
+				}),
+				success : function(res) {
+					alert('DONE');
+				},
+				error : function(odgovor) {
+					alert(odgovor.responseText);
+				}
 			});
 		});
-		
-		function handleFormRegister(e, formId) {
-			var form = $('#' + formId);
-			e.preventDefault();
-			
-			var input = $('#' + formId + ' :input');
-			var obj = {};
-			
-			for(var i = 0; i < input.length; i++){
-				if(input[i].name){
-					obj[input[i].name] = input[i].value;
-				}
-			}
-		
-			$.ajax({
-				type: form.attr('method'),
-				url: form.attr('action'),
-				contentType: "application/json",
-				data: JSON.stringify(obj),
-				success: function(res){
-					window.location.href = res;
-				},
-				error: function(res){
-					alert(res.responseText);
-				}
-			});
-		}
+	});
 	</script>
 </body>
 </html>
