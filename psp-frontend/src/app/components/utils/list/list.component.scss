@@ -6,6 +6,10 @@ table {
   width: 100%;
 }
 
+th, td{
+  width: 33%;
+}
+
 .create {
   display: flex;
   flex-direction: row;
