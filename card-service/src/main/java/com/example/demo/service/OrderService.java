@@ -65,10 +65,10 @@ public class OrderService {
 
 		PaymentRequestDTO dto = paymentRequestMapper.toDTO(merchant, order);
 
-		log.info("pay - create PaymentRequest in bank @" + cipher.decrypt(merchant.getBankUrl()));
+		log.info("pay - create PaymentRequest in bank @" + merchant.getBankUrl());
 		ResponseEntity<PaymentRequestResponseDTO> responseEntity = restTemplate.exchange(
-				cipher.decrypt(merchant.getBankUrl()) + "/payment-requests", HttpMethod.POST,
-				new HttpEntity<PaymentRequestDTO>(dto), PaymentRequestResponseDTO.class);
+				merchant.getBankUrl() + "/payment-requests", HttpMethod.POST, new HttpEntity<PaymentRequestDTO>(dto),
+				PaymentRequestResponseDTO.class);
 
 		this.save(order);
 
