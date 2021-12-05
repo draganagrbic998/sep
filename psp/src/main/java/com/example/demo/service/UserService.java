@@ -48,7 +48,7 @@ public class UserService implements UserDetailsService {
 
 	public User findByApiKey(String apiKey) {
 		log.info("UserService - findByApiKey: apiKey=" + apiKey);
-		return repo.findByApiKey(cipher.encrypt(apiKey));
+		return repo.findByApiKey(apiKey);
 	}
 
 	public Auth login(Auth auth) {

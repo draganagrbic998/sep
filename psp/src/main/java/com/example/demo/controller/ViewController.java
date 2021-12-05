@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.util.Base64;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -14,7 +15,6 @@ import com.example.demo.model.User;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.PaymentMethodService;
 import com.example.demo.service.UserService;
-import com.example.demo.utils.DatabaseCipher;
 
 import lombok.AllArgsConstructor;
 
@@ -26,11 +26,11 @@ public class ViewController {
 	private final UserService userService;
 	private final OrderService orderService;
 	private final PaymentMethodService paymentMethodService;
-	private final DatabaseCipher cipher;
 
 	@GetMapping("/selectPaymentMethod/{merchantApiKey}/{orderWebshopId}")
 	public String selectPaymentMethod(@PathVariable String merchantApiKey, @PathVariable Long orderWebshopId,
 			Model model) {
+		merchantApiKey = new String(Base64.getDecoder().decode(merchantApiKey));
 		List<PaymentMethod> paymentMethods = paymentMethodService.getPaymentMethods(merchantApiKey);
 		User merchant = userService.findByApiKey(merchantApiKey);
 		Order order = orderService.readOne(orderWebshopId);
@@ -42,7 +42,7 @@ public class ViewController {
 		model.addAttribute("callbackUrl", order.getCallbackUrl());
 
 		model.addAttribute("paymentMethods", paymentMethods);
-		model.addAttribute("merchantApiKey", cipher.decrypt(merchant.getApiKey()));
+		model.addAttribute("merchantApiKey", merchant.getApiKey());
 
 		return "selectPaymentMethod";
 	}

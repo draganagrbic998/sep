@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.util.Base64;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.model.CartItem;
 import com.example.demo.model.Order;
 import com.example.demo.service.CartService;
-import com.example.demo.utils.DatabaseCipher;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,7 +27,6 @@ import lombok.extern.log4j.Log4j2;
 public class CartController {
 
 	private final CartService service;
-	private final DatabaseCipher cipher;
 
 	@GetMapping
 	public ResponseEntity<List<CartItem>> read() {
@@ -69,7 +68,7 @@ public class CartController {
 		}
 
 		Order order = service.orderCart(productId);
-		order.getUser().setApiKey(cipher.decrypt(order.getUser().getApiKey()));
+		order.getUser().setApiKey(Base64.getEncoder().encodeToString(order.getUser().getApiKey().getBytes()));
 		return ResponseEntity.ok(order);
 	}
 
