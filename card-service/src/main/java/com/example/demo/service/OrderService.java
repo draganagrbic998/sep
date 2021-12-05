@@ -61,7 +61,7 @@ public class OrderService {
 	public String pay(Long orderId, String merchantApiKey) {
 		log.info("OrderService - pay: orderId=" + orderId + " merchantApiKey=" + merchantApiKey);
 		Order order = this.readOne(orderId);
-		Merchant merchant = merchantService.findByMerchantApiKey(cipher.encrypt(merchantApiKey));
+		Merchant merchant = merchantService.findByMerchantApiKey(merchantApiKey);
 
 		PaymentRequestDTO dto = paymentRequestMapper.toDTO(merchant, order);
 

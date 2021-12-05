@@ -60,13 +60,11 @@ public class DatabaseCipher {
 
 	public Order encrypt(Order o) {
 		o.setPayPalOrderId(this.encrypt(o.getPayPalOrderId()));
-		o.setMerchantApiKey(this.encrypt(o.getMerchantApiKey()));
 		return o;
 	}
 
 	public Order decrypt(Order o) {
 		o.setPayPalOrderId(this.decrypt(o.getPayPalOrderId()));
-		o.setMerchantApiKey(this.decrypt(o.getMerchantApiKey()));
 		return o;
 	}
 

@@ -61,12 +61,10 @@ public class DatabaseCipher {
 	}
 
 	public Order encrypt(Order o) {
-		o.setMerchantApiKey(this.encrypt(o.getMerchantApiKey()));
 		return o;
 	}
 
 	public Order decrypt(Order o) {
-		o.setMerchantApiKey(this.decrypt(o.getMerchantApiKey()));
 		return o;
 	}
 
