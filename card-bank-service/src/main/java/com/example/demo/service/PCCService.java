@@ -65,7 +65,7 @@ public class PCCService {
 				DateTimeFormatter.ofPattern("dd.MM.yyyy").format(LocalDate.now())).getValue().doubleValue();
 
 		client.setAvailableFunds(client.getAvailableFunds() - (pccRequestDTO.getAmount() * rate));
-		clientService.save(client);
+		clientService.save(cipher.encrypt(client));
 
 		return pccMapper.toSuccessfulPCCResponse(pccRequestDTO);
 	}
