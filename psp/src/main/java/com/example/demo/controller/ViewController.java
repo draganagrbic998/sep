@@ -1,13 +1,12 @@
 package com.example.demo.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.example.demo.model.Order;
 import com.example.demo.model.PaymentMethod;
@@ -29,12 +28,12 @@ public class ViewController {
 	private final PaymentMethodService paymentMethodService;
 	private final DatabaseCipher cipher;
 
-	@RequestMapping(value = "/selectPaymentMethod/{merchantApiKey}/{orderId}", method = RequestMethod.GET)
-	public String selectPaymentMethod(@PathVariable UUID merchantApiKey, @PathVariable Long orderId, Model model) {
+	@GetMapping("/selectPaymentMethod/{merchantApiKey}/{orderWebshopId}")
+	public String selectPaymentMethod(@PathVariable String merchantApiKey, @PathVariable Long orderWebshopId,
+			Model model) {
 		List<PaymentMethod> paymentMethods = paymentMethodService.getPaymentMethods(merchantApiKey);
-
-		User merchant = userService.findByApiKey(merchantApiKey.toString());
-		Order order = orderService.readOne(orderId);
+		User merchant = userService.findByApiKey(merchantApiKey);
+		Order order = orderService.readOne(orderWebshopId);
 
 		model.addAttribute("orderIdPSP", order.getId());
 		model.addAttribute("orderIdWebShop", order.getWebshopId());

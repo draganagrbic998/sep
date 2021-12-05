@@ -35,13 +35,13 @@ public class OrderService {
 	}
 
 	@Transactional(readOnly = true)
-	public Order readOne(Long id) {
-		log.info("OrderService - readOne: id=" + id);
-		Optional<Order> order = repo.findById(id);
+	public Order readOne(Long webshopId) {
+		log.info("OrderService - readOne: id=" + webshopId);
+		Optional<Order> order = repo.findByWebshopId(webshopId);
 
 		if (!order.isPresent()) {
-			log.error("Order: id=" + id + " not found.");
-			throw new NotFoundException(id.toString(), Order.class.getSimpleName());
+			log.error("Order: id=" + webshopId + " not found.");
+			throw new NotFoundException(webshopId.toString(), Order.class.getSimpleName());
 		}
 
 		return order.get();
@@ -54,7 +54,7 @@ public class OrderService {
 
 		for (Order order : orders) {
 			if (order.getStatus().equals(OrderStatus.CREATED)) {
-				if (order.getTicks() < 1) {
+				if (order.getTicks() < 5) {
 					log.info("Order: id=" + order.getId() + " tick=" + order.getTicks() + " - OK");
 					order.setTicks(order.getTicks() + 1);
 					save(order);
@@ -67,7 +67,7 @@ public class OrderService {
 
 					log.info("checkOrders - notifying WebShop @" + order.getCallbackUrl());
 					restTemplate.exchange(order.getCallbackUrl() + "/" + dto.getId(), HttpMethod.PUT,
-							new HttpEntity<OrderStatusUpdate>(dto), String.class);
+							new HttpEntity<OrderStatusUpdate>(dto), Void.class);
 
 				}
 			}

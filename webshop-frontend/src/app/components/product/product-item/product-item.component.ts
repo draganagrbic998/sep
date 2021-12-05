@@ -6,6 +6,7 @@ import { CartService } from 'src/app/services/cart.service';
 import { ProductService } from 'src/app/services/product.service';
 import { DIALOG_CONFIG, SNACKBAR_CLOSE_BUTTON, SNACKBAR_ERROR_CONFIG, SNACKBAR_ERROR_TEXT, SNACKBAR_SUCCESS_CONFIG, SNACKBAR_SUCCESS_TEXT } from 'src/app/utils/popup';
 import { Route } from 'src/app/utils/route';
+import { environment } from 'src/environments/environment';
 import { DeleteConfirmationComponent } from '../../utils/delete-confirmation/delete-confirmation.component';
 
 @Component({
@@ -32,10 +33,11 @@ export class ProductItemComponent {
   async order(product: Product) {
     this.orderPendingId = product.id;
     try {
-      await this.cartService.order(product.id).toPromise();
+      const order = await this.cartService.order(product.id).toPromise();
       this.orderPendingId = null;
       this.snackbar.open(SNACKBAR_SUCCESS_TEXT, SNACKBAR_CLOSE_BUTTON, SNACKBAR_SUCCESS_CONFIG);
       this.refreshProducts.emit();
+      window.location.href = `${environment.selectPaymentMethodUrl}/${order.user.apiKey}/${order.id}`;
     }
     catch {
       this.orderPendingId = null;

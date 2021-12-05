@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,20 +29,19 @@ public class RedirectionController {
 	private final OrderService orderService;
 
 	@PostMapping("/{method}/{orderIdWebshop}")
-	public ResponseEntity<?> createOrderInPaymentService(@PathVariable String method, @PathVariable Long orderIdWebshop,
-			@RequestBody OrderCreateDTO orderCreateDTO) {
+	public ResponseEntity<OrderCreatedDTO> createOrderInPaymentService(@PathVariable String method,
+			@PathVariable Long orderIdWebshop, @RequestBody OrderCreateDTO orderCreateDTO) {
 		log.info("RedirectionController - createOrderInPaymentService: method=" + method + " orderIdWebshop="
 				+ orderIdWebshop);
 		Order order = orderService.readOne(orderIdWebshop);
 
-		// Kupac mora u roku od 5 minuta da odabere nacin placanja
 		if (order.getTicks() >= 5) {
 			log.error("Order: id=" + order.getId() + " exceeded maximum tick count.");
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			return ResponseEntity.badRequest().build();
 		}
 
 		log.info("createOrderInPaymentService - sending order to payment service: name=" + method);
-		ResponseEntity<OrderCreatedDTO> responseEntity = restTemplate.exchange("http://localhost:8762/" + method,
+		ResponseEntity<OrderCreatedDTO> responseEntity = restTemplate.exchange("http://localhost:8082/" + method,
 				HttpMethod.POST, new HttpEntity<OrderCreateDTO>(orderCreateDTO), OrderCreatedDTO.class);
 
 		log.info("createOrderInPaymentService - OrderCreatedDTO: status=" + responseEntity.getBody().getStatus());
@@ -51,6 +49,6 @@ public class RedirectionController {
 		order.setStatus(OrderStatus.SENT);
 		orderService.save(order);
 
-		return new ResponseEntity<>(responseEntity.getBody(), HttpStatus.OK);
+		return ResponseEntity.ok(responseEntity.getBody());
 	}
 }

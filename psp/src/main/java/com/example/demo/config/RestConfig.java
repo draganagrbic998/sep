@@ -27,7 +27,7 @@ public class RestConfig {
 
 	@Bean
 	public RestTemplate getRestTemplate() {
-		RestTemplate restTemplate = this.restTemplateBuilder.errorHandler(new RestTemplateErrorHandler()).build();
+		RestTemplate restTemplate = restTemplateBuilder.build();
 
 		try {
 			KeyStore keyStore = KeyStore.getInstance("JKS");

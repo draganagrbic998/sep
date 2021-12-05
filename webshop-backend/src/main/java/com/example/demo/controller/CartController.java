@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.CartItem;
+import com.example.demo.model.Order;
 import com.example.demo.service.CartService;
+import com.example.demo.utils.DatabaseCipher;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -25,6 +27,7 @@ import lombok.extern.log4j.Log4j2;
 public class CartController {
 
 	private final CartService service;
+	private final DatabaseCipher cipher;
 
 	@GetMapping
 	public ResponseEntity<List<CartItem>> read() {
@@ -57,15 +60,17 @@ public class CartController {
 	}
 
 	@PostMapping("/order/{productId}")
-	public ResponseEntity<Void> orderCart(@PathVariable Long productId) {
+	public ResponseEntity<Order> orderCart(@PathVariable Long productId) {
 		log.info("CartController - orderCart");
 
 		if (productId == null) {
 			log.error("orderCart - productId is null");
 			return ResponseEntity.badRequest().build();
 		}
-		service.orderCart(productId);
-		return ResponseEntity.noContent().build();
+
+		Order order = service.orderCart(productId);
+		order.getUser().setApiKey(cipher.decrypt(order.getUser().getApiKey()));
+		return ResponseEntity.ok(order);
 	}
 
 }

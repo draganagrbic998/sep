@@ -5,7 +5,6 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,7 +22,7 @@ import lombok.extern.log4j.Log4j2;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/orders")
-@PreAuthorize("hasAuthority('merchant')")
+//@PreAuthorize("hasAuthority('merchant')")
 @Log4j2
 public class OrderController {
 

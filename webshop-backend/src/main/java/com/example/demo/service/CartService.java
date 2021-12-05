@@ -57,15 +57,17 @@ public class CartService {
 	}
 
 	@Transactional
-	public void orderCart(Long productId) {
+	public Order orderCart(Long productId) {
 		log.info("CartService - orderCart");
 		CartItem item = repo.findByUserIdAndProductId(userService.getLoggedInUser().getId(), productId);
 		Order order = new Order(item);
-		orderRepo.save(order);
+		order = orderRepo.save(order);
 		repo.deleteById(item.getId());
 
 		restTemplate.exchange("https://localhost:8081/orders", HttpMethod.POST,
 				new HttpEntity<PspOrder>(new PspOrder(order)), Void.class);
+
+		return order;
 	}
 
 }

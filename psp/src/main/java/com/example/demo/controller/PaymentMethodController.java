@@ -34,7 +34,7 @@ public class PaymentMethodController {
 	}
 
 	@PostMapping
-	private ResponseEntity<PaymentMethod> create(@RequestBody PaymentMethod dto) {
+	public ResponseEntity<PaymentMethod> create(@RequestBody PaymentMethod dto) {
 		log.info("PaymentMethodController - create");
 
 		if (dto.getId() != null) {

@@ -1,9 +1,7 @@
 package com.example.demo.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -12,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.demo.example.exception.NotFoundException;
 import com.example.demo.model.PaymentMethod;
-import com.example.demo.model.User;
 import com.example.demo.repo.PaymentMethodRepository;
 
 import lombok.AllArgsConstructor;
@@ -56,21 +53,14 @@ public class PaymentMethodService {
 	public List<String> toAdd() {
 		log.info("PaymentMethodService - getAllEurekaServices");
 		return discoveryClient.getServices().stream()
-				.filter(item -> !item.equals("psp") && !item.startsWith("webshop")
+				.filter(item -> !item.equals("psp") && !item.equals("zuul-gateway") && !item.startsWith("webshop")
 						&& !read().stream().map(pm -> pm.getName()).collect(Collectors.toList()).contains(item))
 				.collect(Collectors.toList());
 	}
 
-	public List<PaymentMethod> getPaymentMethods(UUID merchantApiKey) {
+	public List<PaymentMethod> getPaymentMethods(String merchantApiKey) {
 		log.info("PaymentMethodService - getPaymentMethods: merchantApiKey=" + merchantApiKey.toString());
-		List<PaymentMethod> ret = new ArrayList<>();
-
-		User merchant = userService.findByApiKey(merchantApiKey.toString());
-
-		for (PaymentMethod pm : merchant.getMethods())
-			ret.add(pm);
-
-		return ret;
+		return userService.findByApiKey(merchantApiKey).getMethods().stream().collect(Collectors.toList());
 	}
 
 }
