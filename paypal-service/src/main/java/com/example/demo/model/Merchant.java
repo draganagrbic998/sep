@@ -4,20 +4,18 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
+@Entity
 public class Merchant {
 
-	@EqualsAndHashCode.Include
 	@Id
-	private Integer id;
+	private Long id;
 
 	@Column
 	private String clientId;

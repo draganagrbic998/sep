@@ -6,9 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
 public class PCCRequestDTO {
 
 	private String panNumber;
@@ -16,7 +16,7 @@ public class PCCRequestDTO {
 	private String cvv;
 	private String mm;
 	private String yy;
-	private Integer acquirerOrderId;
+	private Long acquirerOrderId;
 	private LocalDateTime acquirerTimestamp;
 	private Double amount;
 	private String currency;

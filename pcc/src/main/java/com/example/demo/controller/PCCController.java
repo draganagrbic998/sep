@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -11,38 +10,34 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.demo.example.exception.NotFoundException;
 import com.example.demo.dto.PCCRequestDTO;
 import com.example.demo.dto.PCCResponseDTO;
 import com.example.demo.mapper.ResponseMapper;
 import com.example.demo.service.BankService;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
+@AllArgsConstructor
 @RestController
 @RequestMapping("/pcc")
+@Log4j2
 public class PCCController {
 
-	@Autowired
-	private ResponseMapper responseMapper;
-
-	@Autowired
-	private BankService bankService;
-
-	@Autowired
-	private RestTemplate restTemplate;
+	private final ResponseMapper responseMapper;
+	private final BankService bankService;
+	private final RestTemplate restTemplate;
 
 	@PostMapping("/redirect")
-	public ResponseEntity<?> redirect(@RequestBody PCCRequestDTO pccRequestDTO) throws NotFoundException {
-		log.info("PCCController - redirect: acquirerOrderId=" + pccRequestDTO.getAcquirerOrderId());
-		String bankId = pccRequestDTO.getPanNumber().replace("-", "").substring(1, 7);
+	public ResponseEntity<?> redirect(@RequestBody PCCRequestDTO dto) {
+		log.info("PCCController - redirect: acquirerOrderId=" + dto.getAcquirerOrderId());
+		String bankId = dto.getPanNumber().replace("-", "").substring(1, 7);
 		String bankUrl = bankService.getBankByPanNumber(bankId).getBankUrl();
 
 		// Saljemo banci kupca
 		log.info("redirect - notifying buyer bank @" + bankUrl + "/pcc/pay");
 		ResponseEntity<PCCResponseDTO> responseEntity = restTemplate.exchange(bankUrl + "/pcc/pay", HttpMethod.POST,
-				new HttpEntity<PCCRequestDTO>(pccRequestDTO), PCCResponseDTO.class);
+				new HttpEntity<PCCRequestDTO>(dto), PCCResponseDTO.class);
 
 		return new ResponseEntity<>(responseMapper.toDTO(responseEntity.getBody()), HttpStatus.OK);
 	}

@@ -32,8 +32,8 @@ import com.paypal.base.rest.PayPalRESTException;
 
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @Service
+@Log4j2
 public class OrderService {
 
 	@Autowired
@@ -53,7 +53,7 @@ public class OrderService {
 	String clientId = "ASbalrTsNQwyeFRT6r47HW23NQwDpF9V_4IRJIEkhWGmgI2uZ5L7lYgrspWWgWvEYqd8GT1SmF4hcRd4";
 	String clientSecret = "EJZT7rVvs4wBMCghAlPnx96WC-Se44lmQTKuiAXRWNFvFxH-e69d_aSI8gESJPAbbys3CvOmLZttfGPb";
 
-	public Order findById(Integer orderId) {
+	public Order findById(Long orderId) {
 		log.info("OrderService - findById: id=" + orderId);
 		return repo.getById(orderId);
 	}
@@ -77,7 +77,7 @@ public class OrderService {
 
 		Transaction transaction = new Transaction();
 		transaction.setAmount(amount);
-		List<Transaction> transactions = new ArrayList<Transaction>();
+		List<Transaction> transactions = new ArrayList<>();
 		transactions.add(transaction);
 
 		Payer payer = new Payer();
@@ -168,7 +168,7 @@ public class OrderService {
 		return completedPayment.toJSON();
 	}
 
-	public String getOrderDetails(int orderId) throws PayPalRESTException {
+	public String getOrderDetails(Long orderId) throws PayPalRESTException {
 		log.info("OrderService - getOrderDetails: orderId=" + orderId);
 
 		Order order = repo.getById(orderId);

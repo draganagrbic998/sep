@@ -5,15 +5,13 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
+@NoArgsConstructor
 @Getter
 @Setter
-@ToString
-@NoArgsConstructor
 public class PCCResponseDTO {
 
-	private Integer acquirerOrderId;
+	private Long acquirerOrderId;
 	private LocalDateTime acquirerTimestamp;
 	private Boolean authentificated;
 	private Boolean transactionAutorized;

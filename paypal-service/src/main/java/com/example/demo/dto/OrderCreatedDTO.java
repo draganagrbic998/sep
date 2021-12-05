@@ -4,12 +4,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
 public class OrderCreatedDTO {
 
-	private Integer id;
+	private Long id;
 	private String status;
 
 }
