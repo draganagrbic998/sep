@@ -27,6 +27,21 @@ export class ProductItemComponent {
   @Output() refreshProducts = new EventEmitter<void>();
 
   cartPendingId: number = null;
+  orderPendingId: number = null;
+
+  async order(product: Product) {
+    this.orderPendingId = product.id;
+    try {
+      await this.cartService.order(product.id).toPromise();
+      this.orderPendingId = null;
+      this.snackbar.open(SNACKBAR_SUCCESS_TEXT, SNACKBAR_CLOSE_BUTTON, SNACKBAR_SUCCESS_CONFIG);
+      this.refreshProducts.emit();
+    }
+    catch {
+      this.orderPendingId = null;
+      this.snackbar.open(SNACKBAR_ERROR_TEXT, SNACKBAR_CLOSE_BUTTON, SNACKBAR_ERROR_CONFIG);
+    }
+  }
 
   async remove_from_cart(product: Product) {
     this.cartPendingId = product.id;

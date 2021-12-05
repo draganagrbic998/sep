@@ -14,9 +14,9 @@ import com.example.demo.repository.ProductRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @AllArgsConstructor
 @Service
+@Log4j2
 public class ProductService {
 
 	private final ProductRepository repo;
@@ -45,7 +45,7 @@ public class ProductService {
 	public Product save(Product product, MultipartFile image) throws IOException {
 		product.setUser(userService.getLoggedInUser());
 		if (image != null) {
-			product.setImageLocation("http://localhost:8080/" + fileService.store(image));
+			product.setImageLocation("https://localhost:8080/" + fileService.store(image));
 		} else if (product.getId() != null) {
 			product.setImageLocation(readOne(product.getId()).getImageLocation());
 		}

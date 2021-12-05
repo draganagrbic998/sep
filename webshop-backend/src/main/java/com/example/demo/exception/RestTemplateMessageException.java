@@ -1,6 +1,6 @@
 package com.example.demo.exception;
 
-import com.example.demo.dto.ErrorDTO;
+import com.example.demo.dto.Error;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +14,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class RestTemplateMessageException extends RuntimeException {
 
-	private ErrorDTO error;
+	private Error error;
 
 }

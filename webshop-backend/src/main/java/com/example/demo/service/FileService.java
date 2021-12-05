@@ -10,8 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @Service
+@Log4j2
 public class FileService {
 
 	public static final String RESOURCES_PATH = "src/main/resources/images/";

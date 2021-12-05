@@ -23,10 +23,10 @@ import com.example.demo.service.ProductService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @AllArgsConstructor
 @RestController
 @RequestMapping("/products")
+@Log4j2
 public class ProductController {
 
 	private final ProductService service;
@@ -49,13 +49,13 @@ public class ProductController {
 		log.info("ProductController - create");
 
 		if (dto.getId() != null) {
-			log.error("delete - dto id not null");
+			log.error("create - dto id not null");
 			return ResponseEntity.badRequest().build();
 		}
 		try {
 			return ResponseEntity.ok(service.save(mapper.map(dto), dto.getImage()));
 		} catch (Exception e) {
-			log.error("delete - IOException occured");
+			log.error("create - IOException occured");
 			return ResponseEntity.badRequest().build();
 		}
 	}
@@ -65,13 +65,13 @@ public class ProductController {
 		log.info("ProductController - update: id=" + id);
 
 		if (id == null || dto.getId() == null || id != dto.getId()) {
-			log.error("delete - id is invalid");
+			log.error("update - id is invalid");
 			return ResponseEntity.badRequest().build();
 		}
 		try {
 			return ResponseEntity.ok(service.save(mapper.map(dto), dto.getImage()));
 		} catch (Exception e) {
-			log.error("delete - IOException occured");
+			log.error("update - IOException occured");
 			return ResponseEntity.badRequest().build();
 		}
 	}

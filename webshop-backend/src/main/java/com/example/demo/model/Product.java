@@ -25,6 +25,11 @@ public class Product {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	@NotNull
+	private User user;
+
 	@Column
 	@NotBlank
 	private String name;
@@ -34,13 +39,13 @@ public class Product {
 	private String description;
 
 	@Column
+	@NotBlank
+	private String category;
+
+	@Column
 	@NotNull
 	@Positive
 	private Double price;
-
-	@Column
-	@NotBlank
-	private String category;
 
 	@Column
 	@NotBlank
@@ -49,10 +54,5 @@ public class Product {
 	@Column
 	@NotBlank
 	private String imageLocation;
-
-	@ManyToOne	//imala sam pre OneToOne
-	@JoinColumn(name = "user_id")
-	@NotNull
-	private User user;
 
 }

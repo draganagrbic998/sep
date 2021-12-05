@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,9 +37,21 @@ public class Order {
 	@NotNull
 	private Date date;
 
-	public Order(User user) {
+	@ManyToOne
+	@JoinColumn(name = "product_id")
+	@NotNull
+	private Product product;
+
+	@Column
+	@NotNull
+	@Positive
+	private Long quantity;
+
+	public Order(CartItem item) {
 		date = new Date();
-		this.user = user;
+		user = item.getUser();
+		product = item.getProduct();
+		quantity = item.getQuantity();
 	}
 
 }

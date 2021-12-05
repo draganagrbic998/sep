@@ -20,3 +20,7 @@
     (refreshProducts)="readProducts()"
   ></app-product-item>
 </div>
+
+<div class="empty" *ngIf="!products?.length">
+  NO PRODUCTS
+</div>

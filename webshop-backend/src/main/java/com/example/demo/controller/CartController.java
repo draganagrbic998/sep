@@ -10,25 +10,24 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.OrderResponse;
 import com.example.demo.model.CartItem;
 import com.example.demo.service.CartService;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @AllArgsConstructor
 @RestController
 @RequestMapping("/cart")
+@Log4j2
 public class CartController {
 
 	private final CartService service;
 
 	@GetMapping
-	public ResponseEntity<List<CartItem>> readCart() {
-		log.info("CartController - readCart");
-		return ResponseEntity.ok(service.readCart());
+	public ResponseEntity<List<CartItem>> read() {
+		log.info("CartController - read");
+		return ResponseEntity.ok(service.read());
 	}
 
 	@PutMapping("/{productId}/add")
@@ -55,17 +54,16 @@ public class CartController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@PostMapping("/order")
-	public ResponseEntity<Void> orderCart() {
+	@PostMapping("/order/{productId}")
+	public ResponseEntity<Void> orderCart(@PathVariable Long productId) {
 		log.info("CartController - orderCart");
-		service.orderCart();
-		return ResponseEntity.noContent().build();
-	}
 
-	@GetMapping("/orders")
-	public ResponseEntity<List<OrderResponse>> readOrders() {
-		log.info("CartController - readOrders");
-		return ResponseEntity.ok(service.readOrders());
+		if (productId == null) {
+			log.error("orderCart - productId is null");
+			return ResponseEntity.badRequest().build();
+		}
+		service.orderCart(productId);
+		return ResponseEntity.noContent().build();
 	}
 
 }

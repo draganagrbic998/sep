@@ -7,23 +7,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.model.Category;
-import com.example.demo.service.CategoryService;
+import com.example.demo.model.Order;
+import com.example.demo.service.OrderService;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/categories")
+@RequestMapping("/orders")
 @Log4j2
-public class CategoryController {
+public class OrderController {
 
-	private final CategoryService service;
+	private final OrderService service;
 
 	@GetMapping
-	public ResponseEntity<List<Category>> read() {
-		log.info("CategoryController - read");
+	public ResponseEntity<List<Order>> read() {
+		log.info("OrderController - read");
 		return ResponseEntity.ok(service.read());
 	}
 

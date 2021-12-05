@@ -24,3 +24,12 @@
   padding-right: 15px;
   font-size: 15px;
 }
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 75%;
+  font-size: 30px;
+}

@@ -19,12 +19,9 @@ export class FormService {
     return this.builder.group(data);
   }
 
-  private buildValidation(config: 'none' | 'required' | 'price') {
+  private buildValidation(config: 'none' | 'required') {
     if (config === 'required') {
       return [Validators.required, Validators.pattern(new RegExp('\\S'))]
-    }
-    if (config === 'price') {
-      return [Validators.required, Validators.pattern(/^([1-9]\d*)?$/)]
     }
     return undefined;
   }

@@ -9,9 +9,9 @@ import lombok.Setter;
 
 @SuppressWarnings("serial")
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
 public class RoleAuth implements GrantedAuthority {
 
 	private String name;

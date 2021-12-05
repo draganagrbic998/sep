@@ -10,10 +10,8 @@ import com.example.demo.model.CartItem;
 @Repository
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 
-	List<CartItem> findByUserIdAndOrderIdIsNull(Long userId);
+	List<CartItem> findByUserId(Long userId);
 
-	List<CartItem> findByOrderId(Long orderId);
-
-	CartItem findByUserIdAndProductIdAndOrderIsNull(Long userId, Long productId);
+	CartItem findByUserIdAndProductId(Long userId, Long productId);
 
 }

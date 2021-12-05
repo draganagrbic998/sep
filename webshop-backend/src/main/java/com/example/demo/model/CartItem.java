@@ -38,10 +38,6 @@ public class CartItem {
 	@Positive
 	private Long quantity;
 
-	@ManyToOne
-	@JoinColumn(name = "order_id")
-	private Order order;
-
 	public CartItem(User user, Product product) {
 		this.user = user;
 		this.product = product;

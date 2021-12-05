@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ErrorDTO {
+public class Error {
 	private String text;
 	private String cause;
 }

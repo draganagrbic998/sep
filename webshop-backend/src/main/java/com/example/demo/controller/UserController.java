@@ -17,14 +17,13 @@ import com.example.demo.utils.DatabaseCipher;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @AllArgsConstructor
 @RestController
 @RequestMapping("/user")
+@Log4j2
 public class UserController {
 
 	private final DatabaseCipher cipher;
-
 	private final UserService service;
 
 	@GetMapping("/{id}")

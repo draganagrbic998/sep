@@ -10,7 +10,6 @@ export interface ProductUpload extends StandardModel {
 }
 
 export interface Product extends StandardModel {
-    id: number;
     name: string;
     description: string;
     price: number;

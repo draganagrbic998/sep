@@ -1,12 +1,12 @@
 <mat-toolbar color="primary" class="mat-elevation-z24">
   <span>
-    <button *ngIf="!login && !products" mat-button [routerLink]="productsLink">
+    <button *ngIf="!login" mat-button [routerLink]="productsLink" [disabled]="products">
       <mat-icon>list</mat-icon>Products
     </button>
-    <button *ngIf="!login && !cart" mat-button [routerLink]="cartLink">
+    <button *ngIf="!login" mat-button [routerLink]="cartLink" [disabled]="cart">
       <mat-icon>shopping_cart</mat-icon>Shopping Cart
     </button>
-    <button *ngIf="!login && !orders" mat-button [routerLink]="ordersLink">
+    <button *ngIf="!login" mat-button [routerLink]="ordersLink" [disabled]="orders">
       <mat-icon>shopping_basket</mat-icon>Orders
     </button>
   </span>

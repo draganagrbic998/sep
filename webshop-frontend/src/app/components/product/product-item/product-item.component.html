@@ -22,6 +22,18 @@
           >
             <mat-icon>edit</mat-icon>Edit
           </button>
+          <span *ngIf="actions === 'remove_from_cart'">
+            <button
+              *ngIf="cartPendingId !== product.id"
+              mat-button
+              color="accent"
+              (click)="remove_from_cart(product)"
+            >
+              <mat-icon>remove_shopping_cart</mat-icon>Remove from cart
+            </button>
+
+            <app-spinner *ngIf="cartPendingId === product.id"></app-spinner>
+          </span>
         </span>
 
         <span>
@@ -49,15 +61,14 @@
 
           <span *ngIf="actions === 'remove_from_cart'">
             <button
-              *ngIf="cartPendingId !== product.id"
+              *ngIf="orderPendingId !== product.id"
               mat-button
-              color="accent"
-              (click)="remove_from_cart(product)"
+              color="primary"
+              (click)="order(product)"
             >
-              <mat-icon>remove_shopping_cart</mat-icon>Remove from cart
+              <mat-icon>add_circle_outline</mat-icon>Order Cart
             </button>
-
-            <app-spinner *ngIf="cartPendingId === product.id"></app-spinner>
+            <app-spinner *ngIf="orderPendingId === product.id"></app-spinner>
           </span>
         </span>
       </span>

@@ -10,7 +10,7 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResponseErrorHandler;
 
-import com.example.demo.dto.ErrorDTO;
+import com.example.demo.dto.Error;
 import com.example.demo.exception.RestTemplateMessageException;
 import com.example.demo.exception.RestTemplateVoidException;
 import com.google.gson.Gson;
@@ -34,7 +34,7 @@ public class RestTemplateErrorHandler implements ResponseErrorHandler {
 		try {
 			Gson gson = new Gson();
 			InputStreamReader bodyReader = new InputStreamReader(httpResponse.getBody());
-			throw new RestTemplateMessageException(gson.fromJson(bodyReader, ErrorDTO.class));
+			throw new RestTemplateMessageException(gson.fromJson(bodyReader, Error.class));
 		} catch (JsonIOException | JsonSyntaxException ex) {
 			throw new RestTemplateVoidException();
 		}

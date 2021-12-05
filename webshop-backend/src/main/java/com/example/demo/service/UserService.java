@@ -17,20 +17,14 @@ import com.example.demo.security.TokenUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @AllArgsConstructor
 @Service
+@Log4j2
 public class UserService implements UserDetailsService {
 
 	private final UserRepository repo;
 	private final AuthenticationManager authManager;
 	private final TokenUtils tokenUtils;
-
-	@Transactional(readOnly = true)
-	public User readOne(Long id) {
-		log.info("UserService - readOne: id=" + id);
-		return repo.findById(id).get();
-	}
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -45,13 +39,19 @@ public class UserService implements UserDetailsService {
 				.getPrincipal(), tokenUtils.generateToken(auth.getEmail()));
 	}
 
+	public User getLoggedInUser() {
+		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	}
+
+	@Transactional(readOnly = true)
+	public User readOne(Long id) {
+		log.info("UserService - readOne: id=" + id);
+		return repo.findById(id).get();
+	}
+
 	public User save(User user) {
 		user.setId(null);
 		return repo.save(user);
-	}
-
-	public User getLoggedInUser() {
-		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 
 }

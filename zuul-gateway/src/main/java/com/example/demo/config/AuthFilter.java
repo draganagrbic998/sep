@@ -1,11 +1,8 @@
 package com.example.demo.config;
 
-import com.netflix.zuul.ZuulFilter;
-import com.netflix.zuul.context.RequestContext;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
+
+import com.netflix.zuul.ZuulFilter;
 
 public class AuthFilter extends ZuulFilter {
 
@@ -26,9 +23,6 @@ public class AuthFilter extends ZuulFilter {
 
 	@Override
 	public Object run() {
-		RequestContext ctx = RequestContext.getCurrentContext();
-		HttpServletRequest request = ctx.getRequest();
-
 		return null;
 	}
 }

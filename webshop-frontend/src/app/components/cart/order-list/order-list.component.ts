@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Order } from 'src/app/models/order';
-import { CartService } from 'src/app/services/cart.service';
+import { OrderService } from 'src/app/services/order.service';
 
 @Component({
   selector: 'app-order-list',
@@ -10,41 +10,13 @@ import { CartService } from 'src/app/services/cart.service';
 export class OrderListComponent implements OnInit {
 
   constructor(
-    private cartService: CartService
+    private orderService: OrderService
   ) { }
 
   orders: Order[];
 
   async readOrders() {
-    this.orders = await this.cartService.orders().toPromise();
-  }
-
-  productsSummary(order: Order) {
-    let summary = '';
-    const products = {};
-    for (const item of order.items) {
-      const name = item.product.name[0].toUpperCase() + item.product.name.substr(1);
-      if (!(item.product.id in products)) {
-        products[name] = 0;
-      }
-      products[name] += item.quantity;
-    }
-    for (const product in products) {
-      summary += `, ${product} (${products[product]})`
-    }
-    return summary.substr(2);
-  }
-
-  totalProductsCount(order: Order) {
-    return order.items.reduce((a, b) => a + b.quantity, 0)
-  }
-
-  totalPrice(order: Order) {
-    let summary = '';
-    for (const item of order.items) {
-      summary += `, ${item.quantity * item.product.price}${item.product.currency} (${item.product.name})`
-    }
-    return summary.substr(2);
+    this.orders = await this.orderService.read().toPromise();
   }
 
   ngOnInit() {

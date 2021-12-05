@@ -13,10 +13,10 @@ import com.example.demo.service.CurrencyService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @AllArgsConstructor
 @RestController
 @RequestMapping("/currencies")
+@Log4j2
 public class CurrencyController {
 
 	private final CurrencyService service;

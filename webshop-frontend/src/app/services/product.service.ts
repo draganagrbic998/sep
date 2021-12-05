@@ -19,16 +19,17 @@ export class ProductService extends StandardRestService<Product> {
     return this.http.get<Page<Product>>(`${this.API_URL}?category=${category}&page=${page}&size=10`);
   }
 
-  upload(upload: ProductUpload) {
+  save(upload: any) {
+    const product = upload as ProductUpload
     const data = new FormData();
-    for (const field in upload) {
-      if (['id', 'image'].includes(field) && !upload[field]) {
+    for (const field in product) {
+      if (['id', 'image'].includes(field) && !product[field]) {
         continue;
       }
-      data.append(field, upload[field]);
+      data.append(field, product[field]);
     }
-    if (upload.id) {
-      return this.http.put<Product>(`${this.API_URL}/${upload.id}`, data);
+    if (product.id) {
+      return this.http.put<Product>(`${this.API_URL}/${product.id}`, data);
     }
     return this.http.post<Product>(this.API_URL, data);
   }

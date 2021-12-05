@@ -1,9 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { StandardModel } from 'src/app/models/standard-model';
 import { FormService } from 'src/app/services/form.service';
+import { StandardRestService } from 'src/app/services/standard-rest.service';
 import { FormConfig, FormStyle } from 'src/app/utils/form';
+import { SNACKBAR_CLOSE_BUTTON, SNACKBAR_ERROR_CONFIG, SNACKBAR_ERROR_TEXT, SNACKBAR_SUCCESS_CONFIG, SNACKBAR_SUCCESS_TEXT } from 'src/app/utils/popup';
 
 @Component({
   selector: 'app-form',
@@ -13,16 +17,20 @@ import { FormConfig, FormStyle } from 'src/app/utils/form';
 export class FormComponent implements OnInit {
 
   constructor(
-    private formService: FormService
+    private formService: FormService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private snackbar: MatSnackBar,
   ) { }
 
   @Input() config: {
-    title: string;
+    title?: string;
     formConfig: FormConfig;
-    pending: boolean;
     style: FormStyle;
-    save: (value: any) => void;
-    readFunction?: () => Observable<StandardModel>;
+    service?: StandardRestService<StandardModel>
+    entity?: string
+    save?: (value: unknown) => void
+    listRoute?: string
   }
 
   form: FormGroup;
@@ -40,10 +48,22 @@ export class FormComponent implements OnInit {
     this.initForm()
   }
 
+  get itemId(){
+    return +this.route.snapshot.params.id
+  }
+
+  title: string;
+
   private async initForm() {
-    if (this.config.readFunction) {
-      const value = await this.config.readFunction().toPromise();
-      this.form.reset(value);
+    if (this.config.title) {
+      return
+    }
+    if (this.itemId) {
+      this.title = `Edit ${this.config.entity}`
+      const value = await this.config.service.readOne(this.itemId).toPromise()
+      this.form.reset(value)
+    } else {
+      this.title = `Create ${this.config.entity}`
     }
   }
 
@@ -64,7 +84,13 @@ export class FormComponent implements OnInit {
       this.form.markAsTouched();
       return;
     }
-    this.config.save(this.form.value);
+    if (this.config.save){
+      this.config.save(this.form.value);
+
+    }
+    else{
+      this.save(this.form.value);
+    }
   }
 
   capitalize(text: string) {
@@ -74,6 +100,33 @@ export class FormComponent implements OnInit {
 
   updateFile(control: string, file: Blob) {
     this.form.get(control).setValue(file);
+  }
+
+  pending = false
+
+  async save(item: StandardModel) {
+    if (this.itemId) {
+      item.id = this.itemId
+    }
+    this.pending = true
+
+    try {
+      await this.config.service.save(item).toPromise()
+      this.pending = false
+      this.snackbar.open(
+        SNACKBAR_SUCCESS_TEXT,
+        SNACKBAR_CLOSE_BUTTON,
+        SNACKBAR_SUCCESS_CONFIG
+      )
+      this.router.navigate([this.config.listRoute])
+    } catch {
+      this.pending = false
+      this.snackbar.open(
+        SNACKBAR_ERROR_TEXT,
+        SNACKBAR_CLOSE_BUTTON,
+        SNACKBAR_ERROR_CONFIG
+      )
+    }
   }
 
 }

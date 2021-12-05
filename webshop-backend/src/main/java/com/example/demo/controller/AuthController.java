@@ -14,10 +14,10 @@ import com.example.demo.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @AllArgsConstructor
 @RestController
 @RequestMapping("/auth")
+@Log4j2
 public class AuthController {
 
 	private final UserService service;
