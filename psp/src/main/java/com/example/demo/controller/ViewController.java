@@ -27,8 +27,13 @@ public class ViewController {
 	@GetMapping("/selectPaymentMethod/{merchantApiKey}/{orderWebshopId}")
 	public String selectPaymentMethod(@PathVariable String merchantApiKey, @PathVariable Long orderWebshopId,
 			Model model) {
+		System.out.println(merchantApiKey);
 		String merchantApiKeyTemp = new String(Base64.getDecoder().decode(merchantApiKey));
+		System.out.println(merchantApiKeyTemp);
+
 		List<PaymentMethod> paymentMethods = paymentMethodService.getPaymentMethods(merchantApiKeyTemp);
+		System.out.println(paymentMethods.size());
+
 		Order order = orderService.readOne(orderWebshopId);
 
 		model.addAttribute("orderIdPSP", order.getId());

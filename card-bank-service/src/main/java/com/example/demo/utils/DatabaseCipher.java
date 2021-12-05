@@ -58,14 +58,14 @@ public class DatabaseCipher {
 	}
 
 	public PaymentRequest encrypt(PaymentRequest pr) {
-		//pr.setMerchantId(this.encrypt(pr.getMerchantId()));
-		//pr.setMerchantPassword(this.encrypt(pr.getMerchantPassword()));
+		// pr.setMerchantId(this.encrypt(pr.getMerchantId()));
+		// pr.setMerchantPassword(this.encrypt(pr.getMerchantPassword()));
 		return pr;
 	}
 
 	public PaymentRequest decrypt(PaymentRequest pr) {
-		//pr.setMerchantId(this.decrypt(pr.getMerchantId()));
-		//pr.setMerchantPassword(this.decrypt(pr.getMerchantPassword()));
+		// pr.setMerchantId(this.decrypt(pr.getMerchantId()));
+		// pr.setMerchantPassword(this.decrypt(pr.getMerchantPassword()));
 		return pr;
 	}
 

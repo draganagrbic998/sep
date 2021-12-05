@@ -101,9 +101,7 @@
 		<div class="col-lg-7 mx-auto" style="height: 90%;">
 			<div class="bg-white rounded-lg shadow-sm p-5 container-card">
 				<div>
-					<form id="cardForm"
-						th:action="@{'http://localhost:8090/payment-requests/confirm/' + ${paymentRequestId}}"
-						method="POST" role="form">
+					<form>
 						<div class="form-group">
 							<label for="cardHolder">Full name (on the card)</label> <input
 								type="text" name="cardHolder" id="cardHolder"
@@ -144,7 +142,7 @@
 								</div>
 							</div>
 						</div>
-						<button type="submit"
+						<button type="submit" id="registration"
 							class="subscribe btn btn-boja btn-block shadow-sm"
 							style="margin: auto; max-width: 100px;">Confirm</button>
 					</form>
@@ -152,5 +150,33 @@
 			</div>
 		</div>
 	</div>
+		<script>
+		$(document).ready(function() {
+			$("#registration").click(function(e) {
+				var springAttribute= window.location.href.split('/')
+				var springAttribute2 = springAttribute[springAttribute.length - 1]
+				e.preventDefault();
+				$.ajax({
+					type : 'POST',
+					url : 'http://localhost:8090/payment-requests/confirm/' + springAttribute2,
+					contentType : "application/json",
+					data : JSON.stringify({
+						'panNumber' : $('#panNumber').val(),
+						'cardHolder' : $('#cardHolder').val(),
+						'cvv' : $('#cvv').val(),
+						'mm' : $('#mm').val(),
+						'yy' : $('#yy').val()
+					}),
+					success : function(res) {
+						alert('DONE');
+					},
+					error : function(odgovor) {
+						alert(odgovor.responseText);
+					}
+				});
+			});
+		});
+	</script>
+	
 </body>
 </html>

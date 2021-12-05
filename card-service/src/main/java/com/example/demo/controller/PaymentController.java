@@ -22,7 +22,7 @@ import lombok.extern.log4j.Log4j2;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping(value = "/card")
+@RequestMapping
 @Log4j2
 public class PaymentController {
 

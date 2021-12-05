@@ -87,7 +87,7 @@ public class PaymentRequestService {
 		log.info("PaymentRequestService - confirmPaymentRequest: id=" + paymentRequestId);
 		// Proveravamo da li je to klijent ove banke
 		PaymentRequest paymentRequest = this.findById(paymentRequestId);
-		Transaction transaction = transactionMapper.toEntity(paymentRequest);
+		Transaction transaction = transactionMapper.toEntity(paymentRequest, clientDTO);
 
 		String clientBankId = this.getBankIdFromPan(clientDTO.getPanNumber());
 
@@ -245,7 +245,7 @@ public class PaymentRequestService {
 	}
 
 	private String getBankIdFromPan(String pan) {
-		return pan.replace("-", "").substring(1, 7);
+		return pan.replace("-", "").substring(0, 6);
 	}
 
 }
