@@ -76,28 +76,14 @@ public class UserService implements UserDetailsService {
 
 	@Transactional
 	public User save(User user) {
-		if (user.getId() == null) {
-			user.setApiKey(cipher.encrypt(UUID.randomUUID().toString()));
-			user.setPassword(passwordEncoder.encode(user.getPassword()));
-		} else {
-			user.setWebshopId(repo.findById(user.getId()).get().getWebshopId());
-		}
+		user.setApiKey(cipher.encrypt(UUID.randomUUID().toString()));
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+
 		if (!user.getRole().equals("psp-admin")) {
-			User webshopUser;
-			if (user.getWebshopId() == null) {
-				webshopUser = restTemplate
-						.exchange(user.getWebshop() + "/users", HttpMethod.POST, new HttpEntity<User>(user), User.class)
-						.getBody();
-			} else {
-				webshopUser = restTemplate.exchange(user.getWebshop() + "/users/" + user.getWebshopId(), HttpMethod.PUT,
-						new HttpEntity<User>(user), User.class).getBody();
-			}
-			user.setWebshopId(webshopUser.getId());
-		} else {
-			if (user.getWebshopId() != null) {
-				restTemplate.exchange(user.getWebshop() + "/users/" + user.getWebshopId(), HttpMethod.DELETE, null,
-						Void.class);
-			}
+			Long webshopId = restTemplate
+					.exchange(user.getWebshop() + "/users", HttpMethod.POST, new HttpEntity<User>(user), User.class)
+					.getBody().getId();
+			user.setWebshopId(webshopId);
 		}
 
 		user = repo.save(user);

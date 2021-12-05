@@ -16,6 +16,7 @@ export class UserListComponent {
   }
 
   editRoute = Route.USER_FORM
+  hideEdit = true;
 
   columnMappings: { [key: string]: string } = {
     email: 'User Email', 
