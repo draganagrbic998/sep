@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import java.util.Optional;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.Auth;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.TokenUtils;
@@ -43,15 +46,24 @@ public class UserService implements UserDetailsService {
 		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 
-	@Transactional(readOnly = true)
-	public User readOne(Long id) {
-		log.info("UserService - readOne: id=" + id);
-		return repo.findById(id).get();
+	@Transactional
+	public User save(User user) {
+		user = repo.save(user);
+		log.info("UserService - save: id=" + user.getId());
+		return user;
 	}
 
-	public User save(User user) {
-		user.setId(null);
-		return repo.save(user);
+	@Transactional
+	public void delete(Long id) {
+		log.info("UserService - delete: id=" + id);
+		Optional<User> user = repo.findById(id);
+
+		if (!user.isPresent()) {
+			log.error("User: id=" + id + " not found.");
+			throw new NotFoundException(id.toString(), UserService.class.getSimpleName());
+		}
+
+		repo.deleteById(id);
 	}
 
 }

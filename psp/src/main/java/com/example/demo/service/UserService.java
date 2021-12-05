@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -77,6 +79,25 @@ public class UserService implements UserDetailsService {
 		if (user.getId() == null) {
 			user.setApiKey(cipher.encrypt(UUID.randomUUID().toString()));
 			user.setPassword(passwordEncoder.encode(user.getPassword()));
+		} else {
+			user.setWebshopId(repo.findById(user.getId()).get().getWebshopId());
+		}
+		if (!user.getRole().equals("psp-admin")) {
+			User webshopUser;
+			if (user.getWebshopId() == null) {
+				webshopUser = restTemplate
+						.exchange(user.getWebshop() + "/users", HttpMethod.POST, new HttpEntity<User>(user), User.class)
+						.getBody();
+			} else {
+				webshopUser = restTemplate.exchange(user.getWebshop() + "/users/" + user.getWebshopId(), HttpMethod.PUT,
+						new HttpEntity<User>(user), User.class).getBody();
+			}
+			user.setWebshopId(webshopUser.getId());
+		} else {
+			if (user.getWebshopId() != null) {
+				restTemplate.exchange(user.getWebshop() + "/users/" + user.getWebshopId(), HttpMethod.DELETE, null,
+						Void.class);
+			}
 		}
 
 		user = repo.save(user);
@@ -87,11 +108,17 @@ public class UserService implements UserDetailsService {
 	@Transactional
 	public void delete(Long id) {
 		log.info("UserService - delete: id=" + id);
-		Optional<User> user = repo.findById(id);
+		Optional<User> temp = repo.findById(id);
 
-		if (!user.isPresent()) {
+		if (!temp.isPresent()) {
 			log.error("User: id=" + id + " not found.");
 			throw new NotFoundException(id.toString(), PaymentMethod.class.getSimpleName());
+		}
+
+		User user = temp.get();
+		if (user.getWebshopId() != null) {
+			restTemplate.exchange(user.getWebshop() + "/users/" + user.getWebshopId(), HttpMethod.DELETE, null,
+					Void.class);
 		}
 
 		repo.deleteById(id);

@@ -17,6 +17,8 @@ import javax.validation.constraints.NotBlank;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,6 +34,9 @@ public class User implements UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	@Column
+	private Long webshopId;
 
 	@NotBlank
 	@Column
@@ -55,6 +60,7 @@ public class User implements UserDetails {
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<PaymentMethod> methods = new HashSet<PaymentMethod>();
 
+	@JsonIgnore
 	@Override
 	public List<RoleAuth> getAuthorities() {
 		return List.of(new RoleAuth(role));
