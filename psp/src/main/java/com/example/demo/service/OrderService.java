@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.demo.example.exception.NotFoundException;
-import com.example.demo.dto.OrderStatusUpdateDTO;
+import com.example.demo.dto.OrderStatusUpdate;
 import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
 import com.example.demo.repo.OrderRepository;
@@ -27,10 +27,11 @@ public class OrderService {
 	private final OrderRepository repo;
 	private final RestTemplate restTemplate;
 
-	@Transactional(readOnly = true)
-	public List<Order> read() {
-		log.info("OrderService - read");
-		return repo.findAll();
+	@Transactional
+	public Order save(Order order) {
+		order = repo.save(order);
+		log.info("OrderService - save: id=" + order.getId());
+		return order;
 	}
 
 	@Transactional(readOnly = true)
@@ -46,39 +47,27 @@ public class OrderService {
 		return order.get();
 	}
 
-	@Transactional
-	public Order save(Order order) {
-		order = repo.save(order);
-		log.info("OrderService - save: id=" + order.getId());
-		return order;
-	}
-
-	@Scheduled(fixedDelay = 60000) // svakih 60s proverimo stanje svih kreiranih porudzbina
+	@Scheduled(fixedDelay = 60000)
 	public void checkOrders() {
 		log.info("OrderService - checkOrders");
-		List<Order> orders = this.read();
+		List<Order> orders = repo.findAll();
 
 		for (Order order : orders) {
-			if (order.getStatus() == OrderStatus.CREATED) {
-				// Ako je ispod 5 minuta sve je okej
-				if (order.getTicks() < 5) {
+			if (order.getStatus().equals(OrderStatus.CREATED)) {
+				if (order.getTicks() < 1) {
 					log.info("Order: id=" + order.getId() + " tick=" + order.getTicks() + " - OK");
 					order.setTicks(order.getTicks() + 1);
-					this.save(order);
-					// Javimo WebShop-u da je postupak slanja mikroservisu bio neuspesan
-					// ako klijent nije odabrao nacin placanja u roku od 5 minuta
+					save(order);
 				} else {
 					log.warn("Order: id=" + order.getId() + " tick=" + order.getTicks() + " - FAILED");
 					order.setStatus(OrderStatus.FAILED);
-					this.save(order);
+					save(order);
 
-					OrderStatusUpdateDTO orderStatusUpdateDTO = new OrderStatusUpdateDTO();
-					orderStatusUpdateDTO.setId(order.getWebshopId());
-					orderStatusUpdateDTO.setStatus("FAILED");
+					OrderStatusUpdate dto = new OrderStatusUpdate(order.getWebshopId(), OrderStatus.FAILED);
 
 					log.info("checkOrders - notifying WebShop @" + order.getCallbackUrl());
 					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
-							new HttpEntity<OrderStatusUpdateDTO>(orderStatusUpdateDTO), String.class);
+							new HttpEntity<OrderStatusUpdate>(dto), String.class);
 
 				}
 			}

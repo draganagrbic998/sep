@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.model.Order;
+import com.example.demo.model.OrderStatus;
 import com.example.demo.repository.OrderRepository;
 
 import lombok.AllArgsConstructor;
@@ -23,6 +24,13 @@ public class OrderService {
 	public List<Order> read() {
 		log.info("OrderService - read");
 		return repo.findByUserId(userService.getLoggedInUser().getId());
+	}
+
+	@Transactional
+	public void updateStatus(Long id, OrderStatus status) {
+		log.info("OrderService - updateStatus: id=" + id);
+		Order order = repo.findById(id).get();
+		order.setStatus(status);
 	}
 
 }

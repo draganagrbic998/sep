@@ -1,14 +1,13 @@
 package com.example.demo.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.OrderWebshopDTO;
+import com.example.demo.dto.OrderDTO;
 import com.example.demo.mapper.OrderMapper;
-import com.example.demo.model.Order;
-import com.example.demo.model.OrderStatus;
 import com.example.demo.service.OrderService;
 
 import lombok.AllArgsConstructor;
@@ -24,12 +23,10 @@ public class OrderController {
 	private final OrderService service;
 
 	@PostMapping
-	private Order create(@RequestBody OrderWebshopDTO dto) {
+	public ResponseEntity<Void> create(@RequestBody OrderDTO dto) {
 		log.info("OrderController - create");
-		Order order = mapper.toEntity(dto);
-		order.setStatus(OrderStatus.CREATED);
-		order = service.save(order);
-		return order;
+		service.save(mapper.toEntity(dto));
+		return ResponseEntity.noContent().build();
 	}
 
 }

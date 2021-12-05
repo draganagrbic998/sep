@@ -7,9 +7,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class OrderStatusUpdateDTO {
+public class OrderDTO {
 
 	private Long id;
-	private String status;
+	private Double price;
+	private String currency;
+	private String callbackUrl;
 
 }

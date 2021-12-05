@@ -47,7 +47,12 @@ public class Order {
 	@Positive
 	private Long quantity;
 
+	@NotNull
+	@Column
+	private OrderStatus status;
+
 	public Order(CartItem item) {
+		status = OrderStatus.CREATED;
 		date = new Date();
 		user = item.getUser();
 		product = item.getProduct();

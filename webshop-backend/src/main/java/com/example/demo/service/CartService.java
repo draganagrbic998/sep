@@ -2,9 +2,13 @@ package com.example.demo.service;
 
 import java.util.List;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
+import com.example.demo.dto.PspOrder;
 import com.example.demo.model.CartItem;
 import com.example.demo.model.Order;
 import com.example.demo.repository.CartItemRepository;
@@ -23,6 +27,7 @@ public class CartService {
 	private final ProductRepository productRepo;
 	private final OrderRepository orderRepo;
 	private final UserService userService;
+	private final RestTemplate restTemplate;
 
 	@Transactional(readOnly = true)
 	public List<CartItem> read() {
@@ -58,6 +63,9 @@ public class CartService {
 		Order order = new Order(item);
 		orderRepo.save(order);
 		repo.deleteById(item.getId());
+
+		restTemplate.exchange("https://localhost:8081/orders", HttpMethod.POST,
+				new HttpEntity<PspOrder>(new PspOrder(order)), Void.class);
 	}
 
 }

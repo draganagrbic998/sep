@@ -1,5 +1,8 @@
 package com.example.demo.dto;
 
+import com.example.demo.model.OrderStatus;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,11 +10,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class OrderWebshopDTO {
+@AllArgsConstructor
+public class OrderStatusUpdate {
 
 	private Long id;
-	private Double price;
-	private String currency;
-	private String callbackUrl;
+	private OrderStatus status;
 
 }
