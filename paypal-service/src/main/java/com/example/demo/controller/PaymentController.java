@@ -49,7 +49,6 @@ public class PaymentController {
 	@GetMapping("/{orderId}")
 	public ResponseEntity<String> getOrderForPaypal(@PathVariable Long orderId) throws PayPalRESTException {
 		log.info("PaymentController - getOrderForPaypal: orderId=" + orderId);
-		String payment = orderService.getOrderDetails(orderId);
-		return ResponseEntity.ok(payment);
+		return ResponseEntity.ok(orderService.getOrderDetails(orderId));
 	}
 }

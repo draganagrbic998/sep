@@ -8,22 +8,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/view")
 public class ViewController {
 
-	@RequestMapping(value = "/success_url")
+	@RequestMapping("/success_url")
 	public String successURL(Model model) {
 		return "successful";
 	}
 
-	@RequestMapping(value = "/failed_url")
+	@RequestMapping("/failed_url")
 	public String failedURL(Model model) {
 		return "failed";
 	}
 
-	@RequestMapping(value = "/error_url")
+	@RequestMapping("/error_url")
 	public String errorURL(Model model) {
 		return "error";
 	}
 
-	@RequestMapping(value = "/register")
+	@RequestMapping("/register")
 	public String form(Model model) {
 		return "register";
 	}

@@ -23,7 +23,7 @@ public class ClientService {
 		return repo.findByPanNumber(panNumber);
 	}
 
-	public Client getClientByMerchantId(String merchantId) throws NotFoundException {
+	public Client getClientByMerchantId(String merchantId) {
 		log.info("ClientService - getClientByMerchantId: merchantId=" + merchantId);
 		Optional<Client> client = repo.findByMerchantId(merchantId);
 

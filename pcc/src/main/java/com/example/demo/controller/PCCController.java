@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.example.demo.dto.AcquirerResponseDTO;
 import com.example.demo.dto.PCCRequestDTO;
 import com.example.demo.dto.PCCResponseDTO;
 import com.example.demo.mapper.ResponseMapper;
@@ -29,7 +29,7 @@ public class PCCController {
 	private final RestTemplate restTemplate;
 
 	@PostMapping("/redirect")
-	public ResponseEntity<?> redirect(@RequestBody PCCRequestDTO dto) {
+	public ResponseEntity<AcquirerResponseDTO> redirect(@RequestBody PCCRequestDTO dto) {
 		log.info("PCCController - redirect: acquirerOrderId=" + dto.getAcquirerOrderId());
 		String bankId = dto.getPanNumber().replace("-", "").substring(1, 7);
 		String bankUrl = bankService.getBankByPanNumber(bankId).getBankUrl();
@@ -39,7 +39,7 @@ public class PCCController {
 		ResponseEntity<PCCResponseDTO> responseEntity = restTemplate.exchange(bankUrl + "/pcc/pay", HttpMethod.POST,
 				new HttpEntity<PCCRequestDTO>(dto), PCCResponseDTO.class);
 
-		return new ResponseEntity<>(responseMapper.toDTO(responseEntity.getBody()), HttpStatus.OK);
+		return ResponseEntity.ok(responseMapper.toDTO(responseEntity.getBody()));
 	}
 
 }

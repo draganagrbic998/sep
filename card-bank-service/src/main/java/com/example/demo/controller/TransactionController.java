@@ -17,12 +17,12 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class TransactionController {
 
-	private final TransactionService transactionService;
+	private final TransactionService service;
 
 	@GetMapping("/{orderId}")
 	private ResponseEntity<String> getTransaction(@PathVariable Long orderId) {
 		log.info("TransactionController - getTransaction: orderId=" + orderId);
-		return ResponseEntity.ok(transactionService.findByMerchantOrderId(orderId).getStatus().toString());
+		return ResponseEntity.ok(service.findByMerchantOrderId(orderId).getStatus().toString());
 	}
 
 }

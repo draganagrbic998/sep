@@ -9,12 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.demo.example.exception.NotFoundException;
 import com.example.demo.dto.OrderCreatedDTO;
 import com.example.demo.dto.OrderDTO;
 import com.example.demo.dto.PaymentRequestCompletedDTO;
 import com.example.demo.mapper.OrderMapper;
-import com.example.demo.model.Order;
 import com.example.demo.service.OrderService;
 
 import lombok.AllArgsConstructor;
@@ -30,24 +28,21 @@ public class PaymentController {
 	private final OrderService orderService;
 
 	@PostMapping
-	public OrderCreatedDTO createPayment(@RequestBody OrderDTO orderDTO) {
-		log.info("PaymentController - createPayment");
-		Order order = orderMapper.toEntity(orderDTO);
-		return orderMapper.toDTO(orderService.save(order));
+	public OrderCreatedDTO create(@RequestBody OrderDTO dto) {
+		log.info("PaymentController - create");
+		return orderMapper.toDTO(orderService.save(orderMapper.toEntity(dto)));
 	}
 
 	@GetMapping("/pay/{merchantApiKey}/{orderId}")
-	public ModelAndView pay(@PathVariable String merchantApiKey, @PathVariable Long orderId) throws NotFoundException {
+	public ModelAndView pay(@PathVariable String merchantApiKey, @PathVariable Long orderId) {
 		log.info("PaymentController - pay: merchantApiKey=" + merchantApiKey + " orderId=" + orderId);
-		String redirectUrl = orderService.pay(orderId, merchantApiKey);
-		return new ModelAndView("redirect:" + redirectUrl);
+		return new ModelAndView("redirect:" + orderService.pay(orderId, merchantApiKey));
 	}
 
 	@PostMapping("/complete")
-	public ResponseEntity<String> completePayment(@RequestBody PaymentRequestCompletedDTO paymentRequestCompletedDTO) {
-		log.info("PaymentController - completePayment: orderId=" + paymentRequestCompletedDTO.getId());
-		String payment = orderService.completePayment(paymentRequestCompletedDTO);
-		return ResponseEntity.ok(payment);
+	public ResponseEntity<String> completePayment(@RequestBody PaymentRequestCompletedDTO dto) {
+		log.info("PaymentController - completePayment: orderId=" + dto.getId());
+		return ResponseEntity.ok(orderService.completePayment(dto));
 	}
 
 }

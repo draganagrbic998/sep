@@ -18,7 +18,7 @@ public class BankService {
 
 	private final BankRepository repo;
 
-	public Bank getBankByPanNumber(String panNumberBankId) throws NotFoundException {
+	public Bank getBankByPanNumber(String panNumberBankId) {
 		log.info("BankService - getBankByPanNumber: panNumberBankId=" + panNumberBankId);
 		Optional<Bank> bank = repo.findByPanNumberBankId(panNumberBankId);
 

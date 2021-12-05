@@ -18,7 +18,7 @@ public class ViewController {
 
 	private final OrderService orderService;
 
-	@RequestMapping(value = "/paypal_payment/{orderId}")
+	@RequestMapping("/paypal_payment/{orderId}")
 	public String paypal(@PathVariable Long orderId, Model model) {
 		Order order = orderService.findById(orderId);
 		model.addAttribute("orderId", orderId);
@@ -26,26 +26,26 @@ public class ViewController {
 		return "confirmOrder";
 	}
 
-	@RequestMapping(value = "/register")
+	@RequestMapping("/register")
 	public String register(Model model) {
 		return "register";
 	}
 
-	@RequestMapping(value = "/success_url")
+	@RequestMapping("/success_url")
 	public String successPayment(@RequestParam("orderId") Long orderId, Model model) {
 		Order order = orderService.findById(orderId);
 		model.addAttribute("redirect", order.getCallbackUrl());
 		return "success";
 	}
 
-	@RequestMapping(value = "/cancel_url")
+	@RequestMapping("/cancel_url")
 	public String cancelPayment(@RequestParam("orderId") Long orderId, Model model) {
 		Order order = orderService.findById(orderId);
 		model.addAttribute("redirect", order.getCallbackUrl());
 		return "cancel";
 	}
 
-	@RequestMapping(value = "/error_url")
+	@RequestMapping("/error_url")
 	public String errorPayment(@RequestParam("orderId") Long orderId, Model model) {
 		Order order = orderService.findById(orderId);
 		model.addAttribute("redirect", order.getCallbackUrl());
