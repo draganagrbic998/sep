@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.util.Base64;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,8 +37,9 @@ public class PaymentController {
 
 	@GetMapping("/pay/{merchantApiKey}/{orderId}")
 	public ModelAndView pay(@PathVariable String merchantApiKey, @PathVariable Long orderId) {
-		log.info("PaymentController - pay: merchantApiKey=" + merchantApiKey + " orderId=" + orderId);
-		return new ModelAndView("redirect:" + orderService.pay(orderId, merchantApiKey));
+		String merchantApiKeyTemp = new String(Base64.getDecoder().decode(merchantApiKey));
+		log.info("PaymentController - pay: merchantApiKey=" + merchantApiKeyTemp + " orderId=" + orderId);
+		return new ModelAndView("redirect:" + orderService.pay(orderId, merchantApiKeyTemp));
 	}
 
 	@PostMapping("/complete")

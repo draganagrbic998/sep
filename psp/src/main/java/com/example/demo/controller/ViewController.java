@@ -11,10 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.model.Order;
 import com.example.demo.model.PaymentMethod;
-import com.example.demo.model.User;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.PaymentMethodService;
-import com.example.demo.service.UserService;
 
 import lombok.AllArgsConstructor;
 
@@ -23,16 +21,14 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/view")
 public class ViewController {
 
-	private final UserService userService;
 	private final OrderService orderService;
 	private final PaymentMethodService paymentMethodService;
 
 	@GetMapping("/selectPaymentMethod/{merchantApiKey}/{orderWebshopId}")
 	public String selectPaymentMethod(@PathVariable String merchantApiKey, @PathVariable Long orderWebshopId,
 			Model model) {
-		merchantApiKey = new String(Base64.getDecoder().decode(merchantApiKey));
-		List<PaymentMethod> paymentMethods = paymentMethodService.getPaymentMethods(merchantApiKey);
-		User merchant = userService.findByApiKey(merchantApiKey);
+		String merchantApiKeyTemp = new String(Base64.getDecoder().decode(merchantApiKey));
+		List<PaymentMethod> paymentMethods = paymentMethodService.getPaymentMethods(merchantApiKeyTemp);
 		Order order = orderService.readOne(orderWebshopId);
 
 		model.addAttribute("orderIdPSP", order.getId());
@@ -42,7 +38,7 @@ public class ViewController {
 		model.addAttribute("callbackUrl", order.getCallbackUrl());
 
 		model.addAttribute("paymentMethods", paymentMethods);
-		model.addAttribute("merchantApiKey", merchant.getApiKey());
+		model.addAttribute("merchantApiKey", merchantApiKey);
 
 		return "selectPaymentMethod";
 	}

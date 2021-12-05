@@ -1,5 +1,7 @@
 package com.example.demo.mapper;
 
+import java.util.Base64;
+
 import org.springframework.stereotype.Component;
 
 import com.example.demo.dto.OrderCreatedDTO;
@@ -23,7 +25,7 @@ public class OrderMapper {
 		Order model = new Order();
 
 		model.setShopOrderId(dto.getOrderIdWebShop());
-		model.setMerchantApiKey(dto.getMerchantApiKey());
+		model.setMerchantApiKey(new String(Base64.getDecoder().decode(dto.getMerchantApiKey())));
 		model.setCurrency(dto.getCurrency());
 		model.setPrice(dto.getPrice());
 		model.setCallbackUrl(dto.getCallbackUrl());
