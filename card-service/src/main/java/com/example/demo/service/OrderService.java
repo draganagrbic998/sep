@@ -91,7 +91,8 @@ public class OrderService {
 			paymentRequestCompletedDTO.setStatus("COMPLETED");
 
 			log.info("completePayment - notifying WebShop @" + order.getCallbackUrl());
-			ResponseEntity<String> responseEntity = restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
+			ResponseEntity<String> responseEntity = restTemplate.exchange(
+					order.getCallbackUrl() + "/" + order.getShopOrderId(), HttpMethod.PUT,
 					new HttpEntity<PaymentRequestCompletedDTO>(paymentRequestCompletedDTO), String.class);
 
 			return responseEntity.getBody();
@@ -105,7 +106,8 @@ public class OrderService {
 			paymentRequestCompletedDTO.setId(order.getShopOrderId());
 
 			log.info("completePayment - notifying WebShop @" + order.getCallbackUrl());
-			ResponseEntity<String> responseEntity = restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
+			ResponseEntity<String> responseEntity = restTemplate.exchange(
+					order.getCallbackUrl() + "/" + order.getShopOrderId(), HttpMethod.PUT,
 					new HttpEntity<PaymentRequestCompletedDTO>(paymentRequestCompletedDTO), String.class);
 
 			return responseEntity.getBody();
@@ -150,7 +152,8 @@ public class OrderService {
 							paymentRequestCompletedDTO.setStatus("COMPLETED");
 
 							log.info("checkOrders - notifying WebShop @" + order.getCallbackUrl());
-							new RestTemplate().exchange(order.getCallbackUrl(), HttpMethod.POST,
+							new RestTemplate().exchange(order.getCallbackUrl() + "/" + order.getShopOrderId(),
+									HttpMethod.PUT,
 									new HttpEntity<PaymentRequestCompletedDTO>(paymentRequestCompletedDTO),
 									String.class);
 						}
@@ -168,7 +171,7 @@ public class OrderService {
 					paymentRequestCompletedDTO.setStatus("FAILED");
 
 					log.info("checkOrders - notifying WebShop @" + order.getCallbackUrl());
-					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.POST,
+					restTemplate.exchange(order.getCallbackUrl() + "/" + order.getShopOrderId(), HttpMethod.PUT,
 							new HttpEntity<PaymentRequestCompletedDTO>(paymentRequestCompletedDTO), String.class);
 
 				}

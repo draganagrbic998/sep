@@ -122,8 +122,8 @@
 						var url = hrefUrl + "/" + res.id
 						window.location.href = url;
 					},
-					error: function(odgovor){
-						alert(odgovor.responseText);
+					error: function(res){
+						alert(res.responseText);
 					}
 				  });
 			});
