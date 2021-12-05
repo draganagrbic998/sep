@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,17 +45,6 @@ public class UserController {
 
 		if (dto.getId() != null) {
 			log.error("create - dto id not null");
-			return ResponseEntity.badRequest().build();
-		}
-		return ResponseEntity.ok(service.save(dto));
-	}
-
-	@PutMapping("/{id}")
-	public ResponseEntity<User> update(@PathVariable Long id, @Valid @RequestBody User dto) {
-		log.info("UserController - update: id=" + id);
-
-		if (id == null || dto.getId() == null || id != dto.getId()) {
-			log.error("update - id is invalid");
 			return ResponseEntity.badRequest().build();
 		}
 		return ResponseEntity.ok(service.save(dto));
