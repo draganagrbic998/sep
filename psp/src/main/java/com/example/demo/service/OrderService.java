@@ -66,7 +66,7 @@ public class OrderService {
 					OrderStatusUpdate dto = new OrderStatusUpdate(order.getWebshopId(), OrderStatus.FAILED);
 
 					log.info("checkOrders - notifying WebShop @" + order.getCallbackUrl());
-					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
+					restTemplate.exchange(order.getCallbackUrl() + "/" + dto.getId(), HttpMethod.PUT,
 							new HttpEntity<OrderStatusUpdate>(dto), String.class);
 
 				}
