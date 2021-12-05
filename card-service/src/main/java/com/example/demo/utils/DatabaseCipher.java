@@ -26,8 +26,8 @@ public class DatabaseCipher {
 		if (plainText.isBlank())
 			return plainText;
 		try {
-			this.cipher.init(Cipher.ENCRYPT_MODE, this.key, this.ips);
-			return Base64.getEncoder().encodeToString(this.cipher.doFinal(plainText.getBytes()));
+			cipher.init(Cipher.ENCRYPT_MODE, key, ips);
+			return Base64.getEncoder().encodeToString(cipher.doFinal(plainText.getBytes()));
 		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException
 				| BadPaddingException e) {
 			throw new RuntimeException(e);
@@ -36,8 +36,8 @@ public class DatabaseCipher {
 
 	public String decrypt(String cipherText) {
 		try {
-			this.cipher.init(Cipher.DECRYPT_MODE, this.key, this.ips);
-			return new String(this.cipher.doFinal(Base64.getDecoder().decode(cipherText)));
+			cipher.init(Cipher.DECRYPT_MODE, key, ips);
+			return new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)));
 		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException
 				| BadPaddingException e) {
 			throw new RuntimeException(e);
@@ -45,18 +45,18 @@ public class DatabaseCipher {
 	}
 
 	public Merchant encrypt(Merchant m) {
-		m.setMerchantId(this.encrypt(m.getMerchantId()));
-		m.setMerchantPassword(this.encrypt(m.getMerchantPassword()));
-		m.setMerchantApiKey(this.encrypt(m.getMerchantApiKey()));
-		m.setBankUrl(this.encrypt(m.getBankUrl()));
+		// m.setMerchantId(encrypt(m.getMerchantId()));
+		// m.setMerchantPassword(encrypt(m.getMerchantPassword()));
+		// m.setMerchantApiKey(encrypt(m.getMerchantApiKey()));
+		m.setBankUrl(encrypt(m.getBankUrl()));
 		return m;
 	}
 
 	public Merchant decrypt(Merchant m) {
-		m.setMerchantId(this.decrypt(m.getMerchantId()));
-		m.setMerchantPassword(this.decrypt(m.getMerchantPassword()));
-		m.setMerchantApiKey(this.decrypt(m.getMerchantApiKey()));
-		m.setBankUrl(this.decrypt(m.getBankUrl()));
+		// m.setMerchantId(decrypt(m.getMerchantId()));
+		// m.setMerchantPassword(decrypt(m.getMerchantPassword()));
+		// m.setMerchantApiKey(decrypt(m.getMerchantApiKey()));
+		m.setBankUrl(decrypt(m.getBankUrl()));
 		return m;
 	}
 

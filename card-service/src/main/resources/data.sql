@@ -1,0 +1,2 @@
+insert into MERCHANT (BANK_URL  , MERCHANT_API_KEY , MERCHANT_ID  , MERCHANT_PASSWORD  )
+values ('Oll4Tod2oRfVJQLfLk3BzHwT2mU6OcxxyJyriVcyaUc=', 'jsJpiP7BGETc8ZBgWkEei6aAJMZilDf1la3hSdhQ6qXwl5q9vZMvrQEkCj1XsgzT', 'jsJpiP7BGETc8ZBgWkEei6aAJMZilDf1la3hSdhQ6qXwl5q9vZMvrQEkCj1XsgzT', '+zJmRgMlAzYmGT5C73cFn1QD4wfYFBXUqlWCz9Jq141ygXehDg0SscsyagEzpU6t');

@@ -25,7 +25,7 @@ public class MerchantMapper {
 		model.setMerchantPassword(dto.getMerchantPassword());
 		model.setBankUrl(dto.getBankUrl());
 
-		return this.databaseCipher.encrypt(model);
+		return databaseCipher.encrypt(model);
 	}
 
 }
