@@ -154,13 +154,13 @@ public class PaymentRequestService {
 					DateTimeFormatter.ofPattern("dd.MM.yyyy").format(LocalDate.now())).getValue().doubleValue();
 
 			client.setAvailableFunds(client.getAvailableFunds() - (paymentRequest.getAmount() * rate));
-			clientService.save(client);
+			clientService.save(cipher.encrypt(client));
 
 			merchant.setAvailableFunds(merchant.getAvailableFunds() + (paymentRequest.getAmount() * rate));
 			clientService.save(merchant);
 
 			transaction.setStatus(TransactionStatus.SUCCESSFUL);
-			transactionService.save(transaction);
+			transactionService.save(cipher.encrypt(transaction));
 
 			PaymentRequestCompletedDTO paymentRequestCompletedDTO = new PaymentRequestCompletedDTO();
 
@@ -204,7 +204,7 @@ public class PaymentRequestService {
 				clientService.save(merchant);
 
 				transaction.setStatus(TransactionStatus.SUCCESSFUL);
-				transactionService.save(transaction);
+				transactionService.save(cipher.encrypt(transaction));
 
 				PaymentRequestCompletedDTO paymentRequestCompletedDTO = new PaymentRequestCompletedDTO();
 
