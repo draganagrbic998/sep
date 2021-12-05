@@ -1,5 +1,8 @@
 package com.example.demo.service;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +57,9 @@ public class PaymentRequestService {
 	private TransactionMapper transactionMapper;
 
 	@Autowired
+	private KursnaListaService rateService;
+
+	@Autowired
 	private RestTemplate restTemplate;
 
 	@Autowired
@@ -77,7 +83,7 @@ public class PaymentRequestService {
 		return paymentRequest;
 	}
 
-	public String confirmPaymentRequest(Long paymentRequestId, ClientDTO clientDTO) {
+	public String confirmPaymentRequest(Long paymentRequestId, ClientDTO clientDTO) throws IOException {
 		log.info("PaymentRequestService - confirmPaymentRequest: id=" + paymentRequestId);
 		// Proveravamo da li je to klijent ove banke
 		PaymentRequest paymentRequest = this.findById(paymentRequestId);
@@ -144,12 +150,13 @@ public class PaymentRequestService {
 				return paymentRequest.getErrorUrl();
 			}
 
-			// Ovde bi trebalo API od NBS-a da se stavi da prebaci u dinari
-			client.setAvailableFunds(client.getAvailableFunds() - paymentRequest.getAmount());
+			double rate = rateService.findRate(transaction.getCurrency().toLowerCase(),
+					DateTimeFormatter.ofPattern("dd.MM.yyyy").format(LocalDate.now())).getValue().doubleValue();
+
+			client.setAvailableFunds(client.getAvailableFunds() - (paymentRequest.getAmount() * rate));
 			clientService.save(client);
 
-			// Ovde bi trebalo API od NBS-a da se stavi da prebaci u dinari
-			merchant.setAvailableFunds(merchant.getAvailableFunds() + paymentRequest.getAmount());
+			merchant.setAvailableFunds(merchant.getAvailableFunds() + (paymentRequest.getAmount() * rate));
 			clientService.save(merchant);
 
 			transaction.setStatus(TransactionStatus.SUCCESSFUL);

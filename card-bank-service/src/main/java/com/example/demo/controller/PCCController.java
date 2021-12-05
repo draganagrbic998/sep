@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.io.IOException;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +24,7 @@ public class PCCController {
 	private final PCCService service;
 
 	@PostMapping("/pay")
-	public ResponseEntity<PCCResponseDTO> pay(@RequestBody PCCRequestDTO dto) {
+	public ResponseEntity<PCCResponseDTO> pay(@RequestBody PCCRequestDTO dto) throws IOException {
 		log.info("PCCController - pay: acquirerOrderId=" + dto.getAcquirerOrderId());
 		return ResponseEntity.ok(service.pay(dto));
 	}

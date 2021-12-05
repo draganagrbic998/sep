@@ -1,5 +1,8 @@
 package com.example.demo.service;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -22,8 +25,9 @@ public class PCCService {
 	private final PCCMapper pccMapper;
 	private final ClientService clientService;
 	private final DatabaseCipher cipher;
+	private final KursnaListaService rateService;
 
-	public PCCResponseDTO pay(PCCRequestDTO pccRequestDTO) {
+	public PCCResponseDTO pay(PCCRequestDTO pccRequestDTO) throws IOException {
 		log.info("PCCService - pay: acquirerOrderId=" + pccRequestDTO.getAcquirerOrderId());
 
 		String clientBankId = pccRequestDTO.getPanNumber().replace("-", "").substring(1, 7);
@@ -57,8 +61,10 @@ public class PCCService {
 			return pccMapper.toFailedPaymentPCCResponse(pccRequestDTO);
 		}
 
-		// Ovde bi trebalo API od NBS-a da se stavi da prebaci u dinari
-		client.setAvailableFunds(client.getAvailableFunds() - pccRequestDTO.getAmount());
+		double rate = rateService.findRate(pccRequestDTO.getCurrency().toLowerCase(),
+				DateTimeFormatter.ofPattern("dd.MM.yyyy").format(LocalDate.now())).getValue().doubleValue();
+
+		client.setAvailableFunds(client.getAvailableFunds() - (pccRequestDTO.getAmount() * rate));
 		clientService.save(client);
 
 		return pccMapper.toSuccessfulPCCResponse(pccRequestDTO);

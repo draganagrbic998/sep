@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.io.IOException;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,7 +34,8 @@ public class PaymentRequestController {
 	}
 
 	@PostMapping("/confirm/{id}")
-	private ResponseEntity<String> confirmPayment(@PathVariable Long id, @RequestBody ClientDTO dto) {
+	private ResponseEntity<String> confirmPayment(@PathVariable Long id, @RequestBody ClientDTO dto)
+			throws IOException {
 		log.info("PaymentRequestController - confirmPayment: paymentRequestId=" + id);
 		return ResponseEntity.ok(service.confirmPaymentRequest(id, dto));
 	}
