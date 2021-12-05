@@ -96,7 +96,7 @@
 					<h5 class="card-title title" th:text="${method.name}"></h5>
 					<button class="btn btn-boja link"
 						th:href="@{'http://localhost:8082/' + ${method.name}} + '/pay/' +  ${merchantApiKey}"
-						th:attr="create_url=@{'http://localhost:8082/psp/redirection/' + ${method.name}} + '/' + ${orderIdPSP}, merchant_api_key=${merchantApiKey}, order_id=${orderIdWebShop}, order_price=${orderPrice}, order_currency=${orderCurrency}, callback_url=${callbackUrl}">
+						th:attr="create_url=@{'https://localhost:8081/redirection/' + ${method.name}} + '/' + ${orderIdPSP}, merchant_api_key=${merchantApiKey}, order_id=${orderIdWebShop}, order_price=${orderPrice}, order_currency=${orderCurrency}, callback_url=${callbackUrl}">
 						Confirm</button>
 				</div>
 			</div>

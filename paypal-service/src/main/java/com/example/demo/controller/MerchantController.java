@@ -16,7 +16,7 @@ import lombok.extern.log4j.Log4j2;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping(value = "/merchants")
+@RequestMapping("/merchants")
 @Log4j2
 public class MerchantController {
 
