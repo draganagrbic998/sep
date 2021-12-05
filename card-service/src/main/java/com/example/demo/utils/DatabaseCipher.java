@@ -47,7 +47,6 @@ public class DatabaseCipher {
 	public Merchant encrypt(Merchant m) {
 		m.setMerchantId(this.encrypt(m.getMerchantId()));
 		m.setMerchantPassword(this.encrypt(m.getMerchantPassword()));
-		m.setMerchantApiKey(this.encrypt(m.getMerchantApiKey()));
 		m.setBankUrl(this.encrypt(m.getBankUrl()));
 		return m;
 	}
@@ -55,18 +54,15 @@ public class DatabaseCipher {
 	public Merchant decrypt(Merchant m) {
 		m.setMerchantId(this.decrypt(m.getMerchantId()));
 		m.setMerchantPassword(this.decrypt(m.getMerchantPassword()));
-		m.setMerchantApiKey(this.decrypt(m.getMerchantApiKey()));
 		m.setBankUrl(this.decrypt(m.getBankUrl()));
 		return m;
 	}
 
 	public Order encrypt(Order o) {
-		o.setMerchantApiKey(this.encrypt(o.getMerchantApiKey()));
 		return o;
 	}
 
 	public Order decrypt(Order o) {
-		o.setMerchantApiKey(this.decrypt(o.getMerchantApiKey()));
 		return o;
 	}
 

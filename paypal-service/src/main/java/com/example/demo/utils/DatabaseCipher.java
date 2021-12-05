@@ -47,26 +47,22 @@ public class DatabaseCipher {
 	public Merchant encrypt(Merchant m) {
 		m.setClientId(this.encrypt(m.getClientId()));
 		m.setClientSecret(this.encrypt(m.getClientSecret()));
-		m.setMerchantApiKey(this.encrypt(m.getMerchantApiKey()));
 		return m;
 	}
 
 	public Merchant decrypt(Merchant m) {
 		m.setClientId(this.decrypt(m.getClientId()));
 		m.setClientSecret(this.decrypt(m.getClientSecret()));
-		m.setMerchantApiKey(this.decrypt(m.getMerchantApiKey()));
 		return m;
 	}
 
 	public Order encrypt(Order o) {
 		o.setPayPalOrderId(this.encrypt(o.getPayPalOrderId()));
-		o.setMerchantApiKey(this.encrypt(o.getMerchantApiKey()));
 		return o;
 	}
 
 	public Order decrypt(Order o) {
 		o.setPayPalOrderId(this.decrypt(o.getPayPalOrderId()));
-		o.setMerchantApiKey(this.decrypt(o.getMerchantApiKey()));
 		return o;
 	}
 
