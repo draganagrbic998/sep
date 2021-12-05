@@ -2,7 +2,6 @@ package com.example.demo.service;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.PCCRequestDTO;
@@ -12,20 +11,17 @@ import com.example.demo.model.Client;
 import com.example.demo.utils.DatabaseCipher;
 import com.example.demo.utils.Utils;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
+@AllArgsConstructor
 @Service
+@Log4j2
 public class PCCService {
 
-	@Autowired
-	private PCCMapper pccMapper;
-
-	@Autowired
-	private ClientService clientService;
-
-	@Autowired
-	private DatabaseCipher cipher;
+	private final PCCMapper pccMapper;
+	private final ClientService clientService;
+	private final DatabaseCipher cipher;
 
 	public PCCResponseDTO pay(PCCRequestDTO pccRequestDTO) {
 		log.info("PCCService - pay: acquirerOrderId=" + pccRequestDTO.getAcquirerOrderId());

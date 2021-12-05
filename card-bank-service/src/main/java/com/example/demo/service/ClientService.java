@@ -2,21 +2,21 @@ package com.example.demo.service;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.demo.example.exception.NotFoundException;
 import com.example.demo.model.Client;
 import com.example.demo.repo.ClientRepository;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
+@AllArgsConstructor
 @Service
+@Log4j2
 public class ClientService {
 
-	@Autowired
-	private ClientRepository repo;
+	private final ClientRepository repo;
 
 	public Optional<Client> findClientByPanNumber(String panNumber) {
 		log.info("ClientService - findClientByPanNumber: panNumber=" + panNumber);
@@ -35,7 +35,7 @@ public class ClientService {
 		return client.get();
 	}
 
-	public Client getClientByPanNumber(String panNumber) throws NotFoundException {
+	public Client getClientByPanNumber(String panNumber) {
 		log.info("ClientService - getClientByPanNumber: panNumber=" + panNumber.replace("-", "").substring(1, 7));
 		Optional<Client> client = repo.findByPanNumber(panNumber);
 

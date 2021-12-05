@@ -28,8 +28,8 @@ import com.example.demo.utils.Utils;
 
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @Service
+@Log4j2
 public class PaymentRequestService {
 
 	@Value("${bankID}")
@@ -59,7 +59,7 @@ public class PaymentRequestService {
 	@Autowired
 	private DatabaseCipher cipher;
 
-	public PaymentRequest findById(Integer id) throws NotFoundException {
+	public PaymentRequest findById(Long id) {
 		log.info("PaymentRequestService - findById: id=" + id);
 		Optional<PaymentRequest> paymentRequest = paymentRequestRepository.findById(id);
 
@@ -77,7 +77,7 @@ public class PaymentRequestService {
 		return paymentRequest;
 	}
 
-	public String confirmPaymentRequest(ClientDTO clientDTO, Integer paymentRequestId) throws NotFoundException {
+	public String confirmPaymentRequest(Long paymentRequestId, ClientDTO clientDTO) {
 		log.info("PaymentRequestService - confirmPaymentRequest: id=" + paymentRequestId);
 		// Proveravamo da li je to klijent ove banke
 		PaymentRequest paymentRequest = this.findById(paymentRequestId);

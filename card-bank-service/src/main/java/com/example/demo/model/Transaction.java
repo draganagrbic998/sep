@@ -9,23 +9,20 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Entity
 @Table(name = "transaction_table")
 public class Transaction {
 
-	@EqualsAndHashCode.Include
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 
 	@Column
 	private Double amount;
@@ -37,7 +34,7 @@ public class Transaction {
 	private String merchantId;
 
 	@Column
-	private Integer merchantOrderId;
+	private Long merchantOrderId;
 
 	@Column
 	private LocalDateTime merchantTimestamp;

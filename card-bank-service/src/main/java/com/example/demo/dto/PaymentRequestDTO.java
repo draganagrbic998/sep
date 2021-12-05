@@ -6,16 +6,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
 public class PaymentRequestDTO {
 
 	private String merchantId;
 	private String merchantPassword;
 	private Double amount;
 	private String currency;
-	private Integer merchantOrderId;
+	private Long merchantOrderId;
 	private LocalDateTime merchantTimestamp;
 	private String callbackUrl;
 	private String successUrl;

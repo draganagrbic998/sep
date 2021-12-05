@@ -10,7 +10,7 @@ import lombok.Setter;
 public class OrderDTO {
 
 	private String merchantApiKey;
-	private Integer orderIdWebShop;
+	private Long orderIdWebShop;
 	private Double price;
 	private String currency;
 	private String callbackUrl;

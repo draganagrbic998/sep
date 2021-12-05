@@ -1,43 +1,39 @@
 package com.example.demo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.demo.example.exception.NotFoundException;
 import com.example.demo.dto.ClientDTO;
 import com.example.demo.dto.PaymentRequestDTO;
 import com.example.demo.mapper.PaymentRequestMapper;
-import com.example.demo.model.PaymentRequest;
 import com.example.demo.service.PaymentRequestService;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
+@AllArgsConstructor
 @RestController
 @RequestMapping("/payment-requests")
+@Log4j2
 public class PaymentRequestController {
 
-	@Autowired
-	private PaymentRequestMapper paymentRequestMapper;
-
-	@Autowired
-	private PaymentRequestService paymentRequestService;
+	private final PaymentRequestMapper mapper;
+	private final PaymentRequestService service;
 
 	@PostMapping
-	private ResponseEntity<?> createPayment(@RequestBody PaymentRequestDTO paymentRequestDTO) {
-		log.info("PaymentRequestController - createPayment");
-		PaymentRequest paymentRequest = paymentRequestMapper.toEntity(paymentRequestDTO);
-		return new ResponseEntity<>(paymentRequestMapper.toDTO(paymentRequestService.save(paymentRequest)),
-				HttpStatus.CREATED);
+	private ResponseEntity<?> create(@RequestBody PaymentRequestDTO dto) {
+		log.info("PaymentRequestController - create");
+		return ResponseEntity.ok(mapper.toDTO(service.save(mapper.toEntity(dto))));
 	}
 
 	@PostMapping("/confirm/{paymentRequestId}")
-	private String confirmPayment(@RequestBody ClientDTO clientDTO, @PathVariable Integer paymentRequestId)
-			throws NotFoundException {
-		log.info("PaymentRequestController - confirmPayment: paymentRequestId=" + paymentRequestId);
-		return paymentRequestService.confirmPaymentRequest(clientDTO, paymentRequestId);
+	private String confirmPayment(@PathVariable Long id, @RequestBody ClientDTO dto) {
+		log.info("PaymentRequestController - confirmPayment: paymentRequestId=" + id);
+		return service.confirmPaymentRequest(id, dto);
 	}
 
 }

@@ -3,7 +3,6 @@ package com.example.demo.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -22,34 +21,27 @@ import com.example.demo.model.OrderStatus;
 import com.example.demo.repo.OrderRepository;
 import com.example.demo.utils.DatabaseCipher;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
+@AllArgsConstructor
 @Service
+@Log4j2
 public class OrderService {
 
-	@Autowired
-	private RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
+	private final OrderRepository repo;
+	private final MerchantService merchantService;
+	private final PaymentRequestMapper paymentRequestMapper;
+	private final DatabaseCipher cipher;
 
-	@Autowired
-	private OrderRepository repo;
-
-	@Autowired
-	private MerchantService merchantService;
-
-	@Autowired
-	private PaymentRequestMapper paymentRequestMapper;
-
-	@Autowired
-	private DatabaseCipher cipher;
-
-	public List<Order> findAll() {
-		log.info("OrderService - findAll");
+	public List<Order> read() {
+		log.info("OrderService - read");
 		return repo.findAll();
 	}
 
-	public Order findById(Integer id) throws NotFoundException {
-		log.info("OrderService - findById: id=" + id);
+	public Order readOne(Long id) {
+		log.info("OrderService - readOne: id=" + id);
 		Optional<Order> order = repo.findById(id);
 
 		if (!order.isPresent()) {
@@ -66,9 +58,9 @@ public class OrderService {
 		return order;
 	}
 
-	public String pay(Integer orderId, String merchantApiKey) throws NotFoundException {
+	public String pay(Long orderId, String merchantApiKey) {
 		log.info("OrderService - pay: orderId=" + orderId + " merchantApiKey=" + merchantApiKey);
-		Order order = this.findById(orderId);
+		Order order = this.readOne(orderId);
 		Merchant merchant = merchantService.findByMerchantApiKey(cipher.encrypt(merchantApiKey));
 
 		PaymentRequestDTO dto = paymentRequestMapper.toDTO(merchant, order);
@@ -85,9 +77,9 @@ public class OrderService {
 		return responseEntity.getBody().getPaymentUrl() + "/" + responseEntity.getBody().getPaymentId();
 	}
 
-	public String completePayment(PaymentRequestCompletedDTO paymentRequestCompletedDTO) throws NotFoundException {
+	public String completePayment(PaymentRequestCompletedDTO paymentRequestCompletedDTO) {
 		log.info("OrderService - completePayment: orderId=" + paymentRequestCompletedDTO.getId());
-		Order order = this.findById(paymentRequestCompletedDTO.getId());
+		Order order = readOne(paymentRequestCompletedDTO.getId());
 
 		if (paymentRequestCompletedDTO.getStatus().contentEquals("SUCCESS")) {
 			log.info("Order: id=" + order.getId() + " payment_status=SUCCESS");
@@ -131,7 +123,7 @@ public class OrderService {
 	@Scheduled(fixedDelay = 60000)
 	public void checkOrders() {
 		log.info("OrderService - checkOrders");
-		List<Order> orders = this.findAll();
+		List<Order> orders = this.read();
 
 		for (Order order : orders) {
 			Merchant merchant = cipher

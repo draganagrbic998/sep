@@ -1,7 +1,5 @@
 package com.example.demo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,21 +7,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.PCCRequestDTO;
+import com.example.demo.dto.PCCResponseDTO;
 import com.example.demo.service.PCCService;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
+@AllArgsConstructor
 @RestController
 @RequestMapping("/pcc")
+@Log4j2
 public class PCCController {
 
-	@Autowired
-	private PCCService pccService;
+	private final PCCService service;
 
 	@PostMapping("/pay")
-	public ResponseEntity<?> pay(@RequestBody PCCRequestDTO pccRequestDTO) {
-		log.info("PCCController - pay: acquirerOrderId=" + pccRequestDTO.getAcquirerOrderId());
-		return new ResponseEntity<>(pccService.pay(pccRequestDTO), HttpStatus.OK);
+	public ResponseEntity<PCCResponseDTO> pay(@RequestBody PCCRequestDTO dto) {
+		log.info("PCCController - pay: acquirerOrderId=" + dto.getAcquirerOrderId());
+		return ResponseEntity.ok(service.pay(dto));
 	}
 }

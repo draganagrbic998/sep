@@ -11,11 +11,11 @@ import com.example.demo.model.PaymentRequest;
 
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @Component
+@Log4j2
 public class PCCMapper {
 
-	public PCCRequestDTO toDTO(Integer transactionId, ClientDTO clientDTO, PaymentRequest paymentRequest) {
+	public PCCRequestDTO toDTO(Long transactionId, ClientDTO clientDTO, PaymentRequest paymentRequest) {
 		log.info("PCCMapper - toDTO: transactionId=" + transactionId);
 		PCCRequestDTO dto = new PCCRequestDTO();
 

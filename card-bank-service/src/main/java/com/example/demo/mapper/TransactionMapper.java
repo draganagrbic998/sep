@@ -9,9 +9,9 @@ import com.example.demo.utils.DatabaseCipher;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
-@Component
 @AllArgsConstructor
+@Component
+@Log4j2
 public class TransactionMapper {
 
 	private final DatabaseCipher cipher;

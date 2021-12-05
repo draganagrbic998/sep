@@ -1,29 +1,29 @@
 package com.example.demo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.demo.example.exception.NotFoundException;
 import com.example.demo.dto.MerchantDTO;
 import com.example.demo.mapper.MerchantMapper;
 import com.example.demo.model.Merchant;
 import com.example.demo.service.MerchantService;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
+@AllArgsConstructor
 @RestController
 @RequestMapping("/merchants")
+@Log4j2
 public class MerchantController {
 
-	@Autowired
-	private MerchantMapper mapper;
-
-	@Autowired
-	private MerchantService service;
+	private final MerchantMapper mapper;
+	private final MerchantService service;
 
 	@PostMapping
-	public Merchant create(@RequestBody MerchantDTO dto) throws NotFoundException {
+	public Merchant create(@RequestBody MerchantDTO dto) {
 		log.info("MerchantController - create");
 		return service.save(mapper.toEntity(dto));
 	}

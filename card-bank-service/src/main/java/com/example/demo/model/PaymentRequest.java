@@ -8,22 +8,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Entity
 public class PaymentRequest {
 
-	@EqualsAndHashCode.Include
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 
 	@Column(nullable = false)
 	private String merchantId;
@@ -38,7 +35,7 @@ public class PaymentRequest {
 	private String currency;
 
 	@Column(nullable = false)
-	private Integer merchantOrderId;
+	private Long merchantOrderId;
 
 	@Column(nullable = false)
 	private LocalDateTime merchantTimestamp;

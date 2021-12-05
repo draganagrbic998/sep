@@ -15,7 +15,7 @@ public class PaymentRequestDTO {
 	private String merchantPassword;
 	private Double amount;
 	private String currency;
-	private Integer merchantOrderId;
+	private Long merchantOrderId;
 	private LocalDateTime merchantTimestamp;
 	private String callbackUrl;
 	private String successUrl;
