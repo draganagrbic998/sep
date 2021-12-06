@@ -7,15 +7,15 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.demo.example.exception.NotFoundException;
 import com.example.demo.dto.ClientDTO;
 import com.example.demo.dto.PaymentRequestCompleted;
 import com.example.demo.dto.PccRequest;
 import com.example.demo.dto.PccResponse;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.model.Client;
 import com.example.demo.model.PaymentRequest;
+import com.example.demo.model.PaymentStatus;
 import com.example.demo.model.Transaction;
-import com.example.demo.model.TransactionStatus;
 import com.example.demo.repo.PaymentRequestRepository;
 import com.example.demo.utils.DatabaseCipher;
 import com.example.demo.utils.PropertiesData;
@@ -39,7 +39,7 @@ public class PaymentRequestService {
 
 	public PaymentRequest save(PaymentRequest request) {
 		log.info("PaymentRequestService - save: id=" + request.getId());
-		return repo.save(cipher.encrypt(request));
+		return repo.save(request);
 	}
 
 	public String confirm(Long id, ClientDTO clientDTO) {
@@ -58,7 +58,7 @@ public class PaymentRequestService {
 				return refuse(request, transaction, false);
 			}
 
-			Client client = cipher.decrypt(clientOptional.get());
+			Client client = clientOptional.get();
 			// transaction.setPanNumber(client.getPanNumber());
 
 			if (!client.getCardHolder().equals(clientDTO.getCardHolder()) || !client.getCvv().equals(clientDTO.getCvv())
@@ -77,7 +77,7 @@ public class PaymentRequestService {
 				return refuse(request, transaction, false);
 			}
 
-			client = cipher.encrypt(client);
+			// client = cipher.encrypt(client);
 
 			String merchantId = request.getMerchantId();
 			Client merchant = clientService.getClientByMerchantId(merchantId);
@@ -95,13 +95,12 @@ public class PaymentRequestService {
 			merchant.incAvailableFunds(rate * request.getAmount());
 			clientService.save(merchant);
 
-			transaction.setStatus(TransactionStatus.SUCCESS);
+			transaction.setStatus(PaymentStatus.SUCCESS);
 			transactionService.save(transaction);
 
 			log.info("confirmPaymentRequest - notifying card-service @" + request.getCallbackUrl());
 			restTemplate.exchange(request.getCallbackUrl(), HttpMethod.POST,
-					new HttpEntity<PaymentRequestCompleted>(
-							new PaymentRequestCompleted(request.getMerchantOrderId(), TransactionStatus.SUCCESS)),
+					new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.SUCCESS)),
 					String.class);
 
 			return request.getSuccessUrl();
@@ -123,28 +122,28 @@ public class PaymentRequestService {
 			}
 
 			log.info("confirmPaymentRequest - sending PCCRequestDTO to PCC @" + data.pccURL + "/redirect");
-			PccResponse response = restTemplate.exchange(data.pccURL + "/redirect", HttpMethod.POST,
-					new HttpEntity<PccRequest>(pccRequest), PccResponse.class).getBody();
+			PccResponse response = restTemplate
+					.exchange(data.pccURL, HttpMethod.POST, new HttpEntity<PccRequest>(pccRequest), PccResponse.class)
+					.getBody();
 
-			if (response.getAuthentificated() && response.getTransactionAuthorized()) {
+			if (response.getAuthenticated() && response.getTransactionAuthorized()) {
 				log.info("AcquirerResponseDTO: authentificated=true transactionAuthorized=true");
 
 				merchant.incAvailableFunds(rateService.findRate(request.getCurrency()) * request.getAmount());
 				// pre nije bilo ovo mnozenje sa currency
 				clientService.save(merchant);
 
-				transaction.setStatus(TransactionStatus.SUCCESS);
+				transaction.setStatus(PaymentStatus.SUCCESS);
 				transactionService.save(transaction);
 
 				log.info("confirmPaymentRequest - notifying card-service @" + request.getCallbackUrl());
 				restTemplate.exchange(request.getCallbackUrl(), HttpMethod.POST,
-						new HttpEntity<PaymentRequestCompleted>(
-								new PaymentRequestCompleted(request.getMerchantOrderId(), TransactionStatus.SUCCESS)),
+						new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.SUCCESS)),
 						String.class);
 				return request.getSuccessUrl();
 			}
 
-			if (!response.getAuthentificated()) {
+			if (!response.getAuthenticated()) {
 				log.error("AcquirerResponseDTO: authentificated=false");
 				return request.getErrorUrl();
 			}
@@ -161,12 +160,10 @@ public class PaymentRequestService {
 	private String refuse(PaymentRequest request, Transaction transaction, boolean error) {
 		log.info("PaymentRequestService - refuse: id=" + request.getId());
 		log.info("confirmPaymentRequest - notifying card-service @" + request.getCallbackUrl());
-		transaction.setStatus(error ? TransactionStatus.ERROR : TransactionStatus.FAIL);
+		transaction.setStatus(error ? PaymentStatus.ERROR : PaymentStatus.FAIL);
 		transactionService.save(transaction);
 		restTemplate.exchange(request.getCallbackUrl(), HttpMethod.POST,
-				new HttpEntity<PaymentRequestCompleted>(
-						new PaymentRequestCompleted(request.getMerchantOrderId(), TransactionStatus.FAIL)),
-				String.class);
+				new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.FAIL)), String.class);
 		return error ? request.getErrorUrl() : request.getFailUrl();
 	}
 
@@ -179,7 +176,7 @@ public class PaymentRequestService {
 			throw new NotFoundException(id.toString(), PaymentRequest.class.getSimpleName());
 		}
 
-		return cipher.decrypt(paymentRequest.get());
+		return paymentRequest.get();
 	}
 
 }

@@ -14,8 +14,8 @@ public class PccRequest {
 	private String panNumber;
 	private String cardHolder;
 	private String cvv;
-	private String mm;
 	private String yy;
+	private String mm;
 	private Long acquirerOrderId;
 	private LocalDateTime acquirerTimestamp;
 	private Double amount;

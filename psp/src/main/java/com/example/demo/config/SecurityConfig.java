@@ -20,6 +20,7 @@ import com.example.demo.security.AuthEntryPoint;
 import com.example.demo.security.AuthFilter;
 import com.example.demo.security.TokenUtils;
 import com.example.demo.service.UserService;
+import com.example.demo.utils.PropertiesData;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -30,6 +31,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private TokenUtils tokenUtils;
+
+	@Autowired
+	private PropertiesData properties;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -50,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public CorsFilter corsFilter() {
 		CorsConfiguration config = new CorsConfiguration();
-		config.addAllowedOrigin("https://localhost:4201");
+		config.addAllowedOrigin(properties.frontendUrl);
 		config.addAllowedHeader("*");
 		config.addAllowedMethod("*");
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

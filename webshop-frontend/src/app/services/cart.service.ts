@@ -23,8 +23,4 @@ export class CartService extends StandardRestService<CartItem> {
     return this.http.put<void>(`${this.API_URL}/${productId}/remove`, null);
   }
 
-  order(productId: number) {
-    return this.http.post<Order>(`${this.API_URL}/order/${productId}`, null);
-  }
-
 }

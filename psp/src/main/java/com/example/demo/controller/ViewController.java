@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import java.util.Base64;
-import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.model.Order;
-import com.example.demo.model.PaymentMethod;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.PaymentMethodService;
 
@@ -24,26 +22,19 @@ public class ViewController {
 	private final OrderService orderService;
 	private final PaymentMethodService paymentMethodService;
 
-	@GetMapping("/selectPaymentMethod/{merchantApiKey}/{orderWebshopId}")
-	public String selectPaymentMethod(@PathVariable String merchantApiKey, @PathVariable Long orderWebshopId,
-			Model model) {
-		System.out.println(merchantApiKey);
-		String merchantApiKeyTemp = new String(Base64.getDecoder().decode(merchantApiKey));
-		System.out.println(merchantApiKeyTemp);
+	@GetMapping("/selectPaymentMethod/{orderId}")
+	public String selectPaymentMethod(@PathVariable Long orderId, Model model) {
 
-		List<PaymentMethod> paymentMethods = paymentMethodService.getPaymentMethods(merchantApiKeyTemp);
-		System.out.println(paymentMethods.size());
+		Order order = orderService.readOne(orderId);
+		model.addAttribute("paymentMethods", paymentMethodService
+				.getPaymentMethods(new String(Base64.getDecoder().decode(order.getMerchantApiKey()))));
 
-		Order order = orderService.readOne(orderWebshopId);
-
-		model.addAttribute("orderIdPSP", order.getId());
-		model.addAttribute("orderIdWebShop", order.getWebshopId());
-		model.addAttribute("orderPrice", order.getPrice());
-		model.addAttribute("orderCurrency", order.getCurrency());
+		// model.addAttribute("payUrl", asd);
+		// model.addAttribute("zuulGatewayUrl", asd);
+		model.addAttribute("merchantApiKey", order.getMerchantApiKey());
+		model.addAttribute("price", order.getPrice());
+		model.addAttribute("currency", order.getCurrency());
 		model.addAttribute("callbackUrl", order.getCallbackUrl());
-
-		model.addAttribute("paymentMethods", paymentMethods);
-		model.addAttribute("merchantApiKey", merchantApiKey);
 
 		return "selectPaymentMethod";
 	}

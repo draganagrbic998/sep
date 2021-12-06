@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class PccResponse {
 
-	private Boolean authentificated;
-	private Boolean transactionAutorized;
+	private Boolean authenticated;
+	private Boolean transactionAuthorized;
 
 }

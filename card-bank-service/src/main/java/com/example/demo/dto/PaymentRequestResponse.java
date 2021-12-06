@@ -11,12 +11,12 @@ import lombok.Setter;
 @Setter
 public class PaymentRequestResponse {
 
-	private String paymentId;
-	private String paymentUrl;
+	private Long id;
+	private String url;
 
-	public PaymentRequestResponse(PaymentRequest request) {
-		paymentId = request.getId().toString();
-		paymentUrl = "http://localhost:8090/view/paymentForm";
+	public PaymentRequestResponse(PaymentRequest request, String url) {
+		id = request.getId();
+		this.url = url;
 	}
 
 }

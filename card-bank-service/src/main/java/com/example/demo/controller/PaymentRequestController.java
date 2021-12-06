@@ -1,7 +1,5 @@
 package com.example.demo.controller;
 
-import javax.validation.Valid;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,27 +11,25 @@ import com.example.demo.dto.ClientDTO;
 import com.example.demo.dto.PaymentRequestResponse;
 import com.example.demo.model.PaymentRequest;
 import com.example.demo.service.PaymentRequestService;
+import com.example.demo.utils.PropertiesData;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/payment-requests")
-@Log4j2
 public class PaymentRequestController {
 
 	private final PaymentRequestService service;
+	private final PropertiesData properties;
 
 	@PostMapping
-	public ResponseEntity<PaymentRequestResponse> create(@Valid @RequestBody PaymentRequest dto) {
-		log.info("PaymentRequestController - create");
-		return ResponseEntity.ok(new PaymentRequestResponse(service.save(dto)));
+	public ResponseEntity<PaymentRequestResponse> create(@RequestBody PaymentRequest dto) {
+		return ResponseEntity.ok(new PaymentRequestResponse(service.save(dto), properties.paymentView));
 	}
 
 	@PostMapping("/confirm/{id}")
-	public ResponseEntity<String> confirmPayment(@PathVariable Long id, @Valid @RequestBody ClientDTO dto) {
-		log.info("PaymentRequestController - confirmPayment: paymentRequestId=" + id);
+	public ResponseEntity<String> confirm(@PathVariable Long id, @RequestBody ClientDTO dto) {
 		return ResponseEntity.ok(service.confirm(id, dto));
 	}
 

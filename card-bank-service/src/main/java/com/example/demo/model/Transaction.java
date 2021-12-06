@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +26,6 @@ public class Transaction {
 	private Long id;
 
 	@NotNull
-	@Positive
 	private Double amount;
 
 	@NotBlank
@@ -42,9 +40,8 @@ public class Transaction {
 	@NotNull
 	private LocalDateTime merchantTimestamp;
 
-	private TransactionStatus status; // set this
-
-	// private String panNumber; // set this
+	@NotNull
+	private PaymentStatus status = PaymentStatus.SUCCESS;
 
 	public Transaction(PaymentRequest request) {
 		amount = request.getAmount();

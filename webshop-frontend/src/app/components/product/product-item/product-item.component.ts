@@ -8,6 +8,7 @@ import { DIALOG_CONFIG, SNACKBAR_CLOSE_BUTTON, SNACKBAR_ERROR_CONFIG, SNACKBAR_E
 import { Route } from 'src/app/utils/route';
 import { environment } from 'src/environments/environment';
 import { DeleteConfirmationComponent } from '../../utils/delete-confirmation/delete-confirmation.component';
+import { OrderService } from 'src/app/services/order.service';
 
 @Component({
   selector: 'app-product-item',
@@ -19,6 +20,7 @@ export class ProductItemComponent {
   constructor(
     private productService: ProductService,
     private cartService: CartService,
+    private orderService: OrderService,
     private dialog: MatDialog,
     private snackbar: MatSnackBar
   ) { }
@@ -33,11 +35,11 @@ export class ProductItemComponent {
   async order(product: Product) {
     this.orderPendingId = product.id;
     try {
-      const order = await this.cartService.order(product.id).toPromise();
+      const order = await this.orderService.order(product.id).toPromise();
       this.orderPendingId = null;
       this.snackbar.open(SNACKBAR_SUCCESS_TEXT, SNACKBAR_CLOSE_BUTTON, SNACKBAR_SUCCESS_CONFIG);
       this.refreshProducts.emit();
-      window.location.href = `${environment.selectPaymentMethodUrl}/${order.user.apiKey}/${order.id}`;
+      window.location.href = `${environment.selectPaymentMethodUrl}/${order.pspId}`;
     }
     catch {
       this.orderPendingId = null;

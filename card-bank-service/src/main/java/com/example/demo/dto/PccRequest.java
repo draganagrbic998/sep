@@ -16,8 +16,8 @@ public class PccRequest {
 	private String cardHolder;
 	private String panNumber;
 	private String cvv;
-	private String mm;
 	private String yy;
+	private String mm;
 	private Long acquirerOrderId;
 	private LocalDateTime acquirerTimestamp;
 	private Double amount;
@@ -27,13 +27,12 @@ public class PccRequest {
 		cardHolder = client.getCardHolder();
 		panNumber = client.getPanNumber();
 		cvv = client.getCvv();
-		mm = client.getMm();
 		yy = client.getYy();
+		mm = client.getMm();
 		acquirerOrderId = transactionId;
 		acquirerTimestamp = LocalDateTime.now();
 		amount = request.getAmount();
 		currency = request.getCurrency();
-
 	}
 
 }

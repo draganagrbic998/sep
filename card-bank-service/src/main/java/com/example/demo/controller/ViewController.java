@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/view")
 public class ViewController {
 
-	@RequestMapping("/registerForm")
-	public String registerForm() {
-		return "registerForm";
+	@RequestMapping("/register")
+	public String register() {
+		return "register";
 	}
 
-	@RequestMapping("/paymentForm/{paymentRequestId}")
-	public String form() {
-		return "paymentForm";
+	@RequestMapping("/payment/{paymentRequestId}")
+	public String payment() {
+		return "payment";
 	}
 
 }

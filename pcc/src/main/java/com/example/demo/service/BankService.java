@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.demo.example.exception.NotFoundException;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.model.Bank;
 import com.example.demo.repo.BankRepository;
 
@@ -19,20 +19,14 @@ public class BankService {
 
 	private final BankRepository repo;
 
-	@Transactional
-	public Bank save(Bank bank) {
-		log.info("BankService - save: id=" + bank.getId());
-		return repo.save(bank);
-	}
-
 	@Transactional(readOnly = true)
-	public Bank getBankByPanNumber(String panNumberBankId) {
-		log.info("BankService - getBankByPanNumber: panNumberBankId=" + panNumberBankId);
-		Optional<Bank> bank = repo.findByPanNumberBankId(panNumberBankId);
+	public Bank findByPanNumber(String panNumber) {
+		log.info("BankService - findByPanNumber: panNumber=" + panNumber);
+		Optional<Bank> bank = repo.findByPanNumber(panNumber);
 
 		if (!bank.isPresent()) {
-			log.error("Bank: panNumberBankId=" + panNumberBankId + " not found.");
-			throw new NotFoundException(panNumberBankId, Bank.class.getSimpleName());
+			log.error("Bank: panNumber=" + panNumber + " not found.");
+			throw new NotFoundException(panNumber, Bank.class.getSimpleName());
 		}
 
 		return bank.get();

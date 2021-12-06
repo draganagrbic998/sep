@@ -10,10 +10,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
-import com.example.demo.model.Client;
-import com.example.demo.model.PaymentRequest;
-import com.example.demo.model.Transaction;
-
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -43,52 +39,6 @@ public class DatabaseCipher {
 				| BadPaddingException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public Transaction encrypt(Transaction transaction) {
-		transaction.setMerchantId(encrypt(transaction.getMerchantId()));
-		// transaction.setPanNumber(encrypt(transaction.getPanNumber()));
-		return transaction;
-	}
-
-	public Transaction decrypt(Transaction transaction) {
-		transaction.setMerchantId(decrypt(transaction.getMerchantId()));
-		// transaction.setPanNumber(decrypt(transaction.getPanNumber()));
-		return transaction;
-	}
-
-	public PaymentRequest encrypt(PaymentRequest request) {
-		// pr.setMerchantId(encrypt(pr.getMerchantId()));
-		// pr.setMerchantPassword(encrypt(pr.getMerchantPassword()));
-		return request;
-	}
-
-	public PaymentRequest decrypt(PaymentRequest request) {
-		// pr.setMerchantId(decrypt(pr.getMerchantId()));
-		// pr.setMerchantPassword(decrypt(pr.getMerchantPassword()));
-		return request;
-	}
-
-	public Client encrypt(Client client) {
-		client.setCardHolder(encrypt(client.getCardHolder()));
-		client.setPanNumber(encrypt(client.getPanNumber()));
-		client.setCvv(encrypt(client.getCvv()));
-		client.setExpirationDate(encrypt(client.getExpirationDate()));
-
-		client.setMerchantId(encrypt(client.getMerchantId()));
-		client.setMerchantPassword(encrypt(client.getMerchantPassword()));
-		return client;
-	}
-
-	public Client decrypt(Client client) {
-		client.setCardHolder(decrypt(client.getCardHolder()));
-		client.setPanNumber(decrypt(client.getPanNumber()));
-		client.setCvv(decrypt(client.getCvv()));
-		client.setExpirationDate(decrypt(client.getExpirationDate()));
-
-		client.setMerchantId(decrypt(client.getMerchantId()));
-		client.setMerchantPassword(decrypt(client.getMerchantPassword()));
-		return client;
 	}
 
 }

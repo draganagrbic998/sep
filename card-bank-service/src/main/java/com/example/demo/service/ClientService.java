@@ -5,10 +5,9 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.demo.example.exception.NotFoundException;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.model.Client;
 import com.example.demo.repo.ClientRepository;
-import com.example.demo.utils.DatabaseCipher;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -19,12 +18,11 @@ import lombok.extern.log4j.Log4j2;
 public class ClientService {
 
 	private final ClientRepository repo;
-	private final DatabaseCipher cipher;
 
 	@Transactional
 	public Client save(Client client) {
 		log.info("ClientService - save: id=" + client.getId());
-		return repo.save(cipher.encrypt(client));
+		return repo.save(client);
 	}
 
 	public Optional<Client> findClientByPanNumber(String panNumber) {

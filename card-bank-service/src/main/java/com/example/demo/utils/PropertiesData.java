@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class PropertiesData {
 
+	@Value("${payment-view}")
+	public String paymentView;
+
 	@Value("${bankID}")
 	public String bankId;
 

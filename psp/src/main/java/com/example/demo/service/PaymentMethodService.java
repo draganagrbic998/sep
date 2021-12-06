@@ -8,7 +8,7 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.demo.example.exception.NotFoundException;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.model.PaymentMethod;
 import com.example.demo.repo.PaymentMethodRepository;
 

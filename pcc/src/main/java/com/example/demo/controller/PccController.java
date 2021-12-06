@@ -25,15 +25,13 @@ public class PccController {
 	private final BankService bankService;
 	private final RestTemplate restTemplate;
 
-	@PostMapping("/redirect")
+	@PostMapping
 	public ResponseEntity<PccResponse> redirect(@RequestBody PccRequest dto) {
-		log.info("PCCController - redirect: acquirerOrderId=" + dto.getAcquirerOrderId());
-		// log.info("redirect - notifying buyer bank @" + bankUrl + "/pcc/pay");
+		String bankUrl = bankService.findByPanNumber(dto.getPanNumber().replace("-", "").substring(0, 6)).getUrl();
+		log.info("PccController - redirect: acquirerOrderId=" + dto.getAcquirerOrderId());
+		log.info("PccController - redirect: notifying buyer bank @" + bankUrl);
 		return ResponseEntity.ok(restTemplate
-				.exchange(
-						bankService.getBankByPanNumber(dto.getPanNumber().replace("-", "").substring(0, 6)).getBankUrl()
-								+ "/pcc/pay",
-						HttpMethod.POST, new HttpEntity<PccRequest>(dto), PccResponse.class)
+				.exchange(bankUrl + "/pcc", HttpMethod.POST, new HttpEntity<PccRequest>(dto), PccResponse.class)
 				.getBody());
 	}
 

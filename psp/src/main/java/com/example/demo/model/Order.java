@@ -1,11 +1,8 @@
 package com.example.demo.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -16,34 +13,22 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity
-@Table(name = "order_table")
 public class Order {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	protected Long id;
+	private Long id;
+
+	@NotBlank
+	private String merchantApiKey;
 
 	@NotNull
-	@Column
-	private Long webshopId;
-
-	@NotNull
-	@Column
-	private OrderStatus status;
-
-	@NotNull
-	@Column
 	private Double price;
 
 	@NotBlank
-	@Column
 	private String currency;
 
-	@Column
+	@NotBlank
 	private String callbackUrl;
-
-	@Column
-	private Integer ticks;
 
 }

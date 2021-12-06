@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import com.demo.example.exception.NotFoundException;
 import com.example.demo.dto.Auth;
+import com.example.demo.exception.NotFoundException;
 import com.example.demo.model.PaymentMethod;
 import com.example.demo.model.User;
 import com.example.demo.repo.UserRepository;

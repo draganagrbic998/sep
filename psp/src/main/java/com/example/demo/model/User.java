@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,26 +33,19 @@ public class User implements UserDetails {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column
 	private Long webshopId;
 
 	@NotBlank
-	@Column
 	private String role;
 
 	@NotBlank
-	@Email
-	@Column(unique = true)
 	private String email;
 
-	@Column
 	@NotBlank
 	private String password;
 
-	@Column(unique = true)
 	private String apiKey;
 
-	@Column
 	private String webshop;
 
 	@ManyToMany(fetch = FetchType.EAGER)

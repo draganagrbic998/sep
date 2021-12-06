@@ -1,133 +1,149 @@
-<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8" />
-<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-<title>Choose a payment method</title>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Choose a payment method</title>
 
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 
-<link
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
-	rel="stylesheet" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
 
-<style>
-.rounded-lg {
-	border-radius: 1rem;
-}
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
+      rel="stylesheet"
+      type="text/css"
+    />
 
-.background {
-	background: rgb(70, 205, 255);
-	background: linear-gradient(90deg, rgba(70, 205, 255, 1) 0%,
-		rgba(200, 243, 255, 1) 45%, rgba(200, 243, 255, 1) 55%,
-		rgba(70, 205, 255, 1) 100%);
-}
+    <style>
+      .background {
+        background: rgb(70, 205, 255);
+        background: linear-gradient(
+          90deg,
+          rgba(70, 205, 255, 1) 0%,
+          rgba(200, 243, 255, 1) 45%,
+          rgba(200, 243, 255, 1) 55%,
+          rgba(70, 205, 255, 1) 100%
+        );
+      }
 
-.title {
-	padding: 10px;
-	border-bottom: 1px solid lightgrey;
-}
+      .title {
+        padding: 10px;
+        border-bottom: 1px solid lightgrey;
+      }
 
-.title-container {
-	width: 50%;
-	background-color: rgba(255, 255, 255, 0.4);
-	border-bottom: 3px inset lightgrey;
-}
+      .title-container {
+        width: 50%;
+        background-color: rgba(255, 255, 255, 0.4);
+        border-bottom: 3px inset lightgrey;
+      }
 
-.h1-custom {
-	color: #6e8eff;
-	background: rgb(255, 255, 255);
-	background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%,
-		rgba(255, 255, 255, 1) 15%, rgba(255, 255, 255, 1) 85%,
-		rgba(255, 255, 255, 0) 100%);
-	height: 100%;
-	width: 60%;
-	margin-left: 20%;
-	margin-right: 20%;
-	background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%,
-		rgba(255, 255, 255, 1) 20%, rgba(255, 255, 255, 1) 80%,
-		rgba(255, 255, 255, 0) 100%);
-	font-size: 34pt;
-}
+      .h1-custom {
+        color: #6e8eff;
+        background: rgb(255, 255, 255);
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 1) 15%,
+          rgba(255, 255, 255, 1) 85%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        height: 100%;
+        width: 60%;
+        margin-left: 20%;
+        margin-right: 20%;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 1) 20%,
+          rgba(255, 255, 255, 1) 80%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        font-size: 34pt;
+      }
 
-.btn-boja, .btn-primary:active {
-	color: #fff;
-	background: rgb(4, 169, 249);
-	vertical-align: middle;
-	border: none;
-}
+      .btn-color {
+        color: #fff;
+        background: rgb(4, 169, 249);
+        vertical-align: middle;
+        border: none;
+      }
 
-.btn-boja:hover, .btn-primary:focus {
-	color: #fff;
-	outline: none;
-	background: #6e8eff;
-}
+      .btn-color:hover {
+        color: #fff;
+        outline: none;
+        background: #6e8eff;
+      }
 
-.methods-container {
-	margin-left: 37.5%;
-	margin-right: 37.5%;
-	max-width: 25%;
-}
+      .methods-container {
+        margin-left: 37.5%;
+        margin-right: 37.5%;
+        max-width: 25%;
+      }
 
-.container-card {
-	border-top: 1px outset lightgrey;
-	border-bottom: 2px inset lightgrey;
-	border-left: 1px outset lightgrey;
-	border-right: 1px inset lightgrey;
-}
-</style>
-</head>
-<body class="background">
+      .container-card {
+        border-top: 1px outset lightgrey;
+        border-bottom: 2px inset lightgrey;
+        border-left: 1px outset lightgrey;
+        border-right: 1px inset lightgrey;
+      }
+    </style>
+  </head>
+  <body class="background">
+    <div class="row mb-4">
+      <div class="col-lg-12 mx-auto text-center title-container">
+        <h1 class="display-4 h1-custom">Choose a payment method</h1>
+      </div>
+    </div>
 
-	<div class="row mb-4">
-		<div class="col-lg-12 mx-auto text-center title-container">
-			<h1 class="display-4 h1-custom">Choose a payment method</h1>
-		</div>
-	</div>
+    <br />
 
-	<br />
+    <div class="row">
+      <div
+        class="col-sm-4 methods-container"
+        th:each="method: ${paymentMethods}"
+      >
+        <div class="card text-center">
+          <div class="card-body container-card">
+            <h5 class="card-title title" th:text="${method.name}"></h5>
+            <button
+              id="selection"
+              class="btn btn-color"
+              th:href="@{'https://localhost:8082/' + ${method.name}} + '/pay'"
+              th:attr="payUrl=@{'https://localhost:8081/pay/' + ${method.name}}, merchantApiKey=${merchantApiKey},  price=${price}, currency=${currency}, callbackUrl=${callbackUrl}"
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-	<div class="row">
-		<div class="col-sm-4 methods-container"
-			th:each="method: ${paymentMethods}">
-			<div class="card text-center">
-				<div class="card-body container-card">
-					<h5 class="card-title title" th:text="${method.name}"></h5>
-					<button class="btn btn-boja link"
-						th:href="@{'http://localhost:8082/' + ${method.name}} + '/pay/' +  ${merchantApiKey}"
-						th:attr="create_url=@{'https://localhost:8081/redirection/' + ${method.name}} + '/' + ${orderIdPSP}, merchant_api_key=${merchantApiKey}, order_id=${orderIdWebShop}, order_price=${orderPrice}, order_currency=${orderCurrency}, callback_url=${callbackUrl}">
-						Confirm</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<script>
-		$(document).ready(function(){
-			$(".link").click(function(e) {
-				  e.preventDefault();
-				  var hrefUrl = $(this).attr('href');
-				  $.ajax({
-				  	type: 'POST',
-					url: $(this).attr('create_url'),
-					contentType: "application/json",
-					data: JSON.stringify({
-						'orderIdWebShop':$(this).attr('order_id'),
-						'price':$(this).attr('order_price'),
-						'currency':$(this).attr('order_currency'),
-						'merchantApiKey':$(this).attr('merchant_api_key'),
-						'callbackUrl': $(this).attr('callback_url')}),
-					success: function(res){
-						var url = hrefUrl + "/" + res.id
-						window.location.href = url;
-					},
-					error: function(res){
-						alert(res.responseText);
-					}
-				  });
-			});
-		});
-	</script>
-</body>
+    <script>
+      $(document).ready(function () {
+        $("#selection").click(function (e) {
+          e.preventDefault();
+          var hrefUrl = $(this).attr("href");
+          $.ajax({
+            url: $(this).attr("payUrl"),
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+              merchantApiKey: $(this).attr("merchantApiKey"),
+              price: $(this).attr("price"),
+              currency: $(this).attr("currency"),
+              callbackUrl: $(this).attr("callbackUrl"),
+            }),
+            success: function (res) {
+              window.location.href = hrefUrl + "/" + res.id;
+            },
+            error: function (res) {
+              alert(res.responseText);
+            },
+          });
+        });
+      });
+    </script>
+  </body>
 </html>

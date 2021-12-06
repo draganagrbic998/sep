@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class PaymentRequestResponse {
 
-	private String paymentId;
-	private String paymentUrl;
+	private Long id;
+	private String url;
 
 }

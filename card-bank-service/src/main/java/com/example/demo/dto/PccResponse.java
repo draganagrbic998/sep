@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PccResponse {
 
-	private Boolean authentificated;
+	private Boolean authenticated;
 	private Boolean transactionAuthorized;
 
 }

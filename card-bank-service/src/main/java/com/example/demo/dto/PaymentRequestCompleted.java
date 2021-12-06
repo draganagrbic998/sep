@@ -1,6 +1,6 @@
 package com.example.demo.dto;
 
-import com.example.demo.model.TransactionStatus;
+import com.example.demo.model.PaymentStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,8 +12,5 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class PaymentRequestCompleted {
-
-	private Long id;
-	private TransactionStatus status;
-
+	private PaymentStatus status;
 }

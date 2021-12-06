@@ -33,7 +33,7 @@ public class PaymentRequest {
 		merchantOrderId = order.getId();
 		merchantTimestamp = LocalDateTime.now();
 		final String url = "http://localhost:8087/view";
-		callbackUrl = "http://localhost:8087/complete";
+		callbackUrl = "http://localhost:8087/complete/" + order.getId();
 		successUrl = url + "/success";
 		failUrl = url + "/fail";
 		errorUrl = url + "/error";

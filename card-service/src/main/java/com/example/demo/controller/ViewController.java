@@ -7,11 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/view")
 public class ViewController {
 
-	@RequestMapping("/register")
-	public String register() {
-		return "register";
-	}
-
 	@RequestMapping("/success")
 	public String success() {
 		return "success";

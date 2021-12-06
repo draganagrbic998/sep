@@ -10,6 +10,6 @@ import com.example.demo.model.Bank;
 @Repository
 public interface BankRepository extends JpaRepository<Bank, Long> {
 
-	Optional<Bank> findByPanNumberBankId(String panNumberBankId);
+	Optional<Bank> findByPanNumber(String panNumber);
 
 }

@@ -12,20 +12,17 @@ import com.example.demo.model.Role;
 import com.example.demo.service.RoleService;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/roles")
 @PreAuthorize("hasAuthority('psp-admin')")
-@Log4j2
 public class RoleController {
 
 	private final RoleService service;
 
 	@GetMapping
 	public ResponseEntity<List<Role>> read() {
-		log.info("RoleController - read");
 		return ResponseEntity.ok(service.read());
 	}
 

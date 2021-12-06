@@ -1,7 +1,5 @@
 package com.example.demo.controller;
 
-import javax.validation.Valid;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,20 +12,17 @@ import com.example.demo.model.Client;
 import com.example.demo.service.ClientService;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/clients")
-@Log4j2
 public class ClientController {
 
-	private final ClientMapper mapper;
 	private final ClientService service;
+	private final ClientMapper mapper;
 
 	@PostMapping
-	public ResponseEntity<Client> create(@Valid @RequestBody ClientDTO dto) {
-		log.info("ClientController - create");
+	public ResponseEntity<Client> create(@RequestBody ClientDTO dto) {
 		return ResponseEntity.ok(service.save(mapper.map(dto)));
 	}
 
