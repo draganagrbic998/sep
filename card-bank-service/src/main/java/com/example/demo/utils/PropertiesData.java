@@ -6,16 +6,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class PropertiesData {
 
-	@Value("${payment-view}")
-	public String paymentView;
+	@Value("${payment-url}")
+	public String paymentUrl;
 
-	@Value("${bankID}")
+	@Value("${confirm-url}")
+	public String confirmUrl;
+
+	@Value("${bank-ID}")
 	public String bankId;
 
-	@Value("${pccURL}")
+	@Value("${pcc-url}")
 	public String pccURL;
 
-	@Value("${nbsAPI}")
-	public String nbsAPI;
+	@Value("${nbs-API}")
+	public String nbsApi;
 
 }

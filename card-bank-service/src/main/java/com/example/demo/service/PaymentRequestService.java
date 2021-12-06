@@ -7,17 +7,17 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.example.demo.dto.ClientDTO;
+import com.example.demo.dto.Customer;
 import com.example.demo.dto.PaymentRequestCompleted;
 import com.example.demo.dto.PccRequest;
 import com.example.demo.dto.PccResponse;
-import com.example.demo.exception.NotFoundException;
 import com.example.demo.model.Client;
 import com.example.demo.model.PaymentRequest;
 import com.example.demo.model.PaymentStatus;
 import com.example.demo.model.Transaction;
+import com.example.demo.repo.ClientRepository;
 import com.example.demo.repo.PaymentRequestRepository;
-import com.example.demo.utils.DatabaseCipher;
+import com.example.demo.repo.TransactionRepository;
 import com.example.demo.utils.PropertiesData;
 import com.example.demo.utils.Utils;
 
@@ -30,113 +30,88 @@ import lombok.extern.log4j.Log4j2;
 public class PaymentRequestService {
 
 	private final PaymentRequestRepository repo;
-	private final ClientService clientService;
-	private final TransactionService transactionService;
+	private final ClientRepository clientRepo;
+	private final TransactionRepository transactionRepo;
 	private final RateService rateService;
 	private final RestTemplate restTemplate;
-	private final DatabaseCipher cipher;
-	private final PropertiesData data;
+	private final PropertiesData properties;
 
 	public PaymentRequest save(PaymentRequest request) {
 		log.info("PaymentRequestService - save: id=" + request.getId());
 		return repo.save(request);
 	}
 
-	public String confirm(Long id, ClientDTO clientDTO) {
-		log.info("PaymentRequestService - confirmPaymentRequest: id=" + id);
-		PaymentRequest request = findById(id);
+	public String confirm(Long id, Customer customer) {
+		log.info("PaymentRequestService - confirm: id=" + id);
+		PaymentRequest request = repo.findById(id).get();
 		Transaction transaction = new Transaction(request);
-		String clientBankId = clientDTO.getPanNumber().replace("-", "").substring(0, 6);
+		transaction = transactionRepo.save(transaction);
 
-		if (clientBankId.contentEquals(data.bankId)) {
-			log.info("Client: panNumber=" + clientBankId + "... has an account in this bank");
-			Optional<Client> clientOptional = clientService
-					.findClientByPanNumber(cipher.encrypt(clientDTO.getPanNumber()));
+		Optional<Client> merchantOptional = clientRepo.findByMerchantId(request.getMerchantId());
+		if (!merchantOptional.isPresent()) {
+			log.error("Merchant: id=" + request.getMerchantId() + " not found");
+			return refuse(request, transaction, false);
+		}
+		Client merchant = merchantOptional.get();
 
+		if (!merchant.getMerchantPassword().equals(request.getMerchantPassword())) {
+			log.error("Merchant: id=" + request.getMerchantId() + " invalid password");
+			return refuse(request, transaction, true);
+		}
+
+		if (customer.getPanNumber().replace("-", "").substring(0, 6).contentEquals(properties.bankId)) {
+			log.info("Client: panNumber=" + customer.getPanNumber() + " has an account in this bank");
+
+			Optional<Client> clientOptional = clientRepo.findByPanNumber(customer.getPanNumber());
 			if (!clientOptional.isPresent()) {
-				log.error("Client: panNumber=" + clientBankId + "... not found");
+				log.error("Client: panNumber=" + customer.getPanNumber() + " not found");
 				return refuse(request, transaction, false);
 			}
-
 			Client client = clientOptional.get();
-			// transaction.setPanNumber(client.getPanNumber());
 
-			if (!client.getCardHolder().equals(clientDTO.getCardHolder()) || !client.getCvv().equals(clientDTO.getCvv())
-					|| !client.getExpirationDate().equals(clientDTO.getMm() + "/" + clientDTO.getYy())) {
-				log.error("Client: panNumber=" + clientBankId + "... invalid card data entered");
+			if (!client.getCardHolder().equals(customer.getCardHolder()) || !client.getCvv().equals(customer.getCvv())
+					|| !client.getExpirationDate().equals(customer.getMm() + "/" + customer.getYy())) {
+				log.error("Client: panNumber=" + customer.getPanNumber() + " invalid card data entered");
 				return refuse(request, transaction, false);
 			}
 
 			if (Utils.cardExpired(client)) {
-				log.error("Client: panNumber=" + clientBankId + "... card expired");
+				log.error("Client: panNumber=" + customer.getPanNumber() + " card expired");
 				return refuse(request, transaction, false);
 			}
 
 			if (request.getAmount() > client.getAvailableFunds()) {
-				log.error("Client: panNumber=" + clientBankId + "... not enough available funds");
+				log.error("Client: panNumber=" + customer.getPanNumber() + " not enough available funds");
 				return refuse(request, transaction, false);
 			}
 
-			// client = cipher.encrypt(client);
-
-			String merchantId = request.getMerchantId();
-			Client merchant = clientService.getClientByMerchantId(merchantId);
-
-			if (!merchant.getMerchantPassword().equals(request.getMerchantPassword())) {
-				log.error("Client: panNumber=" + clientBankId + "... invalid Merchant Password");
-				return refuse(request, transaction, true);
-			}
-
 			double rate = rateService.findRate(transaction.getCurrency());
-
 			client.decAvailableFunds(rate * request.getAmount());
-			clientService.save(client);
-
+			clientRepo.save(client);
 			merchant.incAvailableFunds(rate * request.getAmount());
-			clientService.save(merchant);
+			clientRepo.save(merchant);
 
-			transaction.setStatus(PaymentStatus.SUCCESS);
-			transactionService.save(transaction);
-
-			log.info("confirmPaymentRequest - notifying card-service @" + request.getCallbackUrl());
+			log.info("PaymentRequestService - notifying card-service @" + request.getCallbackUrl());
 			restTemplate.exchange(request.getCallbackUrl(), HttpMethod.POST,
 					new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.SUCCESS)),
 					String.class);
-
 			return request.getSuccessUrl();
 		} else {
-			log.info("Client: panNumber=" + clientBankId + " doesn't have an account in this bank");
+			log.info("Client: panNumber=" + customer.getPanNumber() + " doesn't have an account in this bank");
+			log.info("PaymentRequestService - sending PccRequest to PCC @" + properties.pccURL);
 
-			transaction = transactionService.save(transaction);
-			PccRequest pccRequest = new PccRequest(request, clientDTO, transaction.getId());
+			PccRequest pccRequest = new PccRequest(request, customer);
 
-			// HttpHeaders headers = new HttpHeaders();
-			// headers.setContentType(MediaType.APPLICATION_JSON);
-			// HttpEntity<PccRequest> request = new HttpEntity<PccRequest>(pccRequest,
-			// headers);
-
-			Client merchant = clientService.getClientByMerchantId(request.getMerchantId());
-			if (!merchant.getMerchantPassword().equals(request.getMerchantPassword())) {
-				log.error("Client: panNumber=" + clientBankId + "... invalid Merchant Password");
-				return refuse(request, transaction, true);
-			}
-
-			log.info("confirmPaymentRequest - sending PCCRequestDTO to PCC @" + data.pccURL + "/redirect");
-			PccResponse response = restTemplate
-					.exchange(data.pccURL, HttpMethod.POST, new HttpEntity<PccRequest>(pccRequest), PccResponse.class)
-					.getBody();
+			PccResponse response = restTemplate.exchange(properties.pccURL, HttpMethod.POST,
+					new HttpEntity<PccRequest>(pccRequest), PccResponse.class).getBody();
 
 			if (response.getAuthenticated() && response.getTransactionAuthorized()) {
-				log.info("AcquirerResponseDTO: authentificated=true transactionAuthorized=true");
+				log.info("PccResponse: authentificated=true transactionAuthorized=true");
+				log.info("PaymentRequestService - notifying card-service @" + request.getCallbackUrl());
 
 				merchant.incAvailableFunds(rateService.findRate(request.getCurrency()) * request.getAmount());
-				// pre nije bilo ovo mnozenje sa currency
-				clientService.save(merchant);
+				clientRepo.save(merchant);
 
-				transaction.setStatus(PaymentStatus.SUCCESS);
-				transactionService.save(transaction);
-
-				log.info("confirmPaymentRequest - notifying card-service @" + request.getCallbackUrl());
 				restTemplate.exchange(request.getCallbackUrl(), HttpMethod.POST,
 						new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.SUCCESS)),
 						String.class);
@@ -144,39 +119,27 @@ public class PaymentRequestService {
 			}
 
 			if (!response.getAuthenticated()) {
-				log.error("AcquirerResponseDTO: authentificated=false");
+				log.error("PccResponse: authentificated=false");
 				return request.getErrorUrl();
 			}
 			if (!response.getTransactionAuthorized()) {
-				log.error("AcquirerResponseDTO: transactionAuthorized=false");
+				log.error("PccResponse: transactionAuthorized=false");
 				return request.getFailUrl();
 			}
 
-			log.error("AcquirerResponseDTO: authentificated=false transactionAuthorized=false");
+			log.error("PccResponse: authentificated=false transactionAuthorized=false");
 			return request.getErrorUrl();
 		}
 	}
 
 	private String refuse(PaymentRequest request, Transaction transaction, boolean error) {
 		log.info("PaymentRequestService - refuse: id=" + request.getId());
-		log.info("confirmPaymentRequest - notifying card-service @" + request.getCallbackUrl());
+		log.info("PaymentRequestService - notifying card-service @" + request.getCallbackUrl());
 		transaction.setStatus(error ? PaymentStatus.ERROR : PaymentStatus.FAIL);
-		transactionService.save(transaction);
+		transactionRepo.save(transaction);
 		restTemplate.exchange(request.getCallbackUrl(), HttpMethod.POST,
 				new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.FAIL)), String.class);
 		return error ? request.getErrorUrl() : request.getFailUrl();
-	}
-
-	private PaymentRequest findById(Long id) {
-		log.info("PaymentRequestService - findById: id=" + id);
-		Optional<PaymentRequest> paymentRequest = repo.findById(id);
-
-		if (!paymentRequest.isPresent()) {
-			log.error("PaymentRequest: id=" + id + " not found.");
-			throw new NotFoundException(id.toString(), PaymentRequest.class.getSimpleName());
-		}
-
-		return paymentRequest.get();
 	}
 
 }

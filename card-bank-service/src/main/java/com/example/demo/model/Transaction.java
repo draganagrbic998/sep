@@ -25,14 +25,14 @@ public class Transaction {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@NotBlank
+	private String merchantId;
+
 	@NotNull
 	private Double amount;
 
 	@NotBlank
 	private String currency;
-
-	@NotBlank
-	private String merchantId;
 
 	@NotNull
 	private Long merchantOrderId;
@@ -44,9 +44,9 @@ public class Transaction {
 	private PaymentStatus status = PaymentStatus.SUCCESS;
 
 	public Transaction(PaymentRequest request) {
+		merchantId = request.getMerchantId();
 		amount = request.getAmount();
 		currency = request.getCurrency();
-		merchantId = request.getMerchantId();
 		merchantOrderId = request.getMerchantOrderId();
 		merchantTimestamp = request.getMerchantTimestamp();
 	}

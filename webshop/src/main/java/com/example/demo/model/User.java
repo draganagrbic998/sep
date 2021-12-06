@@ -2,13 +2,11 @@ package com.example.demo.model;
 
 import java.util.List;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,19 +28,14 @@ public class User implements UserDetails {
 	private Long id;
 
 	@NotBlank
-	@Column
 	private String role;
 
-	@Column(unique = true)
 	@NotBlank
-	@Email
 	private String email;
 
-	@Column
 	@NotBlank
 	private String password;
 
-	@Column(unique = true)
 	private String apiKey;
 
 	@Override

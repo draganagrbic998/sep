@@ -1,19 +1,23 @@
 package com.example.demo.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.example.demo.utils.PropertiesData;
+
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 @Controller
 @RequestMapping("/view")
 public class ViewController {
 
-	@RequestMapping("/register")
-	public String register() {
-		return "register";
-	}
+	private final PropertiesData properties;
 
-	@RequestMapping("/payment/{paymentRequestId}")
-	public String payment() {
+	@RequestMapping("/payment/{id}")
+	public String payment(Model model) {
+		model.addAttribute("confirmUrl", properties.confirmUrl);
 		return "payment";
 	}
 

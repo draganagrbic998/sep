@@ -175,6 +175,7 @@
                 id="registration"
                 class="subscribe btn btn-color btn-block shadow-sm"
                 style="margin: auto; max-width: 100px"
+                th:attr="confirmUrl=${confirmUrl}"
               >
                 Confirm
               </button>
@@ -189,9 +190,10 @@
           e.preventDefault();
           var temp = window.location.href.split("/");
           var id = temp[temp.length - 1];
+          var confirmUrl = $(this).attr("confirmUrl");
 
           $.ajax({
-            url: "http://localhost:8090/payment-requests/confirm/" + id,
+            url: confirmUrl + "/" + id,
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({

@@ -36,7 +36,7 @@ public class RateService {
 
 	private String getCurrencyRate() {
 		try {
-			String url = "http://api.kursna-lista.info/".concat(data.nbsAPI).concat("/kl_na_dan/")
+			String url = "http://api.kursna-lista.info/".concat(data.nbsApi).concat("/kl_na_dan/")
 					.concat(DateTimeFormatter.ofPattern("dd.MM.yyyy").format(LocalDate.now())).concat("/kursna_lista");
 
 			HttpClient client = HttpClientBuilder.create().build();

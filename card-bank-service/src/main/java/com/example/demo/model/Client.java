@@ -22,6 +22,12 @@ public class Client {
 	private Long id;
 
 	@NotBlank
+	private String merchantId;
+
+	@NotBlank
+	private String merchantPassword;
+
+	@NotBlank
 	private String cardHolder;
 
 	@NotBlank
@@ -38,12 +44,6 @@ public class Client {
 
 	@NotNull
 	private Double reservedFunds;
-
-	@NotBlank
-	private String merchantId;
-
-	@NotBlank
-	private String merchantPassword;
 
 	public void incAvailableFunds(Double amount) {
 		availableFunds += amount;

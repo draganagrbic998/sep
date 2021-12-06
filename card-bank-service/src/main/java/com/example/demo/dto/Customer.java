@@ -7,7 +7,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ClientDTO {
+public class Customer {
 
 	private String cardHolder;
 	private String panNumber;

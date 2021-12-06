@@ -1,7 +1,5 @@
 package com.example.demo.controller;
 
-import java.util.Base64;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +22,6 @@ public class PaymentController {
 
 	@PostMapping
 	public ResponseEntity<Order> create(@RequestBody Order dto) {
-		dto.setMerchantApiKey(new String(Base64.getDecoder().decode(dto.getMerchantApiKey())));
 		return ResponseEntity.ok(orderService.save(dto));
 	}
 

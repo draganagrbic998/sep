@@ -8,7 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,13 +30,6 @@ public class PaymentRequest {
 	private String merchantPassword;
 
 	@NotNull
-	private Long merchantOrderId;
-
-	@NotNull
-	private LocalDateTime merchantTimestamp;
-
-	@NotNull
-	@Positive
 	private Double amount;
 
 	@NotBlank
@@ -54,5 +46,11 @@ public class PaymentRequest {
 
 	@NotBlank
 	private String errorUrl;
+
+	@NotNull
+	private Long merchantOrderId;
+
+	@NotNull
+	private LocalDateTime merchantTimestamp;
 
 }

@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpEntity;
@@ -30,11 +29,6 @@ public class OrderService {
 	private final RestTemplate restTemplate;
 	private final OrderRepository repo;
 	private final MerchantService merchantService;
-
-	public List<Order> read() {
-		log.info("OrderService - read");
-		return repo.findAll();
-	}
 
 	public Order readOne(Long id) {
 		log.info("OrderService - readOne: id=" + id);
@@ -102,7 +96,7 @@ public class OrderService {
 	public void checkOrders() {
 		log.info("OrderService - checkOrders");
 
-		for (Order order : read()) {
+		for (Order order : repo.findAll()) {
 			Merchant merchant = merchantService.findByMerchantApiKeyOptional(order.getMerchantApiKey()).get();
 
 			if (order.getStatus().equals(OrderStatus.CREATED)) {

@@ -18,11 +18,6 @@ public class MerchantService {
 
 	private final MerchantRepository repo;
 
-	public Merchant save(Merchant merchant) {
-		log.info("MerchantService - save: id=" + merchant.getId());
-		return repo.save(merchant);
-	}
-
 	public Optional<Merchant> findByMerchantApiKeyOptional(String merchantApiKey) {
 		log.info("MerchantService - findByMerchantApiKeyOptional: merchantApiKey=" + merchantApiKey);
 		return repo.findByMerchantApiKey(merchantApiKey);

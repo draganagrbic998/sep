@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.ClientDTO;
+import com.example.demo.dto.Customer;
 import com.example.demo.dto.PaymentRequestResponse;
 import com.example.demo.model.PaymentRequest;
 import com.example.demo.service.PaymentRequestService;
@@ -25,11 +25,11 @@ public class PaymentRequestController {
 
 	@PostMapping
 	public ResponseEntity<PaymentRequestResponse> create(@RequestBody PaymentRequest dto) {
-		return ResponseEntity.ok(new PaymentRequestResponse(service.save(dto), properties.paymentView));
+		return ResponseEntity.ok(new PaymentRequestResponse(service.save(dto), properties.paymentUrl));
 	}
 
 	@PostMapping("/confirm/{id}")
-	public ResponseEntity<String> confirm(@PathVariable Long id, @RequestBody ClientDTO dto) {
+	public ResponseEntity<String> confirm(@PathVariable Long id, @RequestBody Customer dto) {
 		return ResponseEntity.ok(service.confirm(id, dto));
 	}
 
