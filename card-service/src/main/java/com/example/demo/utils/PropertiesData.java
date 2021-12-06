@@ -6,13 +6,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class PropertiesData {
 
-	@Value("${frontend-url}")
-	public String frontendUrl;
+	@Value("${view-url}")
+	public String viewUrl;
 
-	@Value("${zuul-gateway-url}")
-	public String zuulGatewayUrl;
-
-	@Value("${pay-url}")
-	public String payUrl;
+	@Value("${complete-url}")
+	public String completeUrl;
 
 }

@@ -18,25 +18,24 @@ public class PaymentRequest {
 	private String merchantPassword;
 	private Double amount;
 	private String currency;
-	private Long merchantOrderId;
-	private LocalDateTime merchantTimestamp;
 	private String callbackUrl;
 	private String successUrl;
 	private String failUrl;
 	private String errorUrl;
+	private Long merchantOrderId;
+	private LocalDateTime merchantTimestamp;
 
-	public PaymentRequest(Merchant merchant, Order order) {
+	public PaymentRequest(Merchant merchant, Order order, String completeUrl, String viewUrl) {
 		merchantId = merchant.getMerchantId();
 		merchantPassword = merchant.getMerchantPassword();
 		amount = order.getPrice();
 		currency = order.getCurrency();
+		callbackUrl = completeUrl + "/" + order.getId();
+		successUrl = viewUrl + "/success";
+		failUrl = viewUrl + "/fail";
+		errorUrl = viewUrl + "/error";
 		merchantOrderId = order.getId();
 		merchantTimestamp = LocalDateTime.now();
-		final String url = "http://localhost:8087/view";
-		callbackUrl = "http://localhost:8087/complete/" + order.getId();
-		successUrl = url + "/success";
-		failUrl = url + "/fail";
-		errorUrl = url + "/error";
 	}
 
 }

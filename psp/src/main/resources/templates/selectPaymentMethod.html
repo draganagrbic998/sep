@@ -110,8 +110,7 @@
             <button
               id="selection"
               class="btn btn-color"
-              th:href="@{'https://localhost:8082/' + ${method.name}} + '/pay'"
-              th:attr="payUrl=@{'https://localhost:8081/pay/' + ${method.name}}, merchantApiKey=${merchantApiKey},  price=${price}, currency=${currency}, callbackUrl=${callbackUrl}"
+              th:attr="payUrl=${payUrl}, method=${method}, zuulGatewayUrl=${zuulGatewayUrl}, merchantApiKey=${merchantApiKey},  price=${price}, currency=${currency}, callbackUrl=${callbackUrl}"
             >
               Confirm
             </button>
@@ -124,9 +123,11 @@
       $(document).ready(function () {
         $("#selection").click(function (e) {
           e.preventDefault();
-          var hrefUrl = $(this).attr("href");
+		  var payUrl = $(this).attr("payUrl");
+          var zuulGatewayUrl = $(this).attr("zuulGatewayUrl");
+		  var method = $(this).attr("method");
           $.ajax({
-            url: $(this).attr("payUrl"),
+            url: payUrl + "/" + method,
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({
@@ -136,7 +137,7 @@
               callbackUrl: $(this).attr("callbackUrl"),
             }),
             success: function (res) {
-              window.location.href = hrefUrl + "/" + res.id;
+              window.location.href = zuulGatewayUrl + "/" + method + "/pay/" + res.id;
             },
             error: function (res) {
               alert(res.responseText);

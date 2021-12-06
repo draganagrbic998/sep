@@ -1,7 +1,5 @@
 package com.example.demo.service;
 
-import java.util.Optional;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.Auth;
-import com.example.demo.exception.NotFoundException;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.TokenUtils;
@@ -57,13 +54,6 @@ public class UserService implements UserDetailsService {
 	@Transactional
 	public void delete(Long id) {
 		log.info("UserService - delete: id=" + id);
-		Optional<User> user = repo.findById(id);
-
-		if (!user.isPresent()) {
-			log.error("User: id=" + id + " not found.");
-			throw new NotFoundException(id.toString(), UserService.class.getSimpleName());
-		}
-
 		repo.deleteById(id);
 	}
 

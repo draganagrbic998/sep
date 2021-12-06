@@ -175,7 +175,7 @@
                 id="registration"
                 class="subscribe btn btn-color btn-block shadow-sm"
                 style="margin: auto; max-width: 100px"
-                th:attr="confirmUrl=${confirmUrl}"
+                th:attr="confirmUrl=${confirmUrl}, requestId=${requestId}"
               >
                 Confirm
               </button>
@@ -188,12 +188,11 @@
       $(document).ready(function () {
         $("#registration").click(function (e) {
           e.preventDefault();
-          var temp = window.location.href.split("/");
-          var id = temp[temp.length - 1];
+          var requestId = $(this).attr("requestId");
           var confirmUrl = $(this).attr("confirmUrl");
 
           $.ajax({
-            url: confirmUrl + "/" + id,
+            url: confirmUrl + "/" + requestId,
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({

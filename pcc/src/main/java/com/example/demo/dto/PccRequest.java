@@ -1,7 +1,5 @@
 package com.example.demo.dto;
 
-import java.time.LocalDateTime;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,8 +14,6 @@ public class PccRequest {
 	private String cvv;
 	private String yy;
 	private String mm;
-	private Long acquirerOrderId;
-	private LocalDateTime acquirerTimestamp;
 	private Double amount;
 	private String currency;
 

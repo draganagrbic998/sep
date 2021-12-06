@@ -1,7 +1,6 @@
 package com.example.demo.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.http.HttpEntity;
@@ -18,8 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.example.demo.dto.Auth;
-import com.example.demo.exception.NotFoundException;
-import com.example.demo.model.PaymentMethod;
 import com.example.demo.model.User;
 import com.example.demo.repo.UserRepository;
 import com.example.demo.security.TokenUtils;
@@ -94,19 +91,12 @@ public class UserService implements UserDetailsService {
 	@Transactional
 	public void delete(Long id) {
 		log.info("UserService - delete: id=" + id);
-		Optional<User> temp = repo.findById(id);
+		User user = repo.findById(id).get();
 
-		if (!temp.isPresent()) {
-			log.error("User: id=" + id + " not found.");
-			throw new NotFoundException(id.toString(), PaymentMethod.class.getSimpleName());
-		}
-
-		User user = temp.get();
 		if (user.getWebshopId() != null) {
 			restTemplate.exchange(user.getWebshop() + "/users/" + user.getWebshopId(), HttpMethod.DELETE, null,
 					Void.class);
 		}
-
 		repo.deleteById(id);
 	}
 

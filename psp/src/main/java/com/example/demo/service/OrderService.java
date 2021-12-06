@@ -1,13 +1,9 @@
 package com.example.demo.service;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.exception.NotFoundException;
 import com.example.demo.model.Order;
-import com.example.demo.model.PaymentMethod;
 import com.example.demo.repo.OrderRepository;
 
 import lombok.AllArgsConstructor;
@@ -30,14 +26,7 @@ public class OrderService {
 	@Transactional(readOnly = true)
 	public Order readOne(Long id) {
 		log.info("OrderService - readOne: id=" + id);
-		Optional<Order> order = repo.findById(id);
-
-		if (!order.isPresent()) {
-			log.error("Order: id=" + id + " not found.");
-			throw new NotFoundException(id.toString(), PaymentMethod.class.getSimpleName());
-		}
-
-		return order.get();
+		return repo.findById(id).get();
 	}
 
 }

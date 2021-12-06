@@ -1,7 +1,5 @@
 package com.example.demo.service;
 
-import java.util.Optional;
-
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -11,12 +9,13 @@ import org.springframework.web.client.RestTemplate;
 import com.example.demo.dto.PaymentRequest;
 import com.example.demo.dto.PaymentRequestCompleted;
 import com.example.demo.dto.PaymentRequestResponse;
-import com.example.demo.exception.NotFoundException;
 import com.example.demo.model.Merchant;
 import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
 import com.example.demo.model.PaymentStatus;
+import com.example.demo.repo.MerchantRepository;
 import com.example.demo.repo.OrderRepository;
+import com.example.demo.utils.PropertiesData;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -26,69 +25,53 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class OrderService {
 
-	private final RestTemplate restTemplate;
 	private final OrderRepository repo;
-	private final MerchantService merchantService;
-
-	public Order readOne(Long id) {
-		log.info("OrderService - readOne: id=" + id);
-		Optional<Order> order = repo.findById(id);
-
-		if (!order.isPresent()) {
-			log.error("Order: id=" + id + " not found.");
-			throw new NotFoundException(id.toString(), Order.class.getSimpleName());
-		}
-
-		return order.get();
-	}
+	private final MerchantRepository merchantRepo;
+	private final RestTemplate restTemplate;
+	private final PropertiesData properties;
 
 	public Order save(Order order) {
+		order.setId(null);
 		log.info("OrderService - save: id=" + order.getId());
 		return repo.save(order);
 	}
 
 	public String pay(Long orderId) {
 		log.info("OrderService - pay: orderId=" + orderId);
-		Order order = readOne(orderId);
-		Merchant merchant = merchantService.findByMerchantApiKey(order.getMerchantApiKey());
-		// nema enkripcije
-		PaymentRequest dto = new PaymentRequest(merchant, order);
+		Order order = repo.findById(orderId).get();
+		Merchant merchant = merchantRepo.findByMerchantApiKey(order.getMerchantApiKey());
+		PaymentRequest request = new PaymentRequest(merchant, order, properties.completeUrl, properties.viewUrl);
 
-		log.info("pay - create PaymentRequest in bank @" + merchant.getBankUrl());
+		log.info("OrderService - create PaymentRequest in bank @" + merchant.getBankUrl());
 		PaymentRequestResponse response = restTemplate.exchange(merchant.getBankUrl() + "/payment-requests",
-				HttpMethod.POST, new HttpEntity<PaymentRequest>(dto), PaymentRequestResponse.class).getBody();
-		// save(order);
-
-		log.info("pay - obtained: paymentUrl=" + response.getUrl() + " paymentId=" + response.getUrl());
+				HttpMethod.POST, new HttpEntity<PaymentRequest>(request), PaymentRequestResponse.class).getBody();
+		log.info("OrderService - obtained: paymentUrl=" + response.getUrl() + " paymentId=" + response.getUrl());
 		return response.getUrl() + "/" + response.getId();
 	}
 
-	public String complete(Long orderId, PaymentRequestCompleted requestCompleted) {
-		log.info("OrderService - completePayment: orderId=" + orderId);
-		Order order = readOne(orderId);
+	public String complete(Long orderId, PaymentRequestCompleted completed) {
+		log.info("OrderService - complete: orderId=" + orderId);
+		Order order = repo.findById(orderId).get();
 
-		if (requestCompleted.getStatus().equals(PaymentStatus.SUCCESS)) { // treba completed??
+		if (completed.getStatus().equals(PaymentStatus.SUCCESS)) {
 			log.info("Order: id=" + order.getId() + " payment_status=SUCCESS");
 			order.setStatus(OrderStatus.COMPLETED);
 			order = save(order);
 
-			log.info("completePayment - notifying WebShop @" + order.getCallbackUrl());
+			log.info("OrderService - complete: notifying WebShop @" + order.getCallbackUrl());
 			return restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
 					new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.SUCCESS)),
 					String.class).getBody();
 
-		} else if (requestCompleted.getStatus().equals(PaymentStatus.FAIL)) {
+		} else {
 			log.info("Order: id=" + order.getId() + " payment_status=FAILED");
 			order.setStatus(OrderStatus.FAILED);
 			order = save(order);
 
-			log.info("completePayment - notifying WebShop @" + order.getCallbackUrl());
+			log.info("OrderService - complete: notifying WebShop @" + order.getCallbackUrl());
 			return restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
 					new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.FAIL)),
 					String.class).getBody();
-		} else {
-			log.info("Order: id=" + order.getId() + " - Error occured while paying for the order");
-			return "Error occured while paying for the order";
 		}
 	}
 
@@ -97,32 +80,11 @@ public class OrderService {
 		log.info("OrderService - checkOrders");
 
 		for (Order order : repo.findAll()) {
-			Merchant merchant = merchantService.findByMerchantApiKeyOptional(order.getMerchantApiKey()).get();
-
 			if (order.getStatus().equals(OrderStatus.CREATED)) {
 				if (order.getTicks() < 5) {
 					log.info("Order: id=" + order.getId() + " tick=" + order.getTicks() + " - OK");
 					order.setTicks(order.getTicks() + 1);
 					save(order);
-
-					try {
-						log.info("checkOrders - get order state from bank @" + merchant.getBankUrl());
-						String status = restTemplate.getForEntity(merchant.getBankUrl(), String.class).getBody();
-
-						if (status.equals("SUCCESSFUL")) {
-							log.info("Order: id=" + order.getId() + " payment_status=SUCCESSFUL");
-							order.setStatus(OrderStatus.COMPLETED);
-							save(order);
-
-							log.info("checkOrders - notifying WebShop @" + order.getCallbackUrl());
-							restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-									new HttpEntity<PaymentRequestCompleted>(
-											new PaymentRequestCompleted(PaymentStatus.SUCCESS)),
-									String.class);
-						}
-					} catch (Exception e) {
-						log.info("Order: id=" + order.getId() + " - Order doesn't exist");
-					}
 
 				} else {
 					log.warn("Order: id=" + order.getId() + " tick=" + order.getTicks() + " - FAILED");

@@ -1,14 +1,12 @@
 package com.example.demo.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.exception.NotFoundException;
 import com.example.demo.model.PaymentMethod;
 import com.example.demo.repo.PaymentMethodRepository;
 
@@ -32,21 +30,13 @@ public class PaymentMethodService {
 
 	@Transactional
 	public PaymentMethod save(PaymentMethod paymentMethod) {
-		paymentMethod = repo.save(paymentMethod);
 		log.info("PaymentMethodService - save: id=" + paymentMethod.getId());
-		return paymentMethod;
+		return repo.save(paymentMethod);
 	}
 
 	@Transactional
 	public void delete(Long id) {
 		log.info("PaymentMethodService - delete: id=" + id);
-		Optional<PaymentMethod> paymentMethod = repo.findById(id);
-
-		if (!paymentMethod.isPresent()) {
-			log.error("PaymentMethod: id=" + id + " not found.");
-			throw new NotFoundException(id.toString(), PaymentMethod.class.getSimpleName());
-		}
-
 		repo.deleteById(id);
 	}
 

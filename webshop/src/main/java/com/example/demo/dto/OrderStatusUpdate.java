@@ -10,8 +10,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OrderStatusUpdate {
-
-	private Long id;
 	private OrderStatus status;
-
 }
