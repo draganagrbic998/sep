@@ -44,28 +44,28 @@ public class DatabaseCipher {
 		}
 	}
 
-	public Merchant encrypt(Merchant m) {
+	public Merchant encrypt(Merchant merchant) {
 		// m.setMerchantId(encrypt(m.getMerchantId()));
 		// m.setMerchantPassword(encrypt(m.getMerchantPassword()));
 		// m.setMerchantApiKey(encrypt(m.getMerchantApiKey()));
 		// m.setBankUrl(encrypt(m.getBankUrl()));
-		return m;
+		return merchant;
 	}
 
-	public Merchant decrypt(Merchant m) {
+	public Merchant decrypt(Merchant merchant) {
 		// m.setMerchantId(decrypt(m.getMerchantId()));
 		// m.setMerchantPassword(decrypt(m.getMerchantPassword()));
 		// m.setMerchantApiKey(decrypt(m.getMerchantApiKey()));
 		// m.setBankUrl(decrypt(m.getBankUrl()));
-		return m;
+		return merchant;
 	}
 
-	public Order encrypt(Order o) {
-		return o;
+	public Order encrypt(Order order) {
+		return order;
 	}
 
-	public Order decrypt(Order o) {
-		return o;
+	public Order decrypt(Order order) {
+		return order;
 	}
 
 }

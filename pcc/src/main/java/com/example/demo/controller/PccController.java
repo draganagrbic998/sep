@@ -9,10 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.example.demo.dto.AcquirerResponseDTO;
-import com.example.demo.dto.PCCRequestDTO;
-import com.example.demo.dto.PCCResponseDTO;
-import com.example.demo.mapper.ResponseMapper;
+import com.example.demo.dto.PccRequest;
+import com.example.demo.dto.PccResponse;
 import com.example.demo.service.BankService;
 
 import lombok.AllArgsConstructor;
@@ -22,24 +20,21 @@ import lombok.extern.log4j.Log4j2;
 @RestController
 @RequestMapping("/pcc")
 @Log4j2
-public class PCCController {
+public class PccController {
 
-	private final ResponseMapper responseMapper;
 	private final BankService bankService;
 	private final RestTemplate restTemplate;
 
 	@PostMapping("/redirect")
-	public ResponseEntity<AcquirerResponseDTO> redirect(@RequestBody PCCRequestDTO dto) {
+	public ResponseEntity<PccResponse> redirect(@RequestBody PccRequest dto) {
 		log.info("PCCController - redirect: acquirerOrderId=" + dto.getAcquirerOrderId());
-		String bankId = dto.getPanNumber().replace("-", "").substring(1, 7);
-		String bankUrl = bankService.getBankByPanNumber(bankId).getBankUrl();
-
-		// Saljemo banci kupca
-		log.info("redirect - notifying buyer bank @" + bankUrl + "/pcc/pay");
-		ResponseEntity<PCCResponseDTO> responseEntity = restTemplate.exchange(bankUrl + "/pcc/pay", HttpMethod.POST,
-				new HttpEntity<PCCRequestDTO>(dto), PCCResponseDTO.class);
-
-		return ResponseEntity.ok(responseMapper.toDTO(responseEntity.getBody()));
+		// log.info("redirect - notifying buyer bank @" + bankUrl + "/pcc/pay");
+		return ResponseEntity.ok(restTemplate
+				.exchange(
+						bankService.getBankByPanNumber(dto.getPanNumber().replace("-", "").substring(0, 6)).getBankUrl()
+								+ "/pcc/pay",
+						HttpMethod.POST, new HttpEntity<PccRequest>(dto), PccResponse.class)
+				.getBody());
 	}
 
 }

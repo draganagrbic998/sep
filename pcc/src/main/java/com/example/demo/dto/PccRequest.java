@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class PCCRequestDTO {
+public class PccRequest {
 
 	private String panNumber;
 	private String cardHolder;

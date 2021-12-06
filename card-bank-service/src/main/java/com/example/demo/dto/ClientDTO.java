@@ -9,8 +9,8 @@ import lombok.Setter;
 @Setter
 public class ClientDTO {
 
-	private String panNumber;
 	private String cardHolder;
+	private String panNumber;
 	private String cvv;
 	private String mm;
 	private String yy;

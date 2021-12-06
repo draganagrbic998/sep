@@ -6,32 +6,27 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.dto.ClientDTO;
 import com.example.demo.model.Client;
-import com.example.demo.utils.DatabaseCipher;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 @AllArgsConstructor
 @Component
-@Log4j2
 public class ClientMapper {
 
-	private final DatabaseCipher cipher;
-
-	public Client toEntity(ClientDTO dto) {
-		log.info("PCCMapper - toEntity");
+	public Client map(ClientDTO dto) {
 		Client model = new Client();
 
-		model.setMerchantId(UUID.randomUUID().toString());
-		model.setPanNumber(dto.getPanNumber());
 		model.setCardHolder(dto.getCardHolder());
+		model.setPanNumber(dto.getPanNumber());
 		model.setCvv(dto.getCvv());
 		model.setExpirationDate(dto.getMm() + "/" + dto.getYy());
-		model.setAvailableFunds(Double.valueOf(1000000));
-		model.setReservedFunds(Double.valueOf(0));
+
+		model.setAvailableFunds(1000000.0);
+		model.setReservedFunds(0.0);
+		model.setMerchantId(UUID.randomUUID().toString());
 		model.setMerchantPassword(UUID.randomUUID().toString());
 
-		return cipher.encrypt(model);
+		return model;
 	}
 
 }

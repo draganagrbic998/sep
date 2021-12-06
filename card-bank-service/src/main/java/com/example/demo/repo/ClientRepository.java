@@ -9,7 +9,7 @@ import com.example.demo.model.Client;
 
 @Repository
 public interface ClientRepository extends JpaRepository<Client, Long> {
-	Optional<Client> findByMerchantId(String merchantId);
-
 	Optional<Client> findByPanNumber(String panNumber);
+
+	Optional<Client> findByMerchantId(String merchantId);
 }

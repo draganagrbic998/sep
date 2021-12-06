@@ -11,10 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.example.demo.dto.OrderCreatedDTO;
-import com.example.demo.dto.OrderDTO;
-import com.example.demo.dto.PaymentRequestCompletedDTO;
-import com.example.demo.mapper.OrderMapper;
+import com.example.demo.dto.PaymentRequestCompleted;
+import com.example.demo.model.Order;
 import com.example.demo.service.OrderService;
 
 import lombok.AllArgsConstructor;
@@ -26,26 +24,27 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class PaymentController {
 
-	private final OrderMapper orderMapper;
 	private final OrderService orderService;
 
 	@PostMapping
-	public OrderCreatedDTO create(@RequestBody OrderDTO dto) {
+	public Order create(@RequestBody Order dto) {
 		log.info("PaymentController - create");
-		return orderMapper.toDTO(orderService.save(orderMapper.toEntity(dto)));
+		dto.setMerchantApiKey(new String(Base64.getDecoder().decode(dto.getMerchantApiKey())));
+		return orderService.save(dto);
+	}
+
+	@PostMapping("/complete")
+	public ResponseEntity<String> complete(@RequestBody PaymentRequestCompleted dto) {
+		log.info("PaymentController - completePayment: orderId=" + dto.getId());
+		return ResponseEntity.ok(orderService.complete(dto));
 	}
 
 	@GetMapping("/pay/{merchantApiKey}/{orderId}")
 	public ModelAndView pay(@PathVariable String merchantApiKey, @PathVariable Long orderId) {
-		String merchantApiKeyTemp = new String(Base64.getDecoder().decode(merchantApiKey));
-		log.info("PaymentController - pay: merchantApiKey=" + merchantApiKeyTemp + " orderId=" + orderId);
-		return new ModelAndView("redirect:" + orderService.pay(orderId, merchantApiKeyTemp));
-	}
-
-	@PostMapping("/complete")
-	public ResponseEntity<String> completePayment(@RequestBody PaymentRequestCompletedDTO dto) {
-		log.info("PaymentController - completePayment: orderId=" + dto.getId());
-		return ResponseEntity.ok(orderService.completePayment(dto));
+		// log.info("PaymentController - pay: merchantApiKey=" + merchantApiKeyTemp + "
+		// orderId=" + orderId);
+		return new ModelAndView(
+				"redirect:" + orderService.pay(orderId, new String(Base64.getDecoder().decode(merchantApiKey))));
 	}
 
 }

@@ -2,12 +2,14 @@ package com.example.demo.model;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,25 +26,32 @@ public class Transaction {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column
+	@NotNull
+	@Positive
 	private Double amount;
 
-	@Column
+	@NotBlank
 	private String currency;
 
-	@Column
+	@NotBlank
 	private String merchantId;
 
-	@Column
+	@NotNull
 	private Long merchantOrderId;
 
-	@Column
+	@NotNull
 	private LocalDateTime merchantTimestamp;
 
-	@Column
-	private String panNumber;
+	private TransactionStatus status; // set this
 
-	@Column
-	private TransactionStatus status;
+	// private String panNumber; // set this
+
+	public Transaction(PaymentRequest request) {
+		amount = request.getAmount();
+		currency = request.getCurrency();
+		merchantId = request.getMerchantId();
+		merchantOrderId = request.getMerchantOrderId();
+		merchantTimestamp = request.getMerchantTimestamp();
+	}
 
 }

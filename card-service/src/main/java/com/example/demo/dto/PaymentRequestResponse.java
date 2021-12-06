@@ -7,9 +7,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class PaymentRequestCompletedDTO {
+public class PaymentRequestResponse {
 
-	private Long id;
-	private String status;
+	private String paymentId;
+	private String paymentUrl;
 
 }

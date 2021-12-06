@@ -11,12 +11,9 @@ public class Utils {
 		String yy = "20" + client.getExpirationDate().split("/")[1];
 		LocalDate today = LocalDate.now();
 
-		if (Integer.parseInt(yy) < today.getYear()
-				|| (Integer.parseInt(yy) >= today.getYear() && Integer.parseInt(mm) < today.getMonthValue())) {
-			return true;
-		}
+		return Integer.parseInt(yy) < today.getYear()
+				|| (Integer.parseInt(yy) >= today.getYear() && Integer.parseInt(mm) < today.getMonthValue());
 
-		return false;
 	}
 
 }

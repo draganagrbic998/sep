@@ -27,8 +27,8 @@ public class DatabaseCipher {
 		if (plainText.isBlank())
 			return plainText;
 		try {
-			this.cipher.init(Cipher.ENCRYPT_MODE, this.key, this.ips);
-			return Base64.getEncoder().encodeToString(this.cipher.doFinal(plainText.getBytes()));
+			cipher.init(Cipher.ENCRYPT_MODE, key, ips);
+			return Base64.getEncoder().encodeToString(cipher.doFinal(plainText.getBytes()));
 		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException
 				| BadPaddingException e) {
 			throw new RuntimeException(e);
@@ -37,56 +37,58 @@ public class DatabaseCipher {
 
 	public String decrypt(String cipherText) {
 		try {
-			this.cipher.init(Cipher.DECRYPT_MODE, this.key, this.ips);
-			return new String(this.cipher.doFinal(Base64.getDecoder().decode(cipherText)));
+			cipher.init(Cipher.DECRYPT_MODE, key, ips);
+			return new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)));
 		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException
 				| BadPaddingException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public Transaction encrypt(Transaction t) {
-		t.setMerchantId(this.encrypt(t.getMerchantId()));
-		t.setPanNumber(this.encrypt(t.getPanNumber()));
-		return t;
+	public Transaction encrypt(Transaction transaction) {
+		transaction.setMerchantId(encrypt(transaction.getMerchantId()));
+		// transaction.setPanNumber(encrypt(transaction.getPanNumber()));
+		return transaction;
 	}
 
-	public Transaction decrypt(Transaction t) {
-		t.setMerchantId(this.decrypt(t.getMerchantId()));
-		t.setPanNumber(this.decrypt(t.getPanNumber()));
-		return t;
+	public Transaction decrypt(Transaction transaction) {
+		transaction.setMerchantId(decrypt(transaction.getMerchantId()));
+		// transaction.setPanNumber(decrypt(transaction.getPanNumber()));
+		return transaction;
 	}
 
-	public PaymentRequest encrypt(PaymentRequest pr) {
-		// pr.setMerchantId(this.encrypt(pr.getMerchantId()));
-		// pr.setMerchantPassword(this.encrypt(pr.getMerchantPassword()));
-		return pr;
+	public PaymentRequest encrypt(PaymentRequest request) {
+		// pr.setMerchantId(encrypt(pr.getMerchantId()));
+		// pr.setMerchantPassword(encrypt(pr.getMerchantPassword()));
+		return request;
 	}
 
-	public PaymentRequest decrypt(PaymentRequest pr) {
-		// pr.setMerchantId(this.decrypt(pr.getMerchantId()));
-		// pr.setMerchantPassword(this.decrypt(pr.getMerchantPassword()));
-		return pr;
+	public PaymentRequest decrypt(PaymentRequest request) {
+		// pr.setMerchantId(decrypt(pr.getMerchantId()));
+		// pr.setMerchantPassword(decrypt(pr.getMerchantPassword()));
+		return request;
 	}
 
-	public Client encrypt(Client c) {
-		c.setMerchantId(this.encrypt(c.getMerchantId()));
-		c.setMerchantPassword(this.encrypt(c.getMerchantPassword()));
-		c.setPanNumber(this.encrypt(c.getPanNumber()));
-		c.setCardHolder(this.encrypt(c.getCardHolder()));
-		c.setCvv(this.encrypt(c.getCvv()));
-		c.setExpirationDate(this.encrypt(c.getExpirationDate()));
-		return c;
+	public Client encrypt(Client client) {
+		client.setCardHolder(encrypt(client.getCardHolder()));
+		client.setPanNumber(encrypt(client.getPanNumber()));
+		client.setCvv(encrypt(client.getCvv()));
+		client.setExpirationDate(encrypt(client.getExpirationDate()));
+
+		client.setMerchantId(encrypt(client.getMerchantId()));
+		client.setMerchantPassword(encrypt(client.getMerchantPassword()));
+		return client;
 	}
 
-	public Client decrypt(Client c) {
-		c.setMerchantId(this.decrypt(c.getMerchantId()));
-		c.setMerchantPassword(this.decrypt(c.getMerchantPassword()));
-		c.setPanNumber(this.decrypt(c.getPanNumber()));
-		c.setCardHolder(this.decrypt(c.getCardHolder()));
-		c.setCvv(this.decrypt(c.getCvv()));
-		c.setExpirationDate(this.decrypt(c.getExpirationDate()));
-		return c;
+	public Client decrypt(Client client) {
+		client.setCardHolder(decrypt(client.getCardHolder()));
+		client.setPanNumber(decrypt(client.getPanNumber()));
+		client.setCvv(decrypt(client.getCvv()));
+		client.setExpirationDate(decrypt(client.getExpirationDate()));
+
+		client.setMerchantId(decrypt(client.getMerchantId()));
+		client.setMerchantPassword(decrypt(client.getMerchantPassword()));
+		return client;
 	}
 
 }

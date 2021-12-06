@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,9 +26,9 @@ public class ClientController {
 	private final ClientService service;
 
 	@PostMapping
-	public ResponseEntity<Client> create(@RequestBody ClientDTO dto) {
+	public ResponseEntity<Client> create(@Valid @RequestBody ClientDTO dto) {
 		log.info("ClientController - create");
-		return ResponseEntity.ok(service.save(mapper.toEntity(dto)));
+		return ResponseEntity.ok(service.save(mapper.map(dto)));
 	}
 
 }

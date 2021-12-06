@@ -23,7 +23,7 @@ public class Order {
 	private Long id;
 
 	@Column
-	private Long shopOrderId;
+	private Long orderIdWebShop;
 
 	@Column
 	private Double price;
@@ -32,10 +32,10 @@ public class Order {
 	private String currency;
 
 	@Column
-	private String merchantApiKey;
+	private OrderStatus orderStatus = OrderStatus.COMPLETED;
 
 	@Column
-	private OrderStatus orderStatus;
+	private String merchantApiKey;
 
 	@Column
 	private String callbackUrl;

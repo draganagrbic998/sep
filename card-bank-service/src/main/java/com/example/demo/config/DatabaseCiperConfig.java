@@ -34,11 +34,10 @@ public class DatabaseCiperConfig {
 
 		try {
 			KeyStore keyStore = KeyStore.getInstance("JCEKS");
-			InputStream in = new FileInputStream(new File(this.cipherProperties.getDbKeystorePath()));
-			keyStore.load(in, this.cipherProperties.getDbKeystorePassword().toCharArray());
+			InputStream in = new FileInputStream(new File(cipherProperties.getDbKeystorePath()));
+			keyStore.load(in, cipherProperties.getDbKeystorePassword().toCharArray());
 			in.close();
-			key = (SecretKey) keyStore.getKey("databaseKey",
-					this.cipherProperties.getDbKeystorePassword().toCharArray());
+			key = (SecretKey) keyStore.getKey("databaseKey", cipherProperties.getDbKeystorePassword().toCharArray());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -49,18 +48,18 @@ public class DatabaseCiperConfig {
 				keyGenerator.init(256);
 				key = keyGenerator.generateKey();
 
-				File file = new File(this.cipherProperties.getDbKeystorePath());
+				File file = new File(cipherProperties.getDbKeystorePath());
 				file.createNewFile();
 
 				KeyStore keyStore = KeyStore.getInstance("JCEKS");
-				keyStore.load(null, this.cipherProperties.getDbKeystorePassword().toCharArray());
+				keyStore.load(null, cipherProperties.getDbKeystorePassword().toCharArray());
 
 				KeyStore.ProtectionParameter protParam = new KeyStore.PasswordProtection(
-						this.cipherProperties.getDbKeystorePassword().toCharArray());
+						cipherProperties.getDbKeystorePassword().toCharArray());
 
 				KeyStore.SecretKeyEntry keyEntry = new KeyStore.SecretKeyEntry(key);
 				keyStore.setEntry("databaseKey", keyEntry, protParam);
-				keyStore.store(new FileOutputStream(file), this.cipherProperties.getDbKeystorePassword().toCharArray());
+				keyStore.store(new FileOutputStream(file), cipherProperties.getDbKeystorePassword().toCharArray());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -69,7 +68,7 @@ public class DatabaseCiperConfig {
 		IvParameterSpec ips = null;
 
 		try {
-			InputStream in = new FileInputStream(ResourceUtils.getFile(this.cipherProperties.getIpsPath()));
+			InputStream in = new FileInputStream(ResourceUtils.getFile(cipherProperties.getIpsPath()));
 			ips = new IvParameterSpec(in.readAllBytes());
 			in.close();
 		} catch (Exception e) {
@@ -82,7 +81,7 @@ public class DatabaseCiperConfig {
 				new SecureRandom().nextBytes(iv);
 				ips = new IvParameterSpec(iv);
 
-				File file = new File(this.cipherProperties.getIpsPath());
+				File file = new File(cipherProperties.getIpsPath());
 				file.createNewFile();
 
 				FileOutputStream out = new FileOutputStream(file);
