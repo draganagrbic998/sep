@@ -27,7 +27,7 @@ public class PaymentController {
 		return ResponseEntity.ok(orderService.save(dto));
 	}
 
-	@PutMapping("/complete/{orderId}")
+	@PutMapping("/{orderId}")
 	public ResponseEntity<Order> complete(@PathVariable Long orderId, @RequestBody PaymentRequestCompleted dto) {
 		return ResponseEntity.ok(orderService.complete(orderId, dto.getStatus()));
 	}

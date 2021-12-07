@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.model.Product;
 import com.example.demo.repository.ProductRepository;
+import com.example.demo.utils.PropertiesData;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -21,6 +22,7 @@ public class ProductService {
 	private final ProductRepository repo;
 	private final UserService userService;
 	private final FileService fileService;
+	private final PropertiesData properties;
 
 	public Page<Product> read(String category, Pageable pageable) {
 		log.info("ProductService - read: category=" + category);
@@ -39,14 +41,14 @@ public class ProductService {
 	}
 
 	public Product save(Product product, MultipartFile image) throws IOException {
+		log.info("ProductService - save: id=" + product.getId());
 		product.setUser(userService.getLoggedInUser());
 		if (image != null) {
-			product.setImageLocation("https://localhost:8080/" + fileService.store(image));
+			product.setImageLocation(properties.hostUrl + "/" + fileService.store(image));
 		} else if (product.getId() != null) {
 			product.setImageLocation(readOne(product.getId()).getImageLocation());
 		}
 		product = repo.save(product);
-		log.info("ProductService - save: id=" + product.getId());
 		return product;
 	}
 

@@ -22,6 +22,7 @@ public class UserController {
 
 	@PostMapping
 	public ResponseEntity<User> create(@RequestBody User dto) {
+		dto.setId(null);
 		return ResponseEntity.ok(service.save(dto));
 	}
 

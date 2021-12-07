@@ -20,12 +20,7 @@ public class AuthController {
 
 	@PostMapping
 	public ResponseEntity<Auth> login(@RequestBody Auth auth) {
-		try {
-			return ResponseEntity.ok(service.login(auth));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+		return ResponseEntity.ok(service.login(auth));
 	}
 
 }

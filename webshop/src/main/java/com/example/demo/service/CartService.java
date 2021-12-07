@@ -21,7 +21,7 @@ public class CartService {
 	private final UserService userService;
 
 	public List<CartItem> read() {
-		log.info("CartService - readCart");
+		log.info("CartService - read");
 		return repo.findByUserId(userService.getLoggedInUser().getId());
 	}
 

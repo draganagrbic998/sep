@@ -35,29 +35,32 @@ public class OrderService {
 		return repo.findByUserId(userService.getLoggedInUser().getId());
 	}
 
-	public Order updateStatus(Long id, PaymentStatus status) {
-		log.info("OrderService - updateStatus: id=" + id);
-		Order order = repo.findById(id).get();
-		if (status.equals(PaymentStatus.SUCCESS)) {
-			order.setStatus(OrderStatus.COMPLETED);
-		} else {
-			order.setStatus(OrderStatus.FAILED);
-		}
+	public Order order(Long productId) {
+		log.info("OrderService - order: productId=" + productId);
+		CartItem item = cartRepo.findByUserIdAndProductId(userService.getLoggedInUser().getId(), productId);
+		Order order = repo.save(new Order(item));
+		cartRepo.deleteById(item.getId());
+
+		order.setPspId(restTemplate.exchange(properties.pspUrl + "/orders", HttpMethod.POST,
+				new HttpEntity<PspOrder>(new PspOrder(order, properties.callbackUrl + "/orders")), PspOrder.class)
+				.getBody().getId());
 		return repo.save(order);
 	}
 
-	public Order order(Long productId) {
-		log.info("CartService - orderCart");
-		CartItem item = cartRepo.findByUserIdAndProductId(userService.getLoggedInUser().getId(), productId);
-		Order order = new Order(item);
-		order = repo.save(order);
-		cartRepo.deleteById(item.getId());
+	public Order updateStatus(Long id, PaymentStatus status) {
+		log.info("OrderService - updateStatus: id=" + id);
+		Order order = repo.findById(id).get();
 
-		PspOrder pspOrder = restTemplate.exchange(properties.pspUrl + "/orders", HttpMethod.POST,
-				new HttpEntity<PspOrder>(new PspOrder(order, properties.callbackUrl + "/orders")), PspOrder.class)
-				.getBody();
-		order.setPspId(pspOrder.getId());
-		return repo.save(order);
+		if (status.equals(PaymentStatus.SUCCESS)) {
+			log.info("Order: id=" + order.getId() + " payment_status=SUCCESS");
+			order.setStatus(OrderStatus.COMPLETED);
+			return repo.save(order);
+
+		} else {
+			log.info("Order: id=" + order.getId() + " payment_status=FAILED");
+			order.setStatus(OrderStatus.FAILED);
+			return repo.save(order);
+		}
 	}
 
 }

@@ -8,7 +8,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,7 +34,7 @@ public class UserService implements UserDetailsService {
 	private final RestTemplate restTemplate;
 
 	@Override
-	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+	public User loadUserByUsername(String email) throws UsernameNotFoundException {
 		log.info("UserService - loadUserByUsername: email=" + email);
 		return repo.findByEmail(email);
 	}
@@ -45,15 +44,15 @@ public class UserService implements UserDetailsService {
 		return repo.findByApiKey(apiKey);
 	}
 
+	public User getLoggedInUser() {
+		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	}
+
 	public Auth login(Auth auth) {
-		log.info("UserService - login: auth_email=" + auth.getEmail());
+		log.info("UserService - login: email=" + auth.getEmail());
 		return new Auth((User) authManager
 				.authenticate(new UsernamePasswordAuthenticationToken(auth.getEmail(), auth.getPassword()))
 				.getPrincipal(), tokenUtils.generateToken(auth.getEmail()));
-	}
-
-	public User getLoggedInUser() {
-		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 
 	public List<User> read() {
@@ -61,25 +60,18 @@ public class UserService implements UserDetailsService {
 		return repo.findAll();
 	}
 
-	public User readOne(Long id) {
-		log.info("UserService - readOne: id=" + id);
-		return repo.findById(id).get();
-	}
-
 	public User save(User user) {
-		user.setApiKey(UUID.randomUUID().toString());
+		log.info("UserService - save: id=" + user.getId());
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		user.setApiKey(UUID.randomUUID().toString());
 
 		if (!user.getRole().equals("psp-admin")) {
-			Long webshopId = restTemplate
+			user.setWebshopId(restTemplate
 					.exchange(user.getWebshop() + "/users", HttpMethod.POST, new HttpEntity<User>(user), User.class)
-					.getBody().getId();
-			user.setWebshopId(webshopId);
+					.getBody().getId());
 		}
 
-		user = repo.save(user);
-		log.info("UserService - save: id=" + user.getId());
-		return user;
+		return repo.save(user);
 	}
 
 	public void delete(Long id) {

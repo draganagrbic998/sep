@@ -26,15 +26,16 @@ public class Order {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private Long pspId;
+	@NotNull
+	private OrderStatus status = OrderStatus.CREATED;
+
+	@NotNull
+	private Date date = new Date();
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	@NotNull
 	private User user;
-
-	@NotNull
-	private Date date;
 
 	@ManyToOne
 	@JoinColumn(name = "product_id")
@@ -44,12 +45,9 @@ public class Order {
 	@NotNull
 	private Long quantity;
 
-	@NotNull
-	private OrderStatus status;
+	private Long pspId;
 
 	public Order(CartItem item) {
-		status = OrderStatus.CREATED;
-		date = new Date();
 		user = item.getUser();
 		product = item.getProduct();
 		quantity = item.getQuantity();

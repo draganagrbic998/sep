@@ -3,7 +3,6 @@ package com.example.demo.service;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -26,15 +25,13 @@ public class UserService implements UserDetailsService {
 	private final TokenUtils tokenUtils;
 
 	@Override
-	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+	public User loadUserByUsername(String email) throws UsernameNotFoundException {
 		log.info("UserService - loadUserByUsername: email=" + email);
-		System.out.println(repo.findAll().get(0).getEmail());
-		System.out.println(repo.findAll().get(1).getEmail());
 		return repo.findByEmail(email);
 	}
 
 	public Auth login(Auth auth) {
-		log.info("UserService - login: auth_email=" + auth.getEmail());
+		log.info("UserService - login: email=" + auth.getEmail());
 		return new Auth((User) authManager
 				.authenticate(new UsernamePasswordAuthenticationToken(auth.getEmail(), auth.getPassword()))
 				.getPrincipal(), tokenUtils.generateToken(auth.getEmail()));
@@ -45,10 +42,8 @@ public class UserService implements UserDetailsService {
 	}
 
 	public User save(User user) {
-		user.setId(null);
-		user = repo.save(user);
 		log.info("UserService - save: id=" + user.getId());
-		return user;
+		return repo.save(user);
 	}
 
 	public void delete(Long id) {

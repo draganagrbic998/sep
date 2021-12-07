@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class PropertiesData {
 
+	@Value("${host-url}")
+	public String hostUrl;
+
 	@Value("${frontend-url}")
 	public String frontendUrl;
 

@@ -11,6 +11,8 @@ import javax.validation.constraints.NotBlank;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,6 +40,7 @@ public class User implements UserDetails {
 
 	private String apiKey;
 
+	@JsonIgnore
 	@Override
 	public List<RoleAuth> getAuthorities() {
 		return List.of(new RoleAuth(role));
