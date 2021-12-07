@@ -30,7 +30,6 @@ public class PaymentRequestController {
 
 	@PostMapping("/confirm/{id}")
 	public ResponseEntity<String> confirm(@PathVariable Long id, @RequestBody Customer dto) {
-		System.out.println("HAHAHAHA");
 		return ResponseEntity.ok(service.confirm(id, dto));
 	}
 

@@ -48,7 +48,7 @@ public class OrderService {
 		return response.getUrl() + "/" + response.getId();
 	}
 
-	public String complete(Long orderId, PaymentRequestCompleted completed) {
+	public void complete(Long orderId, PaymentRequestCompleted completed) {
 		log.info("OrderService - complete: orderId=" + orderId);
 		Order order = repo.findById(orderId).get();
 
@@ -58,9 +58,9 @@ public class OrderService {
 			order = save(order);
 
 			log.info("OrderService - complete: notifying WebShop @" + order.getCallbackUrl());
-			return restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
+			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
 					new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.SUCCESS)),
-					String.class).getBody();
+					Void.class);
 
 		} else {
 			log.info("Order: id=" + order.getId() + " payment_status=FAILED");
@@ -68,9 +68,9 @@ public class OrderService {
 			order = save(order);
 
 			log.info("OrderService - complete: notifying WebShop @" + order.getCallbackUrl());
-			return restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
+			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
 					new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.FAIL)),
-					String.class).getBody();
+					Void.class);
 		}
 	}
 

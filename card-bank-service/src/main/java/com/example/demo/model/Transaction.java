@@ -25,6 +25,9 @@ public class Transaction {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@NotNull
+	private PaymentStatus status = PaymentStatus.SUCCESS;
+
 	@NotBlank
 	private String merchantId;
 
@@ -39,9 +42,6 @@ public class Transaction {
 
 	@NotNull
 	private LocalDateTime merchantTimestamp;
-
-	@NotNull
-	private PaymentStatus status = PaymentStatus.SUCCESS;
 
 	public Transaction(PaymentRequest request) {
 		merchantId = request.getMerchantId();

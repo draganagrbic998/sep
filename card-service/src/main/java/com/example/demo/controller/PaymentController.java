@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
@@ -26,9 +27,10 @@ public class PaymentController {
 		return ResponseEntity.ok(orderService.save(dto));
 	}
 
-	@PostMapping("/complete/{orderId}")
-	public ResponseEntity<String> complete(@PathVariable Long orderId, @RequestBody PaymentRequestCompleted dto) {
-		return ResponseEntity.ok(orderService.complete(orderId, dto));
+	@PutMapping("/complete/{orderId}")
+	public ResponseEntity<Void> complete(@PathVariable Long orderId, @RequestBody PaymentRequestCompleted dto) {
+		orderService.complete(orderId, dto);
+		return ResponseEntity.noContent().build();
 	}
 
 	@GetMapping("/pay/{orderId}")

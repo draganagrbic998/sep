@@ -21,26 +21,23 @@ import lombok.AllArgsConstructor;
 @Service
 public class RateService {
 
-	private final PropertiesData data;
+	private final PropertiesData properties;
 
-	public Double findRate(String currency) {
+	public Double getCurrencyRate(String currency) {
 		currency = currency.toLowerCase();
 		if (currency.equals("rsd")) {
 			return 1.0;
 		}
 
-		return new Gson().fromJson(getCurrencyRate(), JsonObject.class).get("result").getAsJsonObject().get(currency)
+		return new Gson().fromJson(getRate(), JsonObject.class).get("result").getAsJsonObject().get(currency)
 				.getAsJsonObject().get("sre").getAsDouble();
-
 	}
 
-	private String getCurrencyRate() {
+	private String getRate() {
 		try {
-			String url = "http://api.kursna-lista.info/".concat(data.nbsApi).concat("/kl_na_dan/")
-					.concat(DateTimeFormatter.ofPattern("dd.MM.yyyy").format(LocalDate.now())).concat("/kursna_lista");
-
 			HttpClient client = HttpClientBuilder.create().build();
-			HttpGet get = new HttpGet(url);
+			HttpGet get = new HttpGet("http://api.kursna-lista.info/".concat(properties.nbsApi).concat("/kl_na_dan/")
+					.concat(DateTimeFormatter.ofPattern("dd.MM.yyyy").format(LocalDate.now())).concat("/kursna_lista"));
 			get.setHeader("Accept", "application/json");
 			HttpResponse response = client.execute(get);
 			if (response.getStatusLine().getStatusCode() != 200) {
@@ -54,7 +51,6 @@ public class RateService {
 				buffer.append(line);
 			}
 			reader.close();
-
 			return buffer.toString();
 
 		} catch (Exception e) {

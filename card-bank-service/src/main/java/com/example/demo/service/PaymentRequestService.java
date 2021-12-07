@@ -44,91 +44,85 @@ public class PaymentRequestService {
 	public String confirm(Long id, Customer customer) {
 		log.info("PaymentRequestService - confirm: id=" + id);
 		PaymentRequest request = repo.findById(id).get();
-		Transaction transaction = new Transaction(request);
-		transaction = transactionRepo.save(transaction);
+		Transaction transaction = transactionRepo.save(new Transaction(request));
 
 		Optional<Client> merchantOptional = clientRepo.findByMerchantId(request.getMerchantId());
 		if (!merchantOptional.isPresent()) {
-			log.error("Merchant: id=" + request.getMerchantId() + " not found");
+			log.error("Merchant: id=" + request.getMerchantId() + " not found.");
 			return refuse(request, transaction, false);
 		}
 		Client merchant = merchantOptional.get();
 
 		if (!merchant.getMerchantPassword().equals(request.getMerchantPassword())) {
-			log.error("Merchant: id=" + request.getMerchantId() + " invalid password");
+			log.error("Merchant: id=" + request.getMerchantId() + " invalid password.");
 			return refuse(request, transaction, true);
 		}
 
-		if (customer.getPanNumber().replace("-", "").substring(0, 6).contentEquals(properties.bankId)) {
-			log.info("Client: panNumber=" + customer.getPanNumber() + " has an account in this bank");
+		if (customer.getPanNumber().substring(0, 6).equals(properties.bankId)) {
+			log.info("Client: panNumber=" + customer.getPanNumber() + " has an account in this bank.");
 
 			Optional<Client> clientOptional = clientRepo.findByPanNumber(customer.getPanNumber());
 			if (!clientOptional.isPresent()) {
-				log.error("Client: panNumber=" + customer.getPanNumber() + " not found");
+				log.error("Client: panNumber=" + customer.getPanNumber() + " not found.");
 				return refuse(request, transaction, false);
 			}
 			Client client = clientOptional.get();
 
 			if (!client.getCardHolder().equals(customer.getCardHolder()) || !client.getCvv().equals(customer.getCvv())
 					|| !client.getExpirationDate().equals(customer.getMm() + "/" + customer.getYy())) {
-				log.error("Client: panNumber=" + customer.getPanNumber() + " invalid card data entered");
+				log.error("Client: panNumber=" + customer.getPanNumber() + " invalid card data entered.");
 				return refuse(request, transaction, false);
 			}
 
 			if (Utils.cardExpired(client)) {
-				log.error("Client: panNumber=" + customer.getPanNumber() + " card expired");
+				log.error("Client: panNumber=" + customer.getPanNumber() + " card expired.");
 				return refuse(request, transaction, false);
 			}
 
 			if (request.getAmount() > client.getAvailableFunds()) {
-				log.error("Client: panNumber=" + customer.getPanNumber() + " not enough available funds");
+				log.error("Client: panNumber=" + customer.getPanNumber() + " not enough available funds.");
 				return refuse(request, transaction, false);
 			}
 
-			double rate = rateService.findRate(transaction.getCurrency());
-			log.info("PaymentRequestService - currency rate=" + rate + ", amount=" + request.getAmount());
-			client.decAvailableFunds(rate * request.getAmount());
-			clientRepo.save(client);
+			Double rate = rateService.getCurrencyRate(transaction.getCurrency());
 			merchant.incAvailableFunds(rate * request.getAmount());
 			clientRepo.save(merchant);
+			client.decAvailableFunds(rate * request.getAmount());
+			clientRepo.save(client);
 
 			log.info("PaymentRequestService - notifying card-service @" + request.getCallbackUrl());
-			restTemplate.exchange(request.getCallbackUrl(), HttpMethod.POST,
+			restTemplate.exchange(request.getCallbackUrl(), HttpMethod.PUT,
 					new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.SUCCESS)),
-					String.class);
+					Void.class);
 			return request.getSuccessUrl();
 		} else {
-			log.info("Client: panNumber=" + customer.getPanNumber() + " doesn't have an account in this bank");
+			log.info("Client: panNumber=" + customer.getPanNumber() + " doesn't have an account in this bank.");
 			log.info("PaymentRequestService - sending PccRequest to PCC @" + properties.pccURL);
 
-			PccRequest pccRequest = new PccRequest(request, customer);
-
 			PccResponse response = restTemplate.exchange(properties.pccURL, HttpMethod.POST,
-					new HttpEntity<PccRequest>(pccRequest), PccResponse.class).getBody();
+					new HttpEntity<PccRequest>(new PccRequest(request, customer)), PccResponse.class).getBody();
 
 			if (response.getAuthenticated() && response.getTransactionAuthorized()) {
-				log.info("PccResponse: authentificated=true transactionAuthorized=true");
-				log.info("PaymentRequestService - notifying card-service @" + request.getCallbackUrl());
-
-				merchant.incAvailableFunds(rateService.findRate(request.getCurrency()) * request.getAmount());
+				log.info("PccResponse: authenticated=true, transactionAuthorized=true");
+				merchant.incAvailableFunds(rateService.getCurrencyRate(request.getCurrency()) * request.getAmount());
 				clientRepo.save(merchant);
 
-				restTemplate.exchange(request.getCallbackUrl(), HttpMethod.POST,
+				log.info("PaymentRequestService - notifying card-service @" + request.getCallbackUrl());
+				restTemplate.exchange(request.getCallbackUrl(), HttpMethod.PUT,
 						new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.SUCCESS)),
-						String.class);
+						Void.class);
 				return request.getSuccessUrl();
 			}
 
 			if (!response.getAuthenticated()) {
-				log.error("PccResponse: authentificated=false");
-				return request.getErrorUrl();
+				log.error("PccResponse: authenticated=false");
+				return request.getFailUrl();
 			}
 			if (!response.getTransactionAuthorized()) {
 				log.error("PccResponse: transactionAuthorized=false");
 				return request.getFailUrl();
 			}
-
-			log.error("PccResponse: authentificated=false transactionAuthorized=false");
+			log.error("PccResponse: authenticated=false, transactionAuthorized=false");
 			return request.getErrorUrl();
 		}
 	}
@@ -138,8 +132,8 @@ public class PaymentRequestService {
 		log.info("PaymentRequestService - notifying card-service @" + request.getCallbackUrl());
 		transaction.setStatus(error ? PaymentStatus.ERROR : PaymentStatus.FAIL);
 		transactionRepo.save(transaction);
-		restTemplate.exchange(request.getCallbackUrl(), HttpMethod.POST,
-				new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.FAIL)), String.class);
+		restTemplate.exchange(request.getCallbackUrl(), HttpMethod.PUT,
+				new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.FAIL)), Void.class);
 		return error ? request.getErrorUrl() : request.getFailUrl();
 	}
 

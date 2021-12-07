@@ -1,7 +1,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
-    <title>Confirm Payment</title>
+    <title>Payment Confirmation</title>
 
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 
@@ -16,10 +16,6 @@
     />
 
     <style>
-      .rounded-lg {
-        border-radius: 1rem;
-      }
-
       .background {
         background: rgb(70, 205, 255);
         background: linear-gradient(
@@ -31,9 +27,8 @@
         );
       }
 
-      .title {
-        padding: 10px;
-        border-bottom: 1px solid lightgrey;
+      .rounded-lg {
+        border-radius: 1rem;
       }
 
       .title-container {
@@ -42,7 +37,7 @@
         border-bottom: 3px inset lightgrey;
       }
 
-      .h1-custom {
+      .header {
         color: #6e8eff;
         background: rgb(255, 255, 255);
         background: linear-gradient(
@@ -88,13 +83,12 @@
         margin-top: 20px;
         margin-bottom: 20px;
       }
-
     </style>
   </head>
   <body class="background">
     <div class="row mb-4">
       <div class="col-lg-12 mx-auto text-center title-container">
-        <h1 class="display-4 h1-custom">Payment Confirmation</h1>
+        <h1 class="display-4 header">Payment Confirmation</h1>
       </div>
     </div>
 
@@ -102,7 +96,7 @@
 
     <div class="row">
       <div class="col-lg-7 mx-auto" style="height: 90%">
-        <div class="bg-white rounded-lg shadow-sm p-5 container-card">
+        <div class="bg-white shadow-sm p-5 rounded-lg container-card">
           <div>
             <form>
               <div class="form-group">
@@ -110,8 +104,8 @@
                 <input
                   id="cardHolder"
                   placeholder="Your full name"
-                  required
                   class="form-control"
+                  required
                 />
               </div>
               <div class="form-group">
@@ -140,15 +134,15 @@
                     <div class="input-group">
                       <input
                         type="number"
-                        placeholder="MM"
                         id="mm"
+                        placeholder="MM"
                         class="form-control"
                         required
                       />
                       <input
                         type="number"
-                        placeholder="YY"
                         id="yy"
+                        placeholder="YY"
                         class="form-control"
                         required
                       />
@@ -163,17 +157,13 @@
                       >CVV
                       <i class="fa fa-question-circle text-muted"></i>
                     </label>
-                    <input
-                      id="cvv"
-                      required
-                      class="form-control"
-                    />
+                    <input id="cvv" class="form-control" required />
                   </div>
                 </div>
               </div>
               <button
                 id="registration"
-                class="subscribe btn btn-color btn-block shadow-sm"
+                class="btn btn-color btn-block shadow-sm"
                 style="margin: auto; max-width: 100px"
                 th:attr="confirmUrl=${confirmUrl}, requestId=${requestId}"
               >
@@ -188,8 +178,8 @@
       $(document).ready(function () {
         $("#registration").click(function (e) {
           e.preventDefault();
-          var requestId = $(this).attr("requestId");
           var confirmUrl = $(this).attr("confirmUrl");
+          var requestId = $(this).attr("requestId");
 
           $.ajax({
             url: confirmUrl + "/" + requestId,
@@ -199,8 +189,8 @@
               panNumber: $("#panNumber").val(),
               cardHolder: $("#cardHolder").val(),
               cvv: $("#cvv").val(),
-              mm: $("#mm").val(),
               yy: $("#yy").val(),
+              mm: $("#mm").val(),
             }),
             success: function (res) {
               window.location.href = res;

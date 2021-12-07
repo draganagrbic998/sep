@@ -18,11 +18,11 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class PccService {
 
-	private final RateService rateService;
 	private final ClientRepository clientRepo;
+	private final RateService rateService;
 
 	public PccResponse pay(PccRequest request) {
-		log.info("PCCService - pay: panNumber=" + request.getPanNumber());
+		log.info("PccService - pay: panNumber=" + request.getPanNumber());
 
 		Optional<Client> clientOptional = clientRepo.findByPanNumber(request.getPanNumber());
 		if (!clientOptional.isPresent()) {
@@ -33,21 +33,21 @@ public class PccService {
 
 		if (!client.getCardHolder().equals(request.getCardHolder()) || !client.getCvv().equals(request.getCvv())
 				|| !client.getExpirationDate().equals(request.getMm() + "/" + request.getYy())) {
-			log.error("Client: panNumber=" + request.getPanNumber() + " invalid card data entered");
+			log.error("Client: panNumber=" + request.getPanNumber() + " invalid card data entered.");
 			return new PccResponse(false, false);
 		}
 
 		if (Utils.cardExpired(client)) {
-			log.error("Client: panNumber=" + request.getCardHolder() + " card expired");
+			log.error("Client: panNumber=" + request.getCardHolder() + " card expired.");
 			return new PccResponse(false, false);
 		}
 
 		if (request.getAmount() > client.getAvailableFunds()) {
-			log.error("Client: panNumber=" + request.getPanNumber() + " not enough available funds");
+			log.error("Client: panNumber=" + request.getPanNumber() + " not enough available funds.");
 			return new PccResponse(true, false);
 		}
 
-		client.decAvailableFunds(rateService.findRate(request.getCurrency()) * request.getAmount());
+		client.decAvailableFunds(rateService.getCurrencyRate(request.getCurrency()) * request.getAmount());
 		clientRepo.save(client);
 		return new PccResponse(true, true);
 	}
