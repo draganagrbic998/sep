@@ -7,9 +7,7 @@ import { FormConfig } from '../utils/form';
 })
 export class FormService {
 
-  constructor(
-    private builder: FormBuilder
-  ) { }
+  constructor(private builder: FormBuilder) { }
 
   build(config: FormConfig) {
     const data = {}

@@ -13,32 +13,36 @@ import { DeleteConfirmationComponent } from '../delete-confirmation/delete-confi
   styleUrls: ['./list.component.scss']
 })
 export class ListComponent implements OnInit {
-  constructor (private dialog: MatDialog, private router: Router) {}
+  constructor(private dialog: MatDialog, private router: Router) { }
 
   dataSource: MatTableDataSource<StandardModel>
 
   @Input() config: {
+    service: StandardRestService<StandardModel>
     columnMappings: { [key: string]: string }
     hideCreate?: boolean
     hideEdit?: boolean
     hideDelete?: boolean
     editRoute?: string
-    service: StandardRestService<StandardModel>
   }
 
-  get columns () {
+  get columns() {
     return Object.keys(this.config.columnMappings).concat('Actions')
   }
 
-  create () {
+  ngOnInit() {
+    this.readData()
+  }
+
+  create() {
     this.router.navigate([`${this.config.editRoute}/new`])
   }
 
-  edit (item: StandardModel) {
+  edit(item: StandardModel) {
     this.router.navigate([`${this.config.editRoute}/${item.id}`])
   }
 
-  async delete (item: StandardModel) {
+  async delete(item: StandardModel) {
     const options: MatDialogConfig = {
       ...DIALOG_CONFIG,
       ...{ data: () => this.config.service.delete(item.id) }
@@ -52,12 +56,7 @@ export class ListComponent implements OnInit {
     }
   }
 
-  ngOnInit () {
-    this.readData()
-  }
-
-  private async readData () {
-    const data = await this.config.service.read().toPromise()
-    this.dataSource = new MatTableDataSource(data)
+  private async readData() {
+    this.dataSource = new MatTableDataSource(await this.config.service.read().toPromise())
   }
 }

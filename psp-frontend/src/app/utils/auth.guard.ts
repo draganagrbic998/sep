@@ -7,12 +7,12 @@ import { Route } from './route'
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-  constructor (
+  constructor(
     private storageService: StorageService,
     private router: Router
-  ) {}
+  ) { }
 
-  canActivate (route: ActivatedRouteSnapshot) {
+  canActivate(route: ActivatedRouteSnapshot) {
     if (route.data.role !== this.storageService.getAuth()?.role) {
       this.router.navigate([Route.LOGIN])
       return false

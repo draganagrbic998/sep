@@ -1,12 +1,27 @@
 <mat-toolbar color="primary" class="mat-elevation-z24">
   <span>
-    <button *ngIf="!login" mat-button [routerLink]="webshopsLink" [disabled]="webshops">
+    <button
+      *ngIf="!login"
+      mat-button
+      [routerLink]="webshopsLink"
+      [disabled]="webshops"
+    >
       <mat-icon>list</mat-icon>Web Shops
     </button>
-    <button *ngIf="!login" mat-button [routerLink]="paymentMethodsLink" [disabled]="paymentMethods">
+    <button
+      *ngIf="!login"
+      mat-button
+      [routerLink]="paymentMethodsLink"
+      [disabled]="paymentMethods"
+    >
       <mat-icon>shopping_cart</mat-icon>Payment Methods
     </button>
-    <button *ngIf="!login" mat-button [routerLink]="usersLink" [disabled]="users">
+    <button
+      *ngIf="!login"
+      mat-button
+      [routerLink]="usersLink"
+      [disabled]="users"
+    >
       <mat-icon>shopping_basket</mat-icon>Users
     </button>
   </span>

@@ -19,12 +19,12 @@ import { Route } from 'src/app/utils/route'
   `
 })
 export class LoginComponent implements OnInit {
-  constructor (
+  constructor(
     private authService: AuthService,
     private storageService: StorageService,
     private router: Router,
     private snackbar: MatSnackBar
-  ) {}
+  ) { }
 
   title = 'Log In'
   pending = false
@@ -42,19 +42,19 @@ export class LoginComponent implements OnInit {
     'margin-top': '250px'
   }
 
-  ngOnInit () {
+  ngOnInit() {
     this.storageService.removeAuth()
   }
 
-  async save (auth: Auth) {
+  async save(auth: Auth) {
     this.pending = true
 
     try {
       const res = await this.authService.login(auth).toPromise()
       this.pending = false
-      this.storageService.setAuth(res)
 
       if (res.role === RoleAuth.PSP_ADMIN) {
+        this.storageService.setAuth(res)
         this.router.navigate([Route.WEBSHOPS])
       } else {
         throw new Error()

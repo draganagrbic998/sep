@@ -11,7 +11,6 @@ export interface FormConfig {
       field: string
       values: string[]
     }
-    hide?: boolean
   }
 }
 

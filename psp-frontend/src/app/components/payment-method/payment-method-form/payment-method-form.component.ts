@@ -7,20 +7,18 @@ import { Route } from 'src/app/utils/route';
   selector: 'app-payment-method-form',
   template: `<app-form [config]="this"></app-form>`
 })
-export class PaymentMethodFormComponent  {
+export class PaymentMethodFormComponent {
 
-  constructor(
-    public service: PaymentMethodService
-  ) { }
+  constructor(public service: PaymentMethodService) { }
 
-  listRoute = Route.PAYMENT_METHODS
   entity = 'Payment Method'
+  listRoute = Route.PAYMENT_METHODS
 
   formConfig: FormConfig = {
     name: {
+      type: 'select',
       validation: 'required',
       options: this.service.toAdd(),
-      type: 'select'
     }
   }
   style: FormStyle = {

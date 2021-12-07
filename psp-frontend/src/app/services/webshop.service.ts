@@ -7,7 +7,7 @@ import { StandardRestService } from './standard-rest.service'
   providedIn: 'root'
 })
 export class WebshopService extends StandardRestService<WebShop> {
-  constructor (protected http: HttpClient) {
+  constructor(protected http: HttpClient) {
     super(http, 'webshops')
   }
 }

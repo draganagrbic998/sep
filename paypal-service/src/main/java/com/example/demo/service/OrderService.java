@@ -89,8 +89,8 @@ public class OrderService {
 		payment.setTransactions(transactions);
 
 		RedirectUrls redirectUrls = new RedirectUrls();
-		redirectUrls.setReturnUrl("https://localhost:8086/view/success_url/" + order.getId());
-		redirectUrls.setCancelUrl("https://localhost:8086/view/cancel_url/" + order.getId());
+		redirectUrls.setReturnUrl("http://localhost:8086/view/success_url/" + order.getId());
+		redirectUrls.setCancelUrl("http://localhost:8086/view/cancel_url/" + order.getId());
 		payment.setRedirectUrls(redirectUrls);
 
 		Payment createdPayment;

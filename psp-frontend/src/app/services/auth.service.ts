@@ -8,9 +8,7 @@ import { environment } from 'src/environments/environment';
 })
 export class AuthService {
 
-  constructor(
-    private http: HttpClient
-  ) { }
+  constructor(private http: HttpClient) { }
 
   private readonly AUTH_API = `${environment.apiUrl}/auth`;
 
