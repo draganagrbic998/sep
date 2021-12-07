@@ -1,7 +1,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
-    <title>Choose a payment method</title>
+    <title>Select a payment method</title>
 
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 
@@ -28,18 +28,18 @@
         );
       }
 
-      .title {
-        padding: 10px;
-        border-bottom: 1px solid lightgrey;
-      }
-
       .title-container {
         width: 50%;
         background-color: rgba(255, 255, 255, 0.4);
         border-bottom: 3px inset lightgrey;
       }
 
-      .h1-custom {
+      .title {
+        padding: 10px;
+        border-bottom: 1px solid lightgrey;
+      }
+
+      .header {
         color: #6e8eff;
         background: rgb(255, 255, 255);
         background: linear-gradient(
@@ -93,7 +93,7 @@
   <body class="background">
     <div class="row mb-4">
       <div class="col-lg-12 mx-auto text-center title-container">
-        <h1 class="display-4 h1-custom">Choose a payment method</h1>
+        <h1 class="display-4 header">Select a payment method</h1>
       </div>
     </div>
 
@@ -109,7 +109,7 @@
             <h5 class="card-title title" th:text="${method.name}"></h5>
             <button
               class="btn btn-color selection"
-              th:attr="payUrl=${payUrl}, method=${method.name}, zuulGatewayUrl=${zuulGatewayUrl}, merchantApiKey=${merchantApiKey},  price=${price}, currency=${currency}, callbackUrl=${callbackUrl}"
+              th:attr="zuulGatewayUrl=${zuulGatewayUrl}, payUrl=${payUrl}, method=${method.name}, merchantApiKey=${merchantApiKey},  price=${price}, currency=${currency}, callbackUrl=${callbackUrl}"
             >
               Confirm
             </button>
@@ -122,9 +122,10 @@
       $(document).ready(function () {
         $(".selection").click(function (e) {
           e.preventDefault();
-		  var payUrl = $(this).attr("payUrl");
           var zuulGatewayUrl = $(this).attr("zuulGatewayUrl");
-		  var method = $(this).attr("method");
+          var payUrl = $(this).attr("payUrl");
+          var method = $(this).attr("method");
+
           $.ajax({
             url: payUrl + "/" + method,
             type: "POST",
@@ -136,7 +137,8 @@
               callbackUrl: $(this).attr("callbackUrl"),
             }),
             success: function (res) {
-              window.location.href = zuulGatewayUrl + "/" + method + "/pay/" + res.id;
+              window.location.href =
+                zuulGatewayUrl + "/" + method + "/pay/" + res.id;
             },
             error: function (res) {
               alert(res.responseText);

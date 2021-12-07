@@ -19,7 +19,6 @@ import com.example.demo.dto.Auth;
 import com.example.demo.model.User;
 import com.example.demo.repo.UserRepository;
 import com.example.demo.security.TokenUtils;
-import com.example.demo.utils.DatabaseCipher;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -34,7 +33,6 @@ public class UserService implements UserDetailsService {
 	private final TokenUtils tokenUtils;
 	private final PasswordEncoder passwordEncoder;
 	private final RestTemplate restTemplate;
-	private final DatabaseCipher cipher;
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -69,7 +67,7 @@ public class UserService implements UserDetailsService {
 	}
 
 	public User save(User user) {
-		user.setApiKey(cipher.encrypt(UUID.randomUUID().toString()));
+		user.setApiKey(UUID.randomUUID().toString());
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 
 		if (!user.getRole().equals("psp-admin")) {

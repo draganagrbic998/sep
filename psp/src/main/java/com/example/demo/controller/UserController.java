@@ -30,11 +30,6 @@ public class UserController {
 		return ResponseEntity.ok(service.read());
 	}
 
-	@GetMapping("/{id}")
-	public ResponseEntity<User> readOne(@PathVariable Long id) {
-		return ResponseEntity.ok(service.readOne(id));
-	}
-
 	@PostMapping
 	public ResponseEntity<User> create(@RequestBody User dto) {
 		return ResponseEntity.ok(service.save(dto));

@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.example.demo.dto.OrderCreated;
 import com.example.demo.model.Order;
 import com.example.demo.utils.PropertiesData;
 
@@ -27,9 +26,9 @@ public class RedirectionController {
 	private final PropertiesData properties;
 
 	@PostMapping("/{method}")
-	public ResponseEntity<OrderCreated> pay(@PathVariable String method, @RequestBody Order dto) {
+	public ResponseEntity<Order> pay(@PathVariable String method, @RequestBody Order dto) {
 		log.info("RedirectionController - sending order to payment service: name=" + method);
 		return ResponseEntity.ok(restTemplate.exchange(properties.zuulGatewayUrl + "/" + method, HttpMethod.POST,
-				new HttpEntity<Order>(dto), OrderCreated.class).getBody());
+				new HttpEntity<Order>(dto), Order.class).getBody());
 	}
 }

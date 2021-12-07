@@ -20,6 +20,7 @@ public class OrderController {
 
 	@PostMapping
 	public ResponseEntity<Order> create(@RequestBody Order dto) {
+		dto.setId(null);
 		return ResponseEntity.ok(service.save(dto));
 	}
 

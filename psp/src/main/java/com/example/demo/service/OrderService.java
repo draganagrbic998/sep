@@ -16,7 +16,6 @@ public class OrderService {
 	private final OrderRepository repo;
 
 	public Order save(Order order) {
-		order.setId(null);
 		log.info("OrderService - save: id=" + order.getId());
 		return repo.save(order);
 	}

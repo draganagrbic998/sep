@@ -25,14 +25,14 @@ public class ViewController {
 	@GetMapping("/selectPaymentMethod/{orderId}")
 	public String selectPaymentMethod(@PathVariable Long orderId, Model model) {
 		Order order = orderService.readOne(orderId);
-		model.addAttribute("paymentMethods", paymentMethodService.getPaymentMethods(order.getMerchantApiKey()));
 
-		model.addAttribute("payUrl", properties.payUrl);
 		model.addAttribute("zuulGatewayUrl", properties.zuulGatewayUrl);
+		model.addAttribute("payUrl", properties.payUrl);
 		model.addAttribute("merchantApiKey", order.getMerchantApiKey());
 		model.addAttribute("price", order.getPrice());
 		model.addAttribute("currency", order.getCurrency());
 		model.addAttribute("callbackUrl", order.getCallbackUrl());
+		model.addAttribute("paymentMethods", paymentMethodService.getPaymentMethods(order.getMerchantApiKey()));
 
 		return "selectPaymentMethod";
 	}

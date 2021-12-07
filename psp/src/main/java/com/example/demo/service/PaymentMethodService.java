@@ -39,7 +39,7 @@ public class PaymentMethodService {
 	public List<String> toAdd() {
 		log.info("PaymentMethodService - getAllEurekaServices");
 		return discoveryClient.getServices().stream()
-				.filter(item -> !item.equals("psp") && !item.equals("zuul-gateway") && !item.startsWith("webshop")
+				.filter(item -> !item.startsWith("webshop")
 						&& !read().stream().map(pm -> pm.getName()).collect(Collectors.toList()).contains(item))
 				.collect(Collectors.toList());
 	}

@@ -15,4 +15,3 @@ insert into user_table_methods (user_id, methods_id) values (2, 1);
 insert into user_table_methods (user_id, methods_id) values (2, 2);
 insert into user_table_methods (user_id, methods_id) values (3, 1);
 insert into user_table_methods (user_id, methods_id) values (3, 2);
-
