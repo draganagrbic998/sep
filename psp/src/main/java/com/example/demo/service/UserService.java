@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.example.demo.dto.Auth;
@@ -59,19 +58,16 @@ public class UserService implements UserDetailsService {
 		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 
-	@Transactional(readOnly = true)
 	public List<User> read() {
 		log.info("UserService - read");
 		return repo.findAll();
 	}
 
-	@Transactional(readOnly = true)
 	public User readOne(Long id) {
 		log.info("UserService - readOne: id=" + id);
 		return repo.findById(id).get();
 	}
 
-	@Transactional
 	public User save(User user) {
 		user.setApiKey(cipher.encrypt(UUID.randomUUID().toString()));
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -88,7 +84,6 @@ public class UserService implements UserDetailsService {
 		return user;
 	}
 
-	@Transactional
 	public void delete(Long id) {
 		log.info("UserService - delete: id=" + id);
 		User user = repo.findById(id).get();

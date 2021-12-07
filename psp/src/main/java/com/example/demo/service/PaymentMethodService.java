@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.model.PaymentMethod;
 import com.example.demo.repo.PaymentMethodRepository;
@@ -22,19 +21,16 @@ public class PaymentMethodService {
 	private final UserService userService;
 	private final DiscoveryClient discoveryClient;
 
-	@Transactional(readOnly = true)
 	public List<PaymentMethod> read() {
 		log.info("PaymentMethodService - read");
 		return repo.findAll();
 	}
 
-	@Transactional
 	public PaymentMethod save(PaymentMethod paymentMethod) {
 		log.info("PaymentMethodService - save: id=" + paymentMethod.getId());
 		return repo.save(paymentMethod);
 	}
 
-	@Transactional
 	public void delete(Long id) {
 		log.info("PaymentMethodService - delete: id=" + id);
 		repo.deleteById(id);

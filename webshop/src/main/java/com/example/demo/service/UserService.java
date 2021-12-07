@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.Auth;
 import com.example.demo.model.User;
@@ -29,6 +28,8 @@ public class UserService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		log.info("UserService - loadUserByUsername: email=" + email);
+		System.out.println(repo.findAll().get(0).getEmail());
+		System.out.println(repo.findAll().get(1).getEmail());
 		return repo.findByEmail(email);
 	}
 
@@ -43,7 +44,6 @@ public class UserService implements UserDetailsService {
 		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 
-	@Transactional
 	public User save(User user) {
 		user.setId(null);
 		user = repo.save(user);
@@ -51,7 +51,6 @@ public class UserService implements UserDetailsService {
 		return user;
 	}
 
-	@Transactional
 	public void delete(Long id) {
 		log.info("UserService - delete: id=" + id);
 		repo.deleteById(id);

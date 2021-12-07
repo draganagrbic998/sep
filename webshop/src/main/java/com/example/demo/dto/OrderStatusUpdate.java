@@ -1,6 +1,6 @@
 package com.example.demo.dto;
 
-import com.example.demo.model.OrderStatus;
+import com.example.demo.model.PaymentStatus;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,5 +10,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OrderStatusUpdate {
-	private OrderStatus status;
+	private PaymentStatus status;
 }

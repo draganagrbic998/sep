@@ -3,7 +3,6 @@ package com.example.demo.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.model.CartItem;
 import com.example.demo.repository.CartItemRepository;
@@ -21,13 +20,11 @@ public class CartService {
 	private final ProductRepository productRepo;
 	private final UserService userService;
 
-	@Transactional(readOnly = true)
 	public List<CartItem> read() {
 		log.info("CartService - readCart");
 		return repo.findByUserId(userService.getLoggedInUser().getId());
 	}
 
-	@Transactional
 	public void addToCart(Long productId) {
 		log.info("CartService - addToCart: productId=" + productId);
 		CartItem item = repo.findByUserIdAndProductId(userService.getLoggedInUser().getId(), productId);
@@ -42,7 +39,6 @@ public class CartService {
 		}
 	}
 
-	@Transactional
 	public void removeFromCart(Long productId) {
 		log.info("CartService - removeFromCart: productId=" + productId);
 		repo.deleteById(repo.findByUserIdAndProductId(userService.getLoggedInUser().getId(), productId).getId());

@@ -203,7 +203,7 @@
               yy: $("#yy").val(),
             }),
             success: function (res) {
-              window.location.href = res.body;
+              window.location.href = res;
             },
             error: function (res) {
               alert(res.responseText);

@@ -16,7 +16,7 @@ public class ViewController {
 
 	private final PropertiesData properties;
 
-	@RequestMapping("/payment/{id}")
+	@RequestMapping("/payment/{requestId}")
 	public String payment(@PathVariable Long requestId, Model model) {
 		model.addAttribute("requestId", requestId);
 		model.addAttribute("confirmUrl", properties.confirmUrl);

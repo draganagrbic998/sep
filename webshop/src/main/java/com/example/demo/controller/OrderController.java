@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import java.util.Base64;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -32,15 +31,12 @@ public class OrderController {
 
 	@PostMapping("/{productId}/order")
 	public ResponseEntity<Order> order(@PathVariable Long productId) {
-		Order order = service.order(productId);
-		order.getUser().setApiKey(Base64.getEncoder().encodeToString(order.getUser().getApiKey().getBytes()));
-		return ResponseEntity.ok(order);
+		return ResponseEntity.ok(service.order(productId));
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Void> updateStatus(@PathVariable Long id, @RequestBody OrderStatusUpdate dto) {
-		service.updateStatus(id, dto.getStatus());
-		return ResponseEntity.noContent().build();
+	public ResponseEntity<Order> updateStatus(@PathVariable Long id, @RequestBody OrderStatusUpdate dto) {
+		return ResponseEntity.ok(service.updateStatus(id, dto.getStatus()));
 	}
 
 }

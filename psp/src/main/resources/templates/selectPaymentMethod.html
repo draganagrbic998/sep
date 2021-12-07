@@ -108,9 +108,8 @@
           <div class="card-body container-card">
             <h5 class="card-title title" th:text="${method.name}"></h5>
             <button
-              id="selection"
-              class="btn btn-color"
-              th:attr="payUrl=${payUrl}, method=${method}, zuulGatewayUrl=${zuulGatewayUrl}, merchantApiKey=${merchantApiKey},  price=${price}, currency=${currency}, callbackUrl=${callbackUrl}"
+              class="btn btn-color selection"
+              th:attr="payUrl=${payUrl}, method=${method.name}, zuulGatewayUrl=${zuulGatewayUrl}, merchantApiKey=${merchantApiKey},  price=${price}, currency=${currency}, callbackUrl=${callbackUrl}"
             >
               Confirm
             </button>
@@ -121,7 +120,7 @@
 
     <script>
       $(document).ready(function () {
-        $("#selection").click(function (e) {
+        $(".selection").click(function (e) {
           e.preventDefault();
 		  var payUrl = $(this).attr("payUrl");
           var zuulGatewayUrl = $(this).attr("zuulGatewayUrl");

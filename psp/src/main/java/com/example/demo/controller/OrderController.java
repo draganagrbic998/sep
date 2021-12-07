@@ -6,26 +6,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.Auth;
-import com.example.demo.service.UserService;
+import com.example.demo.model.Order;
+import com.example.demo.service.OrderService;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/auth")
-public class AuthController {
+@RequestMapping("/orders")
+public class OrderController {
 
-	private final UserService service;
+	private final OrderService service;
 
 	@PostMapping
-	public ResponseEntity<Auth> login(@RequestBody Auth auth) {
-		try {
-			return ResponseEntity.ok(service.login(auth));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	public ResponseEntity<Order> create(@RequestBody Order dto) {
+		return ResponseEntity.ok(service.save(dto));
 	}
 
 }

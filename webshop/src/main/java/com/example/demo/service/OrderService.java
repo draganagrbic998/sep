@@ -5,13 +5,13 @@ import java.util.List;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.example.demo.dto.PspOrder;
 import com.example.demo.model.CartItem;
 import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
+import com.example.demo.model.PaymentStatus;
 import com.example.demo.repository.CartItemRepository;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.utils.PropertiesData;
@@ -30,26 +30,28 @@ public class OrderService {
 	private final RestTemplate restTemplate;
 	private final PropertiesData properties;
 
-	@Transactional(readOnly = true)
 	public List<Order> read() {
 		log.info("OrderService - read");
 		return repo.findByUserId(userService.getLoggedInUser().getId());
 	}
 
-	@Transactional
-	public void updateStatus(Long id, OrderStatus status) {
+	public Order updateStatus(Long id, PaymentStatus status) {
 		log.info("OrderService - updateStatus: id=" + id);
 		Order order = repo.findById(id).get();
-		order.setStatus(status);
+		if (status.equals(PaymentStatus.SUCCESS)) {
+			order.setStatus(OrderStatus.COMPLETED);
+		} else {
+			order.setStatus(OrderStatus.FAILED);
+		}
+		return repo.save(order);
 	}
 
-	@Transactional
 	public Order order(Long productId) {
 		log.info("CartService - orderCart");
 		CartItem item = cartRepo.findByUserIdAndProductId(userService.getLoggedInUser().getId(), productId);
 		Order order = new Order(item);
 		order = repo.save(order);
-		repo.deleteById(item.getId());
+		cartRepo.deleteById(item.getId());
 
 		PspOrder pspOrder = restTemplate.exchange(properties.pspUrl + "/orders", HttpMethod.POST,
 				new HttpEntity<PspOrder>(new PspOrder(order, properties.callbackUrl + "/orders")), PspOrder.class)

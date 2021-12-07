@@ -33,8 +33,6 @@ public class User implements UserDetails {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private Long webshopId;
-
 	@NotBlank
 	private String role;
 
@@ -45,8 +43,8 @@ public class User implements UserDetails {
 	private String password;
 
 	private String apiKey;
-
 	private String webshop;
+	private Long webshopId;
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<PaymentMethod> methods = new HashSet<PaymentMethod>();

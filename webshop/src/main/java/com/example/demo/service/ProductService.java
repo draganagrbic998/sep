@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.model.Product;
@@ -23,7 +22,6 @@ public class ProductService {
 	private final UserService userService;
 	private final FileService fileService;
 
-	@Transactional(readOnly = true)
 	public Page<Product> read(String category, Pageable pageable) {
 		log.info("ProductService - read: category=" + category);
 		if (category.equalsIgnoreCase("all")) {
@@ -35,13 +33,11 @@ public class ProductService {
 		return repo.findByCategory(category, pageable);
 	}
 
-	@Transactional(readOnly = true)
 	public Product readOne(Long id) {
 		log.info("ProductService - readOne: id=" + id);
 		return repo.findById(id).get();
 	}
 
-	@Transactional
 	public Product save(Product product, MultipartFile image) throws IOException {
 		product.setUser(userService.getLoggedInUser());
 		if (image != null) {
@@ -54,7 +50,6 @@ public class ProductService {
 		return product;
 	}
 
-	@Transactional
 	public void delete(Long id) {
 		log.info("ProductService - delete: id=" + id);
 		repo.deleteById(id);

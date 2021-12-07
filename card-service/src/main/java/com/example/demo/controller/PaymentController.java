@@ -22,12 +22,13 @@ public class PaymentController {
 
 	@PostMapping
 	public ResponseEntity<Order> create(@RequestBody Order dto) {
+		dto.setId(null);
 		return ResponseEntity.ok(orderService.save(dto));
 	}
 
 	@PostMapping("/complete/{orderId}")
-	public ResponseEntity<String> complete(@PathVariable Long id, @RequestBody PaymentRequestCompleted dto) {
-		return ResponseEntity.ok(orderService.complete(id, dto));
+	public ResponseEntity<String> complete(@PathVariable Long orderId, @RequestBody PaymentRequestCompleted dto) {
+		return ResponseEntity.ok(orderService.complete(orderId, dto));
 	}
 
 	@GetMapping("/pay/{orderId}")

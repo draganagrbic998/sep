@@ -13,8 +13,8 @@ import com.example.demo.model.Merchant;
 import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
 import com.example.demo.model.PaymentStatus;
-import com.example.demo.repo.MerchantRepository;
-import com.example.demo.repo.OrderRepository;
+import com.example.demo.repository.MerchantRepository;
+import com.example.demo.repository.OrderRepository;
 import com.example.demo.utils.PropertiesData;
 
 import lombok.AllArgsConstructor;
@@ -31,7 +31,6 @@ public class OrderService {
 	private final PropertiesData properties;
 
 	public Order save(Order order) {
-		order.setId(null);
 		log.info("OrderService - save: id=" + order.getId());
 		return repo.save(order);
 	}
