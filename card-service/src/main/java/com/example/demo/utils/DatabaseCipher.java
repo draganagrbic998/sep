@@ -20,8 +20,9 @@ public class DatabaseCipher {
 	private IvParameterSpec ips;
 
 	public String encrypt(String plainText) {
-		if (plainText.isBlank())
+		if (plainText.isBlank()) {
 			return plainText;
+		}
 		try {
 			cipher.init(Cipher.ENCRYPT_MODE, key, ips);
 			return Base64.getEncoder().encodeToString(cipher.doFinal(plainText.getBytes()));
