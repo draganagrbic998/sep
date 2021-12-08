@@ -3,9 +3,9 @@ import { User } from "./user";
 
 export interface Order {
     id: number;
-    pspId: number;
+    user: User;
     product: Product;
     quantity: number;
     date: Date;
-    user: User;
+    pspId: number;
 }

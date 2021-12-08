@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CartItem } from '../models/cart-item';
-import { Order } from '../models/order';
 import { StandardRestService } from './standard-rest.service';
 
 @Injectable({

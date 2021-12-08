@@ -21,7 +21,6 @@ export class ProductListComponent implements OnInit {
   categories: string[]
   category: string;
   page = 0
-
   productFormLink = '/' + Route.PRODUCT_FORM + '/new'
 
   ngOnInit() {

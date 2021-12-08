@@ -3,8 +3,8 @@ import { StandardModel } from "./standard-model";
 export interface ProductUpload extends StandardModel {
     name: string;
     description: string;
-    price: string;
     category: string;
+    price: string;
     currency: string;
     image: Blob;
 }
@@ -12,8 +12,8 @@ export interface ProductUpload extends StandardModel {
 export interface Product extends StandardModel {
     name: string;
     description: string;
-    price: number;
     category: string;
+    price: number;
     currency: string;
     imageLocation: string;
 }

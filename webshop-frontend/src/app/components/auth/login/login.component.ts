@@ -48,7 +48,6 @@ export class LoginComponent implements OnInit {
       const res = await this.authService.login(auth).toPromise();
       this.pending = false;
       this.storageService.setAuth(res);
-
       this.router.navigate([Route.PRODUCTS])
     }
 

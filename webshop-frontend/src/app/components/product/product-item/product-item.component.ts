@@ -32,17 +32,26 @@ export class ProductItemComponent {
   cartPendingId: number = null;
   orderPendingId: number = null;
 
-  async order(product: Product) {
-    this.orderPendingId = product.id;
-    try {
-      const order = await this.orderService.order(product.id).toPromise();
-      this.orderPendingId = null;
-      this.snackbar.open(SNACKBAR_SUCCESS_TEXT, SNACKBAR_CLOSE_BUTTON, SNACKBAR_SUCCESS_CONFIG);
+  edit(product: Product) {
+    return `/${Route.PRODUCT_FORM}/${product.id}`
+  }
+
+  async delete(product: Product) {
+    const options: MatDialogConfig = { ...DIALOG_CONFIG, ...{ data: () => this.productService.delete(product.id) } };
+    const res = await this.dialog.open(DeleteConfirmationComponent, options).afterClosed().toPromise()
+    if (res) {
       this.refreshProducts.emit();
-      window.location.href = `${environment.selectPaymentMethodUrl}/${order.pspId}`;
     }
-    catch {
-      this.orderPendingId = null;
+  }
+
+  async addToCart(product: Product) {
+    this.cartPendingId = product.id;
+    try {
+      await this.cartService.addToCart(product.id).toPromise();
+      this.cartPendingId = null;
+      this.snackbar.open(SNACKBAR_SUCCESS_TEXT, SNACKBAR_CLOSE_BUTTON, SNACKBAR_SUCCESS_CONFIG);
+    } catch {
+      this.cartPendingId = null;
       this.snackbar.open(SNACKBAR_ERROR_TEXT, SNACKBAR_CLOSE_BUTTON, SNACKBAR_ERROR_CONFIG);
     }
   }
@@ -60,27 +69,18 @@ export class ProductItemComponent {
     }
   }
 
-  async addToCart(product: Product) {
-    this.cartPendingId = product.id;
+  async order(product: Product) {
+    this.orderPendingId = product.id;
     try {
-      await this.cartService.addToCart(product.id).toPromise();
-      this.cartPendingId = null;
+      const order = await this.orderService.order(product.id).toPromise();
+      this.orderPendingId = null;
       this.snackbar.open(SNACKBAR_SUCCESS_TEXT, SNACKBAR_CLOSE_BUTTON, SNACKBAR_SUCCESS_CONFIG);
-    } catch {
-      this.cartPendingId = null;
-      this.snackbar.open(SNACKBAR_ERROR_TEXT, SNACKBAR_CLOSE_BUTTON, SNACKBAR_ERROR_CONFIG);
-    }
-  }
-
-  edit(product: Product) {
-    return `/${Route.PRODUCT_FORM}/${product.id}`
-  }
-
-  async delete(product: Product) {
-    const options: MatDialogConfig = { ...DIALOG_CONFIG, ...{ data: () => this.productService.delete(product.id) } };
-    const res = await this.dialog.open(DeleteConfirmationComponent, options).afterClosed().toPromise()
-    if (res) {
       this.refreshProducts.emit();
+      window.location.href = `${environment.selectPaymentMethodUrl}/${order.pspId}`;
+    }
+    catch {
+      this.orderPendingId = null;
+      this.snackbar.open(SNACKBAR_ERROR_TEXT, SNACKBAR_CLOSE_BUTTON, SNACKBAR_ERROR_CONFIG);
     }
   }
 

@@ -8,10 +8,10 @@ import { FormConfig, FormStyle } from 'src/app/utils/form';
 import { Route } from 'src/app/utils/route';
 
 @Component({
-  selector: 'app-application-upload',
+  selector: 'app-product-form',
   template: `<app-form [config]="this"></app-form>`
 })
-export class ProductFormComponent  {
+export class ProductFormComponent {
 
   constructor(
     public service: ProductService,
@@ -22,9 +22,9 @@ export class ProductFormComponent  {
 
   entity = 'Product'
   listRoute = Route.PRODUCTS
+  categories: string[]
+  currencies: string[]
 
-  categories: string[];
-  currencies: string[];
   formConfig: FormConfig = {
     name: {
       validation: 'required'

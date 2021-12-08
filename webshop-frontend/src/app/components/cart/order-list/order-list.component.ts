@@ -15,12 +15,12 @@ export class OrderListComponent implements OnInit {
 
   orders: Order[];
 
-  async readOrders() {
-    this.orders = await this.orderService.read().toPromise();
-  }
-
   ngOnInit() {
     this.readOrders();
+  }
+
+  private async readOrders() {
+    this.orders = await this.orderService.read().toPromise();
   }
 
 }
