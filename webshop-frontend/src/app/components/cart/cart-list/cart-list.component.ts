@@ -15,12 +15,12 @@ export class CartListComponent implements OnInit {
 
   cart: CartItem[];
 
-  async readCart() {
-    this.cart = await this.cartService.read().toPromise();
-  }
-
   ngOnInit() {
     this.readCart()
+  }
+
+  async readCart() {
+    this.cart = await this.cartService.read().toPromise();
   }
 
 }

@@ -9,7 +9,7 @@ import { Route } from 'src/app/utils/route'
   `
 })
 export class PaymentMethodListComponent {
-  constructor (public service: PaymentMethodService) {}
+  constructor(public service: PaymentMethodService) { }
 
   editRoute = Route.PAYMENT_METHOD_FORM
   hideEdit = true

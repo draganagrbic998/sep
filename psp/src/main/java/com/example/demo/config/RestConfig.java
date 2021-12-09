@@ -7,7 +7,6 @@ import java.security.KeyStore;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -19,14 +18,15 @@ import org.springframework.web.client.RestTemplate;
 
 import lombok.AllArgsConstructor;
 
-@Configuration
 @AllArgsConstructor
+@Configuration
 public class RestConfig {
 
 	private final RestTemplateBuilder restTemplateBuilder;
 
 	@Bean
 	public RestTemplate getRestTemplate() {
+
 		RestTemplate restTemplate = restTemplateBuilder.build();
 
 		try {
@@ -35,16 +35,13 @@ public class RestConfig {
 			keyStore.load(in, "password".toCharArray());
 			in.close();
 
-			SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(
-					new SSLContextBuilder().loadTrustMaterial(keyStore, new TrustSelfSignedStrategy())
-							.loadKeyMaterial(keyStore, "password".toCharArray()).build(),
-					NoopHostnameVerifier.INSTANCE);
-
-			CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).setMaxConnTotal(5)
-					.setMaxConnPerRoute(5).build();
-
 			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(
-					httpClient);
+					HttpClients.custom()
+							.setSSLSocketFactory(new SSLConnectionSocketFactory(
+									new SSLContextBuilder().loadTrustMaterial(keyStore, new TrustSelfSignedStrategy())
+											.loadKeyMaterial(keyStore, "password".toCharArray()).build(),
+									NoopHostnameVerifier.INSTANCE))
+							.setMaxConnTotal(5).setMaxConnPerRoute(5).build());
 			requestFactory.setReadTimeout(10000);
 			requestFactory.setConnectTimeout(10000);
 			restTemplate.setRequestFactory(requestFactory);
@@ -55,6 +52,7 @@ public class RestConfig {
 		}
 
 		return restTemplate;
+
 	}
 
 }

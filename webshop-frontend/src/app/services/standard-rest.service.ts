@@ -17,18 +17,16 @@ export abstract class StandardRestService<T extends StandardModel> {
     return this.http.get<T[]>(this.API_URL);
   }
 
-  
   readOne(id: number) {
     return this.http.get<T>(`${this.API_URL}/${id}`)
   }
 
-  save (item: T) {
+  save(item: T) {
     if (item.id) {
       return this.http.put<T>(`${this.API_URL}/${item.id}`, item)
     }
     return this.http.post<T>(this.API_URL, item)
   }
-
 
   delete(id: number) {
     return this.http.delete<void>(`${this.API_URL}/${id}`)

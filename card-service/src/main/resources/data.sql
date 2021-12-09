@@ -1,2 +1,4 @@
-insert into MERCHANT (BANK_URL  , MERCHANT_API_KEY , MERCHANT_ID  , MERCHANT_PASSWORD  )
-values ('http://localhost:8090', 'jsJpiP7BGETc8ZBgWkEei6aAJMZilDf1la3hSdhQ6qXwl5q9vZMvrQEkCj1XsgzT', 'aZg5ngosvsotUZjcaw2kS3AvfWKyV4WTANnoyuz6R2jAr4pNIgbXfTfvEQgTayjK', '+zJmRgMlAzYmGT5C73cFn1QD4wfYFBXUqlWCz9Jq141ygXehDg0SscsyagEzpU6t');
+insert into merchant (merchant_api_key, bank_url, merchant_id, merchant_password)
+values ('merchant_api_key_1', 'https://localhost:8090', 'merchant_id_1', 'merchant_password_1');
+insert into merchant (merchant_api_key, bank_url, merchant_id, merchant_password)
+values ('merchant_api_key_2', 'https://localhost:8090', 'merchant_id_2', 'merchant_password_2');

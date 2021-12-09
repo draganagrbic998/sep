@@ -5,19 +5,22 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.example.demo.utils.PropertiesData;
+
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 @Controller
 @RequestMapping("/view")
 public class ViewController {
 
-	@RequestMapping("/form/{paymentRequestId}")
-	public String form(@PathVariable Long paymentRequestId, Model model) {
-		model.addAttribute("paymentRequestId", paymentRequestId);
-		return "form";
-	}
+	private final PropertiesData properties;
 
-	@RequestMapping("/registerForm")
-	public String form(Model model) {
-		return "registerForm";
+	@RequestMapping("/payment/{requestId}")
+	public String payment(@PathVariable Long requestId, Model model) {
+		model.addAttribute("requestId", requestId);
+		model.addAttribute("confirmUrl", properties.confirmUrl);
+		return "payment";
 	}
 
 }

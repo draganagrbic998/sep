@@ -7,19 +7,13 @@ import { Route } from 'src/app/utils/route'
   template: `<app-list [config]="this"></app-list>`
 })
 export class UserListComponent {
-  constructor (
-    private userService: UserService
-  ) {}
-
-  get service () {
-    return this.userService
-  }
+  constructor(public service: UserService) { }
 
   editRoute = Route.USER_FORM
   hideEdit = true;
 
   columnMappings: { [key: string]: string } = {
-    email: 'User Email', 
+    email: 'User Email',
     role: 'User Role'
   }
 

@@ -6,27 +6,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.OrderDTO;
-import com.example.demo.mapper.OrderMapper;
+import com.example.demo.model.Order;
 import com.example.demo.service.OrderService;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/orders")
-@Log4j2
 public class OrderController {
 
-	private final OrderMapper mapper;
 	private final OrderService service;
 
 	@PostMapping
-	public ResponseEntity<Void> create(@RequestBody OrderDTO dto) {
-		log.info("OrderController - create");
-		service.save(mapper.toEntity(dto));
-		return ResponseEntity.noContent().build();
+	public ResponseEntity<Order> create(@RequestBody Order dto) {
+		dto.setId(null);
+		return ResponseEntity.ok(service.save(dto));
 	}
 
 }

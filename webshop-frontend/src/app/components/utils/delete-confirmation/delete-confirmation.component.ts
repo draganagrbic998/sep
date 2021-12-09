@@ -30,7 +30,6 @@ export class DeleteConfirmationComponent {
     } catch {
       this.deletePending = false;
       this.snackBar.open(SNACKBAR_ERROR_TEXT, SNACKBAR_CLOSE_BUTTON, SNACKBAR_ERROR_CONFIG);
-
     }
   }
 

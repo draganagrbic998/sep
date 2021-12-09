@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
 import { StandardModel } from 'src/app/models/standard-model';
 import { FormService } from 'src/app/services/form.service';
 import { StandardRestService } from 'src/app/services/standard-rest.service';
@@ -24,16 +23,30 @@ export class FormComponent implements OnInit {
   ) { }
 
   @Input() config: {
-    title?: string;
     formConfig: FormConfig;
     style: FormStyle;
     service?: StandardRestService<StandardModel>
+    title?: string;
     entity?: string
-    save?: (value: unknown) => void
     listRoute?: string
+    save?: (value: unknown) => void
+    pending?: boolean
   }
 
+  title: string;
   form: FormGroup;
+  pending = false
+
+  get isPending() {
+    if (this.config.pending !== undefined) {
+      return this.config.pending;
+    }
+    return this.pending;
+  }
+
+  get itemId() {
+    return +this.route.snapshot.params.id
+  }
 
   get controls() {
     return Object.keys(this.config.formConfig).filter(control => this.config.formConfig[control].type !== 'file')
@@ -47,12 +60,6 @@ export class FormComponent implements OnInit {
     this.form = this.formService.build(this.config.formConfig);
     this.initForm()
   }
-
-  get itemId(){
-    return +this.route.snapshot.params.id
-  }
-
-  title: string;
 
   private async initForm() {
     if (this.config.title) {
@@ -71,12 +78,12 @@ export class FormComponent implements OnInit {
     return this.config.formConfig[control].type || 'text'
   }
 
-  options(control: string) {
-    return this.config.formConfig[control].options
-  }
-
   validation(control: string) {
     return this.config.formConfig[control].validation
+  }
+
+  options(control: string) {
+    return this.config.formConfig[control].options
   }
 
   handleSubmit() {
@@ -84,11 +91,11 @@ export class FormComponent implements OnInit {
       this.form.markAsTouched();
       return;
     }
-    if (this.config.save){
+    if (this.config.save) {
       this.config.save(this.form.value);
 
     }
-    else{
+    else {
       this.save(this.form.value);
     }
   }
@@ -101,8 +108,6 @@ export class FormComponent implements OnInit {
   updateFile(control: string, file: Blob) {
     this.form.get(control).setValue(file);
   }
-
-  pending = false
 
   async save(item: StandardModel) {
     if (this.itemId) {

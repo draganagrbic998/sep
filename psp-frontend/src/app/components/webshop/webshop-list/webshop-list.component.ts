@@ -6,9 +6,9 @@ import { WebshopService } from 'src/app/services/webshop.service'
   template: `<app-list [config]="this"></app-list>`
 })
 export class WebshopListComponent {
-  constructor (
+  constructor(
     public service: WebshopService
-  ) {}
+  ) { }
 
   hideCreate = true;
   hideEdit = true;

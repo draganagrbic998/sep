@@ -1,11 +1,12 @@
 package com.example.demo.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,25 +23,22 @@ public class Order {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column
-	private Long shopOrderId;
-
-	@Column
-	private Double price;
-
-	@Column
-	private String currency;
-
-	@Column
+	@NotBlank
 	private String merchantApiKey;
 
-	@Column
-	private OrderStatus orderStatus;
+	@NotNull
+	private Double price;
 
-	@Column
+	@NotBlank
+	private String currency;
+
+	@NotBlank
 	private String callbackUrl;
 
-	@Column
-	private Integer ticks;
+	@NotNull
+	private OrderStatus status = OrderStatus.CREATED;
+
+	@NotNull
+	private Integer ticks = 0;
 
 }

@@ -2,11 +2,12 @@ package com.example.demo.model;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,34 +23,34 @@ public class PaymentRequest {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
+	@NotBlank
 	private String merchantId;
 
-	@Column(nullable = false)
+	@NotBlank
 	private String merchantPassword;
 
-	@Column(nullable = false)
+	@NotNull
 	private Double amount;
 
-	@Column(nullable = false)
+	@NotBlank
 	private String currency;
 
-	@Column(nullable = false)
-	private Long merchantOrderId;
-
-	@Column(nullable = false)
-	private LocalDateTime merchantTimestamp;
-
-	@Column
+	@NotBlank
 	private String callbackUrl;
 
-	@Column(nullable = false)
+	@NotBlank
 	private String successUrl;
 
-	@Column(nullable = false)
-	private String failedUrl;
+	@NotBlank
+	private String failUrl;
 
-	@Column(nullable = false)
+	@NotBlank
 	private String errorUrl;
+
+	@NotNull
+	private Long merchantOrderId;
+
+	@NotNull
+	private LocalDateTime merchantTimestamp;
 
 }

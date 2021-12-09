@@ -7,7 +7,7 @@ import { StandardRestService } from './standard-rest.service'
   providedIn: 'root'
 })
 export class UserService extends StandardRestService<User> {
-  constructor (protected http: HttpClient) {
+  constructor(protected http: HttpClient) {
     super(http, 'users')
   }
 }

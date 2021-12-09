@@ -1,51 +1,40 @@
 package com.example.demo.controller;
 
-import java.util.Base64;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.example.demo.dto.OrderCreatedDTO;
-import com.example.demo.dto.OrderDTO;
-import com.example.demo.dto.PaymentRequestCompletedDTO;
-import com.example.demo.mapper.OrderMapper;
+import com.example.demo.dto.PaymentRequestCompleted;
+import com.example.demo.model.Order;
 import com.example.demo.service.OrderService;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping
-@Log4j2
 public class PaymentController {
 
-	private final OrderMapper orderMapper;
 	private final OrderService orderService;
 
 	@PostMapping
-	public OrderCreatedDTO create(@RequestBody OrderDTO dto) {
-		log.info("PaymentController - create");
-		return orderMapper.toDTO(orderService.save(orderMapper.toEntity(dto)));
+	public ResponseEntity<Order> create(@RequestBody Order dto) {
+		dto.setId(null);
+		return ResponseEntity.ok(orderService.save(dto));
 	}
 
-	@GetMapping("/pay/{merchantApiKey}/{orderId}")
-	public ModelAndView pay(@PathVariable String merchantApiKey, @PathVariable Long orderId) {
-		String merchantApiKeyTemp = new String(Base64.getDecoder().decode(merchantApiKey));
-		log.info("PaymentController - pay: merchantApiKey=" + merchantApiKeyTemp + " orderId=" + orderId);
-		return new ModelAndView("redirect:" + orderService.pay(orderId, merchantApiKeyTemp));
+	@PutMapping("/{orderId}")
+	public ResponseEntity<Order> complete(@PathVariable Long orderId, @RequestBody PaymentRequestCompleted dto) {
+		return ResponseEntity.ok(orderService.complete(orderId, dto.getStatus()));
 	}
 
-	@PostMapping("/complete")
-	public ResponseEntity<String> completePayment(@RequestBody PaymentRequestCompletedDTO dto) {
-		log.info("PaymentController - completePayment: orderId=" + dto.getId());
-		return ResponseEntity.ok(orderService.completePayment(dto));
+	@GetMapping("/pay/{orderId}")
+	public ModelAndView pay(@PathVariable Long orderId) {
+		return new ModelAndView("redirect:" + orderService.pay(orderId));
 	}
 
 }

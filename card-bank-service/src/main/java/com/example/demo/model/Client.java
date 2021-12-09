@@ -1,10 +1,11 @@
 package com.example.demo.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,28 +21,36 @@ public class Client {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, unique = true)
-	private String panNumber;
-
-	@Column(nullable = false)
-	private String cardHolder;
-
-	@Column(nullable = false)
-	private String cvv;
-
-	@Column(nullable = false)
-	private String expirationDate;
-
-	@Column
+	@NotBlank
 	private String merchantId;
 
-	@Column
+	@NotBlank
 	private String merchantPassword;
 
-	@Column
+	@NotBlank
+	private String cardHolder;
+
+	@NotBlank
+	private String panNumber;
+
+	@NotBlank
+	private String cvv;
+
+	@NotBlank
+	private String expirationDate;
+
+	@NotNull
 	private Double availableFunds;
 
-	@Column
+	@NotNull
 	private Double reservedFunds;
+
+	public void incAvailableFunds(Double amount) {
+		availableFunds += amount;
+	}
+
+	public void decAvailableFunds(Double amount) {
+		availableFunds -= amount;
+	}
 
 }

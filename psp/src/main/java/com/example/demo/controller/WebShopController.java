@@ -12,20 +12,17 @@ import com.example.demo.model.WebShop;
 import com.example.demo.service.WebShopService;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/webshops")
 @PreAuthorize("hasAuthority('psp-admin')")
-@Log4j2
 public class WebShopController {
 
 	private final WebShopService service;
 
 	@GetMapping
 	public ResponseEntity<List<WebShop>> read() {
-		log.info("WebShopController - read");
 		return ResponseEntity.ok(service.read());
 	}
 

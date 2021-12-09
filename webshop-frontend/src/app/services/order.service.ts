@@ -13,4 +13,9 @@ export class OrderService extends StandardRestService<Order> {
   ) {
     super(http, 'orders');
   }
+
+  order(productId: number) {
+    return this.http.post<Order>(`${this.API_URL}/${productId}/order`, null);
+  }
+
 }

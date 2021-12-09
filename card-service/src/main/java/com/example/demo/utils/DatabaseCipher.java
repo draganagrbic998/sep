@@ -10,9 +10,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
-import com.example.demo.model.Merchant;
-import com.example.demo.model.Order;
-
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -23,8 +20,9 @@ public class DatabaseCipher {
 	private IvParameterSpec ips;
 
 	public String encrypt(String plainText) {
-		if (plainText.isBlank())
+		if (plainText.isBlank()) {
 			return plainText;
+		}
 		try {
 			cipher.init(Cipher.ENCRYPT_MODE, key, ips);
 			return Base64.getEncoder().encodeToString(cipher.doFinal(plainText.getBytes()));
@@ -42,30 +40,6 @@ public class DatabaseCipher {
 				| BadPaddingException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public Merchant encrypt(Merchant m) {
-		// m.setMerchantId(encrypt(m.getMerchantId()));
-		// m.setMerchantPassword(encrypt(m.getMerchantPassword()));
-		// m.setMerchantApiKey(encrypt(m.getMerchantApiKey()));
-		// m.setBankUrl(encrypt(m.getBankUrl()));
-		return m;
-	}
-
-	public Merchant decrypt(Merchant m) {
-		// m.setMerchantId(decrypt(m.getMerchantId()));
-		// m.setMerchantPassword(decrypt(m.getMerchantPassword()));
-		// m.setMerchantApiKey(decrypt(m.getMerchantApiKey()));
-		// m.setBankUrl(decrypt(m.getBankUrl()));
-		return m;
-	}
-
-	public Order encrypt(Order o) {
-		return o;
-	}
-
-	public Order decrypt(Order o) {
-		return o;
 	}
 
 }

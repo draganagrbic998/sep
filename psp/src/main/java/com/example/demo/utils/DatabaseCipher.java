@@ -10,8 +10,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
-import com.example.demo.model.User;
-
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -22,11 +20,12 @@ public class DatabaseCipher {
 	private IvParameterSpec ips;
 
 	public String encrypt(String plainText) {
-		if (plainText.isBlank())
+		if (plainText.isBlank()) {
 			return plainText;
+		}
 		try {
-			this.cipher.init(Cipher.ENCRYPT_MODE, this.key, this.ips);
-			return Base64.getEncoder().encodeToString(this.cipher.doFinal(plainText.getBytes()));
+			cipher.init(Cipher.ENCRYPT_MODE, key, ips);
+			return Base64.getEncoder().encodeToString(cipher.doFinal(plainText.getBytes()));
 		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException
 				| BadPaddingException e) {
 			throw new RuntimeException(e);
@@ -35,22 +34,12 @@ public class DatabaseCipher {
 
 	public String decrypt(String cipherText) {
 		try {
-			this.cipher.init(Cipher.DECRYPT_MODE, this.key, this.ips);
-			return new String(this.cipher.doFinal(Base64.getDecoder().decode(cipherText)));
+			cipher.init(Cipher.DECRYPT_MODE, key, ips);
+			return new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)));
 		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException
 				| BadPaddingException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public User encrypt(User u) {
-		u.setApiKey(this.encrypt(u.getApiKey()));
-		return u;
-	}
-
-	public User decrypt(User u) {
-		u.setApiKey(this.decrypt(u.getApiKey()));
-		return u;
 	}
 
 }

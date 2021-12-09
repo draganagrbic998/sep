@@ -22,31 +22,39 @@ import {
 export class FormComponent implements OnInit {
   constructor(
     private formService: FormService,
+    private router: Router,
     private route: ActivatedRoute,
     private snackbar: MatSnackBar,
-    private router: Router
   ) { }
+
+  title: string
+  form: FormGroup
+  pending = false
 
   @Input() config: {
     formConfig: FormConfig
     style: FormStyle
     service?: StandardRestService<StandardModel>
     listRoute?: string
-    save?: (value: unknown) => void
     entity?: string
     title?: string
+    pending?: boolean
+    save?: (value: unknown) => void
   }
-
-  title: string
-  form: FormGroup
-  pending = false
 
   get itemId() {
     return +this.route.snapshot.params.id
   }
 
+  get isPending() {
+    if (this.config.pending !== undefined) {
+      return this.config.pending
+    }
+    return this.pending;
+  }
+
   get controls() {
-    let temp = Object.keys(this.config.formConfig).filter(control => !this.config.formConfig[control].hide)
+    let temp = Object.keys(this.config.formConfig)
     for (const control of temp) {
       const hidding = this.config.formConfig[control].hidding
       if (hidding?.values.includes(this.form.get(hidding.field).value)) {
@@ -67,8 +75,7 @@ export class FormComponent implements OnInit {
     }
     if (this.itemId) {
       this.title = `Edit ${this.config.entity}`
-      const value = await this.config.service.readOne(this.itemId).toPromise()
-      this.form.reset(value)
+      this.form.reset(await this.config.service.readOne(this.itemId).toPromise())
     } else {
       this.title = `Create ${this.config.entity}`
     }
@@ -110,11 +117,10 @@ export class FormComponent implements OnInit {
   }
 
   compareOptions(item1: any, item2: any) {
-    if (typeof item1 === 'object' && typeof item2 === 'object'){
+    if (typeof item1 === 'object' && typeof item2 === 'object') {
       if ('name' in item1 && 'name' in item2) {
         return item1['name'] === item2['name']
       }
-
       if ('id' in item1 && 'id' in item2) {
         return item1['id'] === item2['id']
       }

@@ -1,6 +1,5 @@
 package com.example.demo.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,7 +21,6 @@ public class PaymentMethod {
 	private Long id;
 
 	@NotBlank
-	@Column(unique = true)
 	private String name;
 
 }
