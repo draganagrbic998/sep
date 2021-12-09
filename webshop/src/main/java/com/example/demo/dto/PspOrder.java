@@ -18,7 +18,7 @@ public class PspOrder {
 	private String callbackUrl;
 
 	public PspOrder(Order order, String callbackUrl) {
-		merchantApiKey = order.getUser().getApiKey();
+		merchantApiKey = order.getProduct().getUser().getApiKey();
 		price = order.getQuantity() * order.getProduct().getPrice();
 		currency = order.getProduct().getCurrency();
 		this.callbackUrl = callbackUrl + "/" + order.getId();
