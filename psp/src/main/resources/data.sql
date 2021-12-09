@@ -3,7 +3,7 @@ insert into role (name) values ('ws-admin');
 insert into role (name) values ('merchant');
 
 insert into payment_method (name) values ('card');
-insert into payment_method (name) values ('paypal');
+insert into payment_method (name) values ('qr');
 
 insert into user_table (email, password, role)
 values ('psp@gmail.com', '$2a$10$aL2cRpbMvSsvTcIGxUoauO4RMefDmYtEEARsmKJpwJ7T585HfBsra', 'psp-admin');
@@ -14,7 +14,5 @@ values ('merchant2@gmail.com', '$2a$10$LGMypZ0/SdnoRotrQXYAweCPhCymDjA2vqoGc3D75
 insert into user_table (email, password, role, api_key, webshop, webshop_id)
 values ('merchant3@gmail.com', '$2a$10$aL2cRpbMvSsvTcIGxUoauO4RMefDmYtEEARsmKJpwJ7T585HfBsra', 'merchant', 'merchant_api_key_3', 'https://localhost:8080', 3);
 
-insert into user_table_methods (user_id, methods_id) values (3, 1);
-insert into user_table_methods (user_id, methods_id) values (3, 2);
-insert into user_table_methods (user_id, methods_id) values (4, 1);
-insert into user_table_methods (user_id, methods_id) values (4, 2);
+insert into user_table_methods (user_id, methods_id) values (2, 1);
+insert into user_table_methods (user_id, methods_id) values (2, 2);

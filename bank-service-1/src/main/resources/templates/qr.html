@@ -1,0 +1,193 @@
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Scan QR Code</title>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    <script type="text/javascript" src="jquery.qrcode.js"></script>
+    <script type="text/javascript" src="qrcode.js"></script>
+
+    <style>
+      .background {
+        background: rgb(70, 205, 255);
+        background: linear-gradient(
+          90deg,
+          rgba(70, 205, 255, 1) 0%,
+          rgba(200, 243, 255, 1) 45%,
+          rgba(200, 243, 255, 1) 55%,
+          rgba(70, 205, 255, 1) 100%
+        );
+      }
+
+      .rounded-lg {
+        border-radius: 1rem;
+      }
+
+      .title-container {
+        width: 50%;
+        background-color: rgba(255, 255, 255, 0.4);
+        border-bottom: 3px inset lightgrey;
+      }
+
+      .header {
+        color: #6e8eff;
+        background: rgb(255, 255, 255);
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 1) 15%,
+          rgba(255, 255, 255, 1) 85%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        height: 100%;
+        width: 60%;
+        margin-left: 20%;
+        margin-right: 20%;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 1) 20%,
+          rgba(255, 255, 255, 1) 80%,
+          rgba(255, 255, 255, 0) 100%
+        );
+      }
+
+      .btn-color {
+        color: #fff;
+        background: rgb(4, 169, 249);
+        vertical-align: middle;
+        border: none;
+      }
+
+      .btn-color:hover {
+        color: #fff;
+        outline: none;
+        background: #6e8eff;
+      }
+
+      .container-card {
+        border-top: 1px outset lightgrey;
+        border-bottom: 2px inset lightgrey;
+        border-left: 1px outset lightgrey;
+        border-right: 1px inset lightgrey;
+        height: 90%;
+        vertical-align: middle;
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body class="background">
+    <div class="row mb-4">
+      <div class="col-lg-12 mx-auto text-center title-container">
+        <h1 class="display-4 header">Scan QR Code</h1>
+      </div>
+    </div>
+
+    <br />
+
+    <div class="row">
+      <div class="col-lg-7 mx-auto" style="height: 90%">
+        <div class="bg-white shadow-sm p-5 rounded-lg container-card">
+          <div id="qrcode">QR CODE</div>
+
+          <div
+            style="
+              display: flex;
+              flex-direction: row;
+              justify-content: space-around;
+              align-items: center;
+            "
+          >
+            <button
+              id="same-bank"
+              class="btn btn-color btn-block shadow-sm"
+              style="margin: auto; max-width: 100px"
+              th:attr="confirmUrl=${confirmUrl}, requestId=${requestId}"
+            >
+              Same Bank
+            </button>
+            <button
+              id="different-bank"
+              class="btn btn-color btn-block shadow-sm"
+              style="margin: auto; max-width: 100px"
+              th:attr="confirmUrl=${confirmUrl}, requestId=${requestId}"
+            >
+              Different Bank
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      $(document).ready(function () {
+        $("#qrcode").qrcode({
+          width: "300px",
+          height: "300px",
+          text: "testtest",
+        });
+
+        $("#same-bank").click(function (e) {
+          e.preventDefault();
+          var confirmUrl = $(this).attr("confirmUrl");
+          var requestId = $(this).attr("requestId");
+
+          $.ajax({
+            url: confirmUrl + "/" + requestId,
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+              panNumber: "192112pan_number_2",
+              cardHolder: "card_holder_2",
+              cvv: "cvv_2",
+              yy: "22",
+              mm: "22",
+            }),
+            success: function (res) {
+              window.location.href = res;
+            },
+            error: function (res) {
+              alert(res.responseText);
+            },
+          });
+        });
+
+        $("#different-bank").click(function (e) {
+          e.preventDefault();
+          var confirmUrl = $(this).attr("confirmUrl");
+          var requestId = $(this).attr("requestId");
+
+          $.ajax({
+            url: confirmUrl + "/" + requestId,
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+              panNumber: "192113pan_number_3",
+              cardHolder: "card_holder_3",
+              cvv: "cvv_3",
+              yy: "33",
+              mm: "33",
+            }),
+            success: function (res) {
+              window.location.href = res;
+            },
+            error: function (res) {
+              alert(res.responseText);
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

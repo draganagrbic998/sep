@@ -76,7 +76,7 @@ export class ProductItemComponent {
       this.orderPendingId = null;
       this.snackbar.open(SNACKBAR_SUCCESS_TEXT, SNACKBAR_CLOSE_BUTTON, SNACKBAR_SUCCESS_CONFIG);
       this.refreshProducts.emit();
-      window.location.href = `${environment.selectPaymentMethodUrl}/${order.pspId}`;
+      window.open(`${environment.selectPaymentMethodUrl}/${order.pspId}`);
     }
     catch {
       this.orderPendingId = null;
