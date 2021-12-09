@@ -85,10 +85,7 @@ public class PaymentRequestService {
 			}
 
 			Double rate = rateService.getCurrencyRate(transaction.getCurrency());
-			log.info("MERCHANT MONEY BEFORE=" + merchant.getAvailableFunds());
-			log.info("EXTRA DATA=" + rate + ", and=" + request.getAmount());
 			merchant.incAvailableFunds(rate * request.getAmount());
-			log.info("MERCHANT MONEY AFTER=" + merchant.getAvailableFunds());
 			clientRepo.save(merchant);
 			client.decAvailableFunds(rate * request.getAmount());
 			clientRepo.save(client);
