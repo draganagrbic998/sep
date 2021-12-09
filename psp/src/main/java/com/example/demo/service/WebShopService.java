@@ -21,7 +21,7 @@ public class WebShopService {
 	public List<WebShop> read() {
 		log.info("WebShopService - read");
 		return discoveryClient.getServices().stream().filter(item -> item.startsWith("webshop")).map(
-				item -> new WebShop(item, "http://localhost:" + discoveryClient.getInstances(item).get(0).getPort()))
+				item -> new WebShop(item, "https://localhost:" + discoveryClient.getInstances(item).get(0).getPort()))
 				.collect(Collectors.toList());
 	}
 

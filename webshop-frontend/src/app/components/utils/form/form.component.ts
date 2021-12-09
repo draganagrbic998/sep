@@ -30,11 +30,19 @@ export class FormComponent implements OnInit {
     entity?: string
     listRoute?: string
     save?: (value: unknown) => void
+    pending?: boolean
   }
 
   title: string;
   form: FormGroup;
   pending = false
+
+  get isPending() {
+    if (this.config.pending !== undefined) {
+      return this.config.pending;
+    }
+    return this.pending;
+  }
 
   get itemId() {
     return +this.route.snapshot.params.id

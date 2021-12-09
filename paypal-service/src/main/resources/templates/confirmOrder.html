@@ -91,7 +91,7 @@
 		    }, 
 		 	createOrder: function() {
 		        /* Set up a url on your server to create the order */
-		        var GET_ORDER_URL = 'http://localhost:8086/getOrder/' + orderId;
+		        var GET_ORDER_URL = 'https://localhost:8086/getOrder/' + orderId;
 		 
 		        /* Make a call to your server to set up the payment */
 		        return fetch(GET_ORDER_URL)
@@ -103,13 +103,13 @@
 		         });
 		    },
 		 	onCancel: function() {
-		        window.location = 'http://localhost:8086/view/cancelURL?orderId=' + orderId;
+		        window.location = 'https://localhost:8086/view/cancelURL?orderId=' + orderId;
 		 		
 		 	},
 		    /* onApprove() is called when the buyer approves the payment */
 		    onApprove: function(data, actions) {
 		        /* Set up a url on your server to execute the payment */
-		        var EXECUTE_URL = 'http://localhost:8086/complete/payment/' + data.paymentID + '/' + data.payerID;
+		        var EXECUTE_URL = 'https://localhost:8086/complete/payment/' + data.paymentID + '/' + data.payerID;
 		 
 		        /* Set up the data you need to pass to your server */
 		 
@@ -120,11 +120,11 @@
 		          return res.json();
 		        }).then(function(details) {
 		          alert('Transaction funds captured!');
-		          window.location = 'http://localhost:8086/view/successURL?orderId=' + orderId;
+		          window.location = 'https://localhost:8086/view/successURL?orderId=' + orderId;
 		        }).catch(function(error) {
 		      	  console.log(error);
 		      	  alert('An error occured');
-		          window.location = 'http://localhost:8086/view/errorURL?orderId=' + orderId;
+		          window.location = 'https://localhost:8086/view/errorURL?orderId=' + orderId;
 		        });
 		    }
 		 

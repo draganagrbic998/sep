@@ -36,7 +36,7 @@ public class PaymentController {
 	@GetMapping("/pay/{merchantApiKey}/{orderId}")
 	public ModelAndView pay(@PathVariable Long merchantApiKey, @PathVariable Long orderId) {
 		log.info("PaymentController - pay: merchantApiKey" + merchantApiKey + " orderId=" + orderId);
-		String redirectUrl = "http://localhost:8086/view/paypal_payment/" + orderId.toString();
+		String redirectUrl = "https://localhost:8086/view/paypal_payment/" + orderId.toString();
 		return new ModelAndView("redirect:" + redirectUrl);
 	}
 

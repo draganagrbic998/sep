@@ -26,6 +26,7 @@ public class RestConfig {
 
 	@Bean
 	public RestTemplate getRestTemplate() {
+
 		RestTemplate restTemplate = restTemplateBuilder.build();
 
 		try {
@@ -51,6 +52,7 @@ public class RestConfig {
 		}
 
 		return restTemplate;
+
 	}
 
 }

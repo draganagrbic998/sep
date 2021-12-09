@@ -3,7 +3,7 @@
     <mat-card-content>
       <h1>{{ title || config.title }}</h1>
       <form [formGroup]="form" (submit)="$event.stopPropagation()">
-        <div [class.disabled]="pending">
+        <div [class.disabled]="isPending">
           <mat-form-field *ngFor="let control of controls">
             <mat-label>{{ capitalize(control) }}</mat-label>
             <input
@@ -63,14 +63,14 @@
         </div>
         <div class="center">
           <button
-            *ngIf="!pending"
+            *ngIf="!isPending"
             mat-raised-button
             color="primary"
             (click)="handleSubmit()"
           >
             Submit
           </button>
-          <app-spinner *ngIf="pending"></app-spinner>
+          <app-spinner *ngIf="isPending"></app-spinner>
         </div>
       </form>
     </mat-card-content>

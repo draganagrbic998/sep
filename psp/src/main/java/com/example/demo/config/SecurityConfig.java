@@ -66,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().exceptionHandling()
 				.authenticationEntryPoint(new AuthEntryPoint()).and().authorizeRequests().antMatchers("/h2").permitAll()
-				.and().cors().and()
+				.antMatchers("/view**").permitAll().and().cors().and()
 				.addFilterBefore(new AuthFilter(userService, tokenUtils), BasicAuthenticationFilter.class).csrf()
 				.disable().headers().frameOptions().disable();
 	}
