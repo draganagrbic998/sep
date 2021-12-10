@@ -18,6 +18,7 @@ import com.example.demo.model.Transaction;
 import com.example.demo.repository.ClientRepository;
 import com.example.demo.repository.PaymentRequestRepository;
 import com.example.demo.repository.TransactionRepository;
+import com.example.demo.utils.DatabaseCipher;
 import com.example.demo.utils.PropertiesData;
 import com.example.demo.utils.Utils;
 
@@ -35,23 +36,24 @@ public class PaymentRequestService {
 	private final RateService rateService;
 	private final RestTemplate restTemplate;
 	private final PropertiesData properties;
+	private final DatabaseCipher cipher;
 
 	public PaymentRequest save(PaymentRequest request) {
 		log.info("PaymentRequestService - save: id=" + request.getId());
-		return repo.save(request);
+		return repo.save(cipher.encrypt(request));
 	}
 
 	public String confirm(Long id, Customer customer) {
 		log.info("PaymentRequestService - confirm: id=" + id);
-		PaymentRequest request = repo.findById(id).get();
+		PaymentRequest request = cipher.decrypt(repo.findById(id).get());
 		Transaction transaction = transactionRepo.save(new Transaction(request));
 
-		Optional<Client> merchantOptional = clientRepo.findByMerchantId(request.getMerchantId());
+		Optional<Client> merchantOptional = clientRepo.findByMerchantId(cipher.encrypt(request.getMerchantId()));
 		if (!merchantOptional.isPresent()) {
 			log.error("Merchant: id=" + request.getMerchantId() + " not found.");
 			return refuse(request, transaction, false);
 		}
-		Client merchant = merchantOptional.get();
+		Client merchant = cipher.decrypt(merchantOptional.get());
 
 		if (!merchant.getMerchantPassword().equals(request.getMerchantPassword())) {
 			log.error("Merchant: id=" + request.getMerchantId() + " invalid password.");
@@ -61,12 +63,12 @@ public class PaymentRequestService {
 		if (customer.getPanNumber().substring(0, 6).equals(properties.bankId)) {
 			log.info("Client: panNumber=" + customer.getPanNumber() + " has an account in this bank.");
 
-			Optional<Client> clientOptional = clientRepo.findByPanNumber(customer.getPanNumber());
+			Optional<Client> clientOptional = clientRepo.findByPanNumber(cipher.encrypt(customer.getPanNumber()));
 			if (!clientOptional.isPresent()) {
 				log.error("Client: panNumber=" + customer.getPanNumber() + " not found.");
 				return refuse(request, transaction, false);
 			}
-			Client client = clientOptional.get();
+			Client client = cipher.decrypt(clientOptional.get());
 
 			if (!client.getCardHolder().equals(customer.getCardHolder()) || !client.getCvv().equals(customer.getCvv())
 					|| !client.getExpirationDate().equals(customer.getMm() + "/" + customer.getYy())) {
@@ -86,9 +88,9 @@ public class PaymentRequestService {
 
 			Double rate = rateService.getCurrencyRate(transaction.getCurrency());
 			merchant.incAvailableFunds(rate * request.getAmount());
-			clientRepo.save(merchant);
+			clientRepo.save(cipher.encrypt(merchant));
 			client.decAvailableFunds(rate * request.getAmount());
-			clientRepo.save(client);
+			clientRepo.save(cipher.encrypt(client));
 
 			log.info("PaymentRequestService - notifying card-service @" + request.getCallbackUrl());
 			restTemplate.exchange(request.getCallbackUrl(), HttpMethod.PUT,
@@ -105,7 +107,7 @@ public class PaymentRequestService {
 			if (response.getAuthenticated() && response.getTransactionAuthorized()) {
 				log.info("PccResponse: authenticated=true, transactionAuthorized=true");
 				merchant.incAvailableFunds(rateService.getCurrencyRate(request.getCurrency()) * request.getAmount());
-				clientRepo.save(merchant);
+				clientRepo.save(cipher.encrypt(merchant));
 
 				log.info("PaymentRequestService - notifying card-service @" + request.getCallbackUrl());
 				restTemplate.exchange(request.getCallbackUrl(), HttpMethod.PUT,

@@ -8,6 +8,7 @@ import com.example.demo.dto.PccRequest;
 import com.example.demo.dto.PccResponse;
 import com.example.demo.model.Client;
 import com.example.demo.repository.ClientRepository;
+import com.example.demo.utils.DatabaseCipher;
 import com.example.demo.utils.Utils;
 
 import lombok.AllArgsConstructor;
@@ -20,16 +21,17 @@ public class PccService {
 
 	private final ClientRepository clientRepo;
 	private final RateService rateService;
+	private final DatabaseCipher cipher;
 
 	public PccResponse pay(PccRequest request) {
 		log.info("PccService - pay: panNumber=" + request.getPanNumber());
 
-		Optional<Client> clientOptional = clientRepo.findByPanNumber(request.getPanNumber());
+		Optional<Client> clientOptional = clientRepo.findByPanNumber(cipher.encrypt(request.getPanNumber()));
 		if (!clientOptional.isPresent()) {
 			log.error("Client: panNumber=" + request.getPanNumber() + " not found.");
 			return new PccResponse(false, false);
 		}
-		Client client = clientOptional.get();
+		Client client = cipher.decrypt(clientOptional.get());
 
 		if (!client.getCardHolder().equals(request.getCardHolder()) || !client.getCvv().equals(request.getCvv())
 				|| !client.getExpirationDate().equals(request.getMm() + "/" + request.getYy())) {
@@ -48,7 +50,7 @@ public class PccService {
 		}
 
 		client.decAvailableFunds(rateService.getCurrencyRate(request.getCurrency()) * request.getAmount());
-		clientRepo.save(client);
+		clientRepo.save(cipher.encrypt(client));
 		return new PccResponse(true, true);
 	}
 

@@ -10,6 +10,9 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
+import com.example.demo.model.Merchant;
+import com.example.demo.model.Order;
+
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -40,6 +43,32 @@ public class DatabaseCipher {
 				| BadPaddingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public Merchant encrypt(Merchant merchant) {
+		merchant.setMerchantApiKey(encrypt(merchant.getMerchantApiKey()));
+		merchant.setBankUrl(encrypt(merchant.getBankUrl()));
+		merchant.setMerchantId(encrypt(merchant.getMerchantId()));
+		merchant.setMerchantPassword(encrypt(merchant.getMerchantPassword()));
+		return merchant;
+	}
+
+	public Merchant decrypt(Merchant merchant) {
+		merchant.setMerchantApiKey(decrypt(merchant.getMerchantApiKey()));
+		merchant.setBankUrl(decrypt(merchant.getBankUrl()));
+		merchant.setMerchantId(decrypt(merchant.getMerchantId()));
+		merchant.setMerchantPassword(decrypt(merchant.getMerchantPassword()));
+		return merchant;
+	}
+
+	public Order encrypt(Order order) {
+		order.setMerchantApiKey(encrypt(order.getMerchantApiKey()));
+		return order;
+	}
+
+	public Order decrypt(Order order) {
+		order.setMerchantApiKey(decrypt(order.getMerchantApiKey()));
+		return order;
 	}
 
 }

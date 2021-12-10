@@ -10,6 +10,9 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
+import com.example.demo.model.Client;
+import com.example.demo.model.PaymentRequest;
+
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -40,6 +43,38 @@ public class DatabaseCipher {
 				| BadPaddingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public Client encrypt(Client client) {
+		client.setCardHolder(encrypt(client.getCardHolder()));
+		client.setPanNumber(encrypt(client.getPanNumber()));
+		client.setExpirationDate(encrypt(client.getExpirationDate()));
+		client.setCvv(encrypt(client.getCvv()));
+		client.setMerchantId(encrypt(client.getMerchantId()));
+		client.setMerchantPassword(encrypt(client.getMerchantPassword()));
+		return client;
+	}
+
+	public Client decrypt(Client client) {
+		client.setCardHolder(decrypt(client.getCardHolder()));
+		client.setPanNumber(decrypt(client.getPanNumber()));
+		client.setExpirationDate(decrypt(client.getExpirationDate()));
+		client.setCvv(decrypt(client.getCvv()));
+		client.setMerchantId(decrypt(client.getMerchantId()));
+		client.setMerchantPassword(decrypt(client.getMerchantPassword()));
+		return client;
+	}
+
+	public PaymentRequest encrypt(PaymentRequest request) {
+		request.setMerchantId(encrypt(request.getMerchantId()));
+		request.setMerchantPassword(encrypt(request.getMerchantPassword()));
+		return request;
+	}
+
+	public PaymentRequest decrypt(PaymentRequest request) {
+		request.setMerchantId(decrypt(request.getMerchantId()));
+		request.setMerchantPassword(decrypt(request.getMerchantPassword()));
+		return request;
 	}
 
 }

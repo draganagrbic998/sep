@@ -13,5 +13,4 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PaymentRequestCompleted {
 	private PaymentStatus status;
-
 }

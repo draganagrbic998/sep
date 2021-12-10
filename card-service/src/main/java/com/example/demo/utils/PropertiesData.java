@@ -12,4 +12,7 @@ public class PropertiesData {
 	@Value("${complete-url}")
 	public String completeUrl;
 
+	@Value("${is-qr}")
+	public Boolean isQr;
+
 }

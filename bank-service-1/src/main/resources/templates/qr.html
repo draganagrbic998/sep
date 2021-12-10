@@ -100,7 +100,6 @@
     <div class="row">
       <div class="col-lg-7 mx-auto" style="height: 90%">
         <div class="bg-white shadow-sm p-5 rounded-lg container-card">
-          <div id="qrcode">QR CODE</div>
 
           <div
             style="
@@ -132,12 +131,6 @@
     </div>
     <script>
       $(document).ready(function () {
-        $("#qrcode").qrcode({
-          width: "300px",
-          height: "300px",
-          text: "testtest",
-        });
-
         $("#same-bank").click(function (e) {
           e.preventDefault();
           var confirmUrl = $(this).attr("confirmUrl");

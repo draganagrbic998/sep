@@ -10,8 +10,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
-import com.example.demo.model.Merchant;
-import com.example.demo.model.Order;
+import com.example.demo.model.Bank;
 
 import lombok.AllArgsConstructor;
 
@@ -45,30 +44,16 @@ public class DatabaseCipher {
 		}
 	}
 
-	public Merchant encrypt(Merchant merchant) {
-		merchant.setMerchantApiKey(encrypt(merchant.getMerchantApiKey()));
-		merchant.setBankUrl(encrypt(merchant.getBankUrl()));
-		merchant.setMerchantId(encrypt(merchant.getMerchantId()));
-		merchant.setMerchantPassword(encrypt(merchant.getMerchantPassword()));
-		return merchant;
+	public Bank encrypt(Bank bank) {
+		bank.setUrl(encrypt(bank.getUrl()));
+		bank.setPanNumber(encrypt(bank.getPanNumber()));
+		return bank;
 	}
 
-	public Merchant decrypt(Merchant merchant) {
-		merchant.setMerchantApiKey(decrypt(merchant.getMerchantApiKey()));
-		merchant.setBankUrl(decrypt(merchant.getBankUrl()));
-		merchant.setMerchantId(decrypt(merchant.getMerchantId()));
-		merchant.setMerchantPassword(decrypt(merchant.getMerchantPassword()));
-		return merchant;
-	}
-
-	public Order encrypt(Order order) {
-		order.setMerchantApiKey(encrypt(order.getMerchantApiKey()));
-		return order;
-	}
-
-	public Order decrypt(Order order) {
-		order.setMerchantApiKey(decrypt(order.getMerchantApiKey()));
-		return order;
+	public Bank decrypt(Bank bank) {
+		bank.setUrl(decrypt(bank.getUrl()));
+		bank.setPanNumber(decrypt(bank.getPanNumber()));
+		return bank;
 	}
 
 }
