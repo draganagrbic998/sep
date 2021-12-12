@@ -23,7 +23,7 @@ public class DatabaseCipher {
 	private IvParameterSpec ips;
 
 	public String encrypt(String plainText) {
-		if (plainText.isBlank())
+		if (plainText == null || plainText.isBlank())
 			return plainText;
 		try {
 			this.cipher.init(Cipher.ENCRYPT_MODE, this.key, this.ips);
@@ -35,6 +35,8 @@ public class DatabaseCipher {
 	}
 
 	public String decrypt(String cipherText) {
+		if (cipherText == null || cipherText.isBlank())
+			return cipherText;
 		try {
 			this.cipher.init(Cipher.DECRYPT_MODE, this.key, this.ips);
 			return new String(this.cipher.doFinal(Base64.getDecoder().decode(cipherText)));
@@ -47,24 +49,26 @@ public class DatabaseCipher {
 	public Merchant encrypt(Merchant m) {
 		m.setClientId(this.encrypt(m.getClientId()));
 		m.setClientSecret(this.encrypt(m.getClientSecret()));
-		// m.setMerchantApiKey(this.encrypt(m.getMerchantApiKey()));
+		m.setMerchantApiKey(this.encrypt(m.getMerchantApiKey()));
 		return m;
 	}
 
 	public Merchant decrypt(Merchant m) {
 		m.setClientId(this.decrypt(m.getClientId()));
 		m.setClientSecret(this.decrypt(m.getClientSecret()));
-		// m.setMerchantApiKey(this.decrypt(m.getMerchantApiKey()));
+		m.setMerchantApiKey(this.decrypt(m.getMerchantApiKey()));
 		return m;
 	}
 
 	public Order encrypt(Order o) {
 		o.setPayPalOrderId(this.encrypt(o.getPayPalOrderId()));
+		o.setMerchantApiKey(this.encrypt(o.getMerchantApiKey()));
 		return o;
 	}
 
 	public Order decrypt(Order o) {
 		o.setPayPalOrderId(this.decrypt(o.getPayPalOrderId()));
+		o.setMerchantApiKey(this.decrypt(o.getMerchantApiKey()));
 		return o;
 	}
 

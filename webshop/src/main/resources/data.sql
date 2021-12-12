@@ -14,4 +14,4 @@ insert into user_table (email, password, role, api_key)
 values ('merchant3@gmail.com', '$2a$10$aL2cRpbMvSsvTcIGxUoauO4RMefDmYtEEARsmKJpwJ7T585HfBsra', 'merchant', 'merchant_api_key_3');
 
 insert into product (user_id, name, description, category, price, currency, image_location)
-values (1, 'NAME 1', 'DESCRIPTION 1', 'CATEGORY 1', 1, 'RSD', 'IMAGE LOCATION 1');
+values (1, 'NAME 1', 'DESCRIPTION 1', 'CATEGORY 1', 1, 'USD', 'IMAGE LOCATION 1');

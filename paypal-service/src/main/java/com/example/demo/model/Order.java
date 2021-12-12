@@ -31,9 +31,6 @@ public class Order {
 	private LocalDateTime createdTimestamp;
 
 	@Column
-	private Long shopOrderId;
-
-	@Column
 	private String merchantApiKey;
 
 	@Column
@@ -43,10 +40,10 @@ public class Order {
 	private String currency;
 
 	@Column
-	private Double value;
+	private Double price;
 
 	@Column
-	private Boolean executed;
+	private Boolean executed = false;
 
 	@Column
 	private String redirectUrl;

@@ -4,6 +4,7 @@ insert into role (name) values ('merchant');
 
 insert into payment_method (name) values ('card');
 insert into payment_method (name) values ('qr');
+insert into payment_method (name) values ('paypal');
 
 insert into user_table (email, password, role)
 values ('psp@gmail.com', '$2a$10$aL2cRpbMvSsvTcIGxUoauO4RMefDmYtEEARsmKJpwJ7T585HfBsra', 'psp-admin');
@@ -16,3 +17,5 @@ values ('merchant3@gmail.com', '$2a$10$aL2cRpbMvSsvTcIGxUoauO4RMefDmYtEEARsmKJpw
 
 insert into user_table_methods (user_id, methods_id) values (2, 1);
 insert into user_table_methods (user_id, methods_id) values (2, 2);
+insert into user_table_methods (user_id, methods_id) values (2, 3);
+

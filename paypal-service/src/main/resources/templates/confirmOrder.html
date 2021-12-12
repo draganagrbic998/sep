@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 
-<title>Register Merchant</title>
+<title>Confirm Order</title>
 
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
@@ -91,7 +91,7 @@
 		    }, 
 		 	createOrder: function() {
 		        /* Set up a url on your server to create the order */
-		        var GET_ORDER_URL = 'https://localhost:8086/getOrder/' + orderId;
+		        var GET_ORDER_URL = 'https://localhost:8086/' + orderId;
 		 
 		        /* Make a call to your server to set up the payment */
 		        return fetch(GET_ORDER_URL)
@@ -99,11 +99,18 @@
 		          return res.json();
 		         }).then(function(data) {
 		        	console.log(data);
-		          return data.id;
+		            var token;
+
+		            for (let link of data.links) {
+		                if (link.rel === 'approval_url') {
+		                    token = link.href.match(/EC-\w+/)[0];
+		                }
+		            }
+		          return token;
 		         });
 		    },
 		 	onCancel: function() {
-		        window.location = 'https://localhost:8086/view/cancelURL?orderId=' + orderId;
+		        window.location = 'https://localhost:8086/view/cancel_url?orderId=' + orderId;
 		 		
 		 	},
 		    /* onApprove() is called when the buyer approves the payment */
@@ -120,11 +127,11 @@
 		          return res.json();
 		        }).then(function(details) {
 		          alert('Transaction funds captured!');
-		          window.location = 'https://localhost:8086/view/successURL?orderId=' + orderId;
+		          window.location = 'https://localhost:8086/view/success_url?orderId=' + orderId;
 		        }).catch(function(error) {
 		      	  console.log(error);
 		      	  alert('An error occured');
-		          window.location = 'https://localhost:8086/view/errorURL?orderId=' + orderId;
+		          window.location = 'https://localhost:8086/view/error_url?orderId=' + orderId;
 		        });
 		    }
 		 

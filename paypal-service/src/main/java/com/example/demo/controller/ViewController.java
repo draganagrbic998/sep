@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.model.Order;
 import com.example.demo.service.OrderService;
+import com.example.demo.utils.DatabaseCipher;
 
 import lombok.AllArgsConstructor;
 
@@ -16,13 +17,14 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/view")
 public class ViewController {
 
+	private final DatabaseCipher cipher;
 	private final OrderService orderService;
 
 	@RequestMapping("/paypal_payment/{orderId}")
 	public String paypal(@PathVariable Long orderId, Model model) {
 		Order order = orderService.findById(orderId);
 		model.addAttribute("orderId", orderId);
-		model.addAttribute("payPalOrderId", order.getPayPalOrderId());
+		model.addAttribute("payPalOrderId", cipher.decrypt(order.getPayPalOrderId()));
 		return "confirmOrder";
 	}
 
