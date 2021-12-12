@@ -34,23 +34,17 @@ public class ViewController {
 	}
 
 	@RequestMapping("/success_url")
-	public String successPayment(@RequestParam("orderId") Long orderId, Model model) {
-		Order order = orderService.findById(orderId);
-		model.addAttribute("redirect", order.getCallbackUrl());
+	public String successPayment(Model model) {
 		return "success";
 	}
 
 	@RequestMapping("/cancel_url")
-	public String cancelPayment(@RequestParam("orderId") Long orderId, Model model) {
-		Order order = orderService.findById(orderId);
-		model.addAttribute("redirect", order.getCallbackUrl());
+	public String cancelPayment(Model model) {
 		return "cancel";
 	}
 
 	@RequestMapping("/error_url")
-	public String errorPayment(@RequestParam("orderId") Long orderId, Model model) {
-		Order order = orderService.findById(orderId);
-		model.addAttribute("redirect", order.getCallbackUrl());
+	public String errorPayment(Model model) {
 		return "error";
 	}
 

@@ -17,12 +17,12 @@ import com.example.demo.dto.PaymentCompletedDTO;
 import com.example.demo.model.Merchant;
 import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
+import com.example.demo.model.PaymentStatus;
 import com.example.demo.repo.OrderRepository;
 import com.example.demo.utils.DatabaseCipher;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.paypal.api.payments.Amount;
-import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payer;
 import com.paypal.api.payments.Payment;
 import com.paypal.api.payments.PaymentExecution;
@@ -143,23 +143,13 @@ public class OrderService {
 			log.info("completePayment - payment execution status=COMPLETED");
 			order.setExecuted(true);
 
-			PaymentCompletedDTO paymentCompletedDTO = new PaymentCompletedDTO();
-			paymentCompletedDTO.setId(order.getId());
-			paymentCompletedDTO.setStatus("COMPLETED");
-
 			log.info("completePayment - notifying WebShop @" + order.getCallbackUrl());
-			restTemplate.exchange(order.getCallbackUrl() + "/" + order.getId(), HttpMethod.PUT,
-					new HttpEntity<PaymentCompletedDTO>(paymentCompletedDTO), String.class);
+			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
+					new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)), Void.class);
 		} else {
 			log.error("completePayment - Error occured during payment execution");
-
-			PaymentCompletedDTO paymentCompletedDTO = new PaymentCompletedDTO();
-			paymentCompletedDTO.setId(order.getId());
-			paymentCompletedDTO.setStatus("FAILED");
-
-			log.info("completePayment - notifying WebShop @" + order.getCallbackUrl());
-			restTemplate.exchange(order.getCallbackUrl() + "/" + order.getId(), HttpMethod.PUT,
-					new HttpEntity<PaymentCompletedDTO>(paymentCompletedDTO), String.class);
+			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
+					new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
 		}
 
 		merchant = cipher.encrypt(merchant);
@@ -222,13 +212,9 @@ public class OrderService {
 					order.setStatus(OrderStatus.COMPLETED);
 					order.setExecuted(true);
 
-					PaymentCompletedDTO paymentCompletedDTO = new PaymentCompletedDTO();
-					paymentCompletedDTO.setId(order.getId());
-					paymentCompletedDTO.setStatus("COMPLETED");
-
-					log.info("checkOrders - notifying WebShop @" + order.getCallbackUrl());
-					restTemplate.exchange(order.getCallbackUrl() + "/" + order.getId(), HttpMethod.PUT,
-							new HttpEntity<PaymentCompletedDTO>(paymentCompletedDTO), String.class);
+					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
+							new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)),
+							Void.class);
 				}
 
 			} catch (Exception e) {
@@ -237,13 +223,8 @@ public class OrderService {
 				order.setStatus(OrderStatus.FAILED);
 				order.setExecuted(true);
 
-				PaymentCompletedDTO paymentCompletedDTO = new PaymentCompletedDTO();
-				paymentCompletedDTO.setId(order.getId());
-				paymentCompletedDTO.setStatus("FAILED");
-
-				log.info("checkOrders - notifying WebShop @" + order.getCallbackUrl());
-				restTemplate.exchange(order.getCallbackUrl() + "/" + order.getId(), HttpMethod.PUT,
-						new HttpEntity<PaymentCompletedDTO>(paymentCompletedDTO), String.class);
+				restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
+						new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
 			}
 		}
 

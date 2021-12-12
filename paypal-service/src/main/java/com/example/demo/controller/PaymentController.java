@@ -35,7 +35,7 @@ public class PaymentController {
 		return new ModelAndView("redirect:" + redirectUrl);
 	}
 
-	@PostMapping(value = "/complete/payment/{paymentId}/{payerId}")
+	@GetMapping(value = "/complete/payment/{paymentId}/{payerId}")
 	public ResponseEntity<String> complete(@PathVariable String paymentId, @PathVariable String payerId) {
 		log.info("PaymentController - complete");
 		return ResponseEntity.ok(orderService.completePayment(paymentId, payerId));

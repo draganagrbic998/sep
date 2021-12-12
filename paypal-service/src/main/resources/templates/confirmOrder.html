@@ -110,7 +110,7 @@
 		         });
 		    },
 		 	onCancel: function() {
-		        window.location = 'https://localhost:8086/view/cancel_url?orderId=' + orderId;
+		        window.location = 'https://localhost:8086/view/cancel_url';
 		 		
 		 	},
 		    /* onApprove() is called when the buyer approves the payment */
@@ -126,12 +126,13 @@
 		        .then(function(res) {
 		          return res.json();
 		        }).then(function(details) {
+			        console.log(details);
 		          alert('Transaction funds captured!');
-		          window.location = 'https://localhost:8086/view/success_url?orderId=' + orderId;
+		          window.location = 'https://localhost:8086/view/success_url';
 		        }).catch(function(error) {
 		      	  console.log(error);
 		      	  alert('An error occured');
-		          window.location = 'https://localhost:8086/view/error_url?orderId=' + orderId;
+		          window.location = 'https://localhost:8086/view/error_url';
 		        });
 		    }
 		 
