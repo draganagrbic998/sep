@@ -23,14 +23,22 @@ public class PaymentController {
 	private final OrderService orderService;
 
 	@PostMapping
-	public ResponseEntity<Order> create(@RequestBody Order dto) {
-		log.info("PaymentController - create");
-		return ResponseEntity.ok(orderService.createPayment(orderService.save(dto)));
+	public ResponseEntity<Order> createOrder(@RequestBody Order dto) {
+		log.info("PaymentController - createOrder");
+		return ResponseEntity.ok(orderService.save(dto));
 	}
 
 	@GetMapping("/pay/{orderId}")
 	public ModelAndView pay(@PathVariable Long orderId) {
 		log.info("PaymentController - pay: orderId=" + orderId);
+		String redirectUrl = "https://localhost:8086/view/choose_type/" + orderId;
+		return new ModelAndView("redirect:" + redirectUrl);
+	}
+
+	@GetMapping("/create_payment/{orderId}")
+	public ModelAndView createPayment(@PathVariable Long orderId) {
+		log.info("PaymentController - createPayment");
+		orderService.createPayment(orderService.findById(orderId));
 		String redirectUrl = "https://localhost:8086/view/paypal_payment/" + orderId;
 		return new ModelAndView("redirect:" + redirectUrl);
 	}
@@ -42,8 +50,7 @@ public class PaymentController {
 	}
 
 	@GetMapping("/{orderId}")
-	public ResponseEntity<String> getOrderForPaypal(@PathVariable Long orderId)
-			throws PayPalRESTException {
+	public ResponseEntity<String> getOrderForPaypal(@PathVariable Long orderId) throws PayPalRESTException {
 		log.info("PaymentController - getOrderForPaypal: orderId=" + orderId);
 		return ResponseEntity.ok(orderService.getOrderDetails(orderId));
 	}

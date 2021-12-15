@@ -4,7 +4,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.model.Order;
 import com.example.demo.service.OrderService;
@@ -19,6 +18,12 @@ public class ViewController {
 
 	private final DatabaseCipher cipher;
 	private final OrderService orderService;
+
+	@RequestMapping("/choose_type/{orderId}")
+	public String chooseType(@PathVariable Long orderId, Model model) {
+		model.addAttribute("orderId", orderId);
+		return "chooseType";
+	}
 
 	@RequestMapping("/paypal_payment/{orderId}")
 	public String paypal(@PathVariable Long orderId, Model model) {
