@@ -3,7 +3,6 @@ package com.example.demo.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -31,23 +30,21 @@ import com.paypal.api.payments.Transaction;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+@AllArgsConstructor
 @Service
 @Log4j2
 public class OrderService {
 
-	@Autowired
-	private RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
 
-	@Autowired
-	private OrderRepository repo;
+	private final OrderRepository repo;
 
-	@Autowired
-	private MerchantService merchantService;
+	private final MerchantService merchantService;
 
-	@Autowired
-	private DatabaseCipher cipher;
+	private final DatabaseCipher cipher;
 
 	public Order findById(Long orderId) {
 		log.info("OrderService - findById: id=" + orderId);
@@ -86,8 +83,8 @@ public class OrderService {
 		payment.setTransactions(transactions);
 
 		RedirectUrls redirectUrls = new RedirectUrls();
-		redirectUrls.setReturnUrl("https://localhost:8086/view/success_url/" + order.getId());
-		redirectUrls.setCancelUrl("https://localhost:8086/view/cancel_url/" + order.getId());
+		redirectUrls.setReturnUrl("https://localhost:8086/view/success_url");
+		redirectUrls.setCancelUrl("https://localhost:8086/view/cancel_url");
 		payment.setRedirectUrls(redirectUrls);
 
 		Payment createdPayment;
@@ -103,6 +100,12 @@ public class OrderService {
 			}
 		} catch (PayPalRESTException e) {
 			log.error("createPayment - Error occured during payment creation");
+
+			order.setStatus(OrderStatus.FAILED);
+			order.setExecuted(true);
+
+			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
+					new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
 		}
 		merchant = cipher.encrypt(merchant);
 		order = repo.save(cipher.encrypt(order));
@@ -188,6 +191,9 @@ public class OrderService {
 		List<Order> orders = repo.findAllByExecuted(false);
 
 		for (Order order : orders) {
+			if (order.getPayPalOrderId() == null)
+				continue;
+			
 			log.info("Order: id=" + order.getId() + " checking status");
 
 			Merchant merchant = cipher.decrypt(merchantService.findOneByApiKey(order.getMerchantApiKey()));
@@ -200,7 +206,7 @@ public class OrderService {
 						+ cipher.decrypt(order.getPayPalOrderId());
 				HttpHeaders headers = new HttpHeaders();
 				headers.setContentType(MediaType.APPLICATION_JSON);
-				headers.set("Authorization", "Bearer " + context.fetchAccessToken());
+				headers.set("Authorization", context.fetchAccessToken());
 				HttpEntity entity = new HttpEntity(headers);
 
 				log.info("checkOrders - get payment details using paypal api");
@@ -219,7 +225,7 @@ public class OrderService {
 
 			} catch (Exception e) {
 				log.error("checkOrders - Error occured while obtaining payment details");
-
+				e.printStackTrace();
 				order.setStatus(OrderStatus.FAILED);
 				order.setExecuted(true);
 

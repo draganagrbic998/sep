@@ -10,8 +10,11 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
+import com.example.demo.model.BillingPlan;
 import com.example.demo.model.Merchant;
 import com.example.demo.model.Order;
+import com.example.demo.model.Product;
+import com.example.demo.model.Subscription;
 
 import lombok.AllArgsConstructor;
 
@@ -70,6 +73,48 @@ public class DatabaseCipher {
 		o.setPayPalOrderId(this.decrypt(o.getPayPalOrderId()));
 		o.setMerchantApiKey(this.decrypt(o.getMerchantApiKey()));
 		return o;
+	}
+
+	public Product encrypt(Product p) {
+		p.setProductId(this.encrypt(p.getProductId()));
+		p.setName(this.encrypt(p.getName()));
+		return p;
+	}
+
+	public Product decrypt(Product p) {
+		p.setProductId(this.decrypt(p.getProductId()));
+		p.setName(this.decrypt(p.getName()));
+		return p;
+	}
+
+	public BillingPlan encrypt(BillingPlan b) {
+		b.setPlanId(this.encrypt(b.getPlanId()));
+		b.setProductId(this.encrypt(b.getProductId()));
+		b.setName(this.encrypt(b.getName()));
+		return b;
+	}
+
+	public BillingPlan decrypt(BillingPlan b) {
+		b.setPlanId(this.decrypt(b.getPlanId()));
+		b.setProductId(this.decrypt(b.getProductId()));
+		b.setName(this.decrypt(b.getName()));
+		return b;
+	}
+
+	public Subscription encrypt(Subscription s) {
+		s.setApproveUrl(this.encrypt(s.getApproveUrl()));
+		s.setSubscriber(this.encrypt(s.getSubscriber()));
+		s.setSubscriptionId(this.encrypt(s.getSubscriptionId()));
+		s.setPlanId(this.encrypt(s.getPlanId()));
+		return s;
+	}
+
+	public Subscription decrypt(Subscription s) {
+		s.setApproveUrl(this.decrypt(s.getApproveUrl()));
+		s.setSubscriber(this.decrypt(s.getSubscriber()));
+		s.setSubscriptionId(this.decrypt(s.getSubscriptionId()));
+		s.setPlanId(this.decrypt(s.getPlanId()));
+		return s;
 	}
 
 }

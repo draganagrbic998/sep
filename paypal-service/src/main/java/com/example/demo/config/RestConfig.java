@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.KeyStore;
 
+import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
@@ -34,13 +35,17 @@ public class RestConfig {
 			keyStore.load(in, "password".toCharArray());
 			in.close();
 
+			SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(
+					new SSLContextBuilder().loadTrustMaterial(keyStore, new TrustSelfSignedStrategy())
+							.loadKeyMaterial(keyStore, "password".toCharArray()).build(),
+					NoopHostnameVerifier.INSTANCE);
+
+			HttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).setMaxConnTotal(5)
+					.setMaxConnPerRoute(5).build();
+
 			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(
-					HttpClients.custom()
-							.setSSLSocketFactory(new SSLConnectionSocketFactory(
-									new SSLContextBuilder().loadTrustMaterial(keyStore, new TrustSelfSignedStrategy())
-											.loadKeyMaterial(keyStore, "password".toCharArray()).build(),
-									NoopHostnameVerifier.INSTANCE))
-							.setMaxConnTotal(5).setMaxConnPerRoute(5).build());
+					httpClient);
+
 			requestFactory.setReadTimeout(10000);
 			requestFactory.setConnectTimeout(10000);
 			restTemplate.setRequestFactory(requestFactory);
