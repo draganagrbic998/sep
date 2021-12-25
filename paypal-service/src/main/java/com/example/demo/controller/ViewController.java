@@ -7,10 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.model.Merchant;
 import com.example.demo.model.Order;
-import com.example.demo.model.Subscription;
-import com.example.demo.service.MerchantService;
-import com.example.demo.service.OrderService;
-import com.example.demo.service.SubscriptionService;
+import com.example.demo.repository.MerchantRepository;
+import com.example.demo.repository.OrderRepository;
+import com.example.demo.repository.SubscriptionRepository;
 import com.example.demo.utils.DatabaseCipher;
 
 import lombok.AllArgsConstructor;
@@ -20,10 +19,28 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/view")
 public class ViewController {
 
+	private final MerchantRepository merchantRepo;
+	private final OrderRepository orderRepo;
+	private final SubscriptionRepository subscriptionRepo;
 	private final DatabaseCipher cipher;
-	private final SubscriptionService subscriptionService;
-	private final OrderService orderService;
-	private final MerchantService merchantService;
+
+	@RequestMapping("/paypal_payment/{orderId}")
+	public String paypalPayment(@PathVariable Long orderId, Model model) {
+		Order order = cipher.decrypt(orderRepo.findById(orderId).get());
+		model.addAttribute("orderId", orderId);
+		model.addAttribute("payPalOrderId", order.getPayPalOrderId());
+		return "confirmOrder";
+	}
+
+	@RequestMapping("/subscription_payment/{subscriptionId}")
+	public String subscriptionPayment(@PathVariable Long subscriptionId, Model model) {
+		Merchant merchant = cipher.decrypt(merchantRepo.findByMerchantApiKey(orderRepo
+				.findById(subscriptionRepo.findById(subscriptionId).get().getOrderId()).get().getMerchantApiKey()));
+
+		model.addAttribute("subscriptionId", subscriptionId);
+		model.addAttribute("clientId", merchant.getClientId());
+		return "confirmSubscription";
+	}
 
 	@RequestMapping("/choose_type/{orderId}")
 	public String chooseType(@PathVariable Long orderId, Model model) {
@@ -31,31 +48,10 @@ public class ViewController {
 		return "chooseType";
 	}
 
-	@RequestMapping("/paypal_payment/{orderId}")
-	public String paypal(@PathVariable Long orderId, Model model) {
-		Order order = orderService.findById(orderId);
-		model.addAttribute("orderId", orderId);
-		model.addAttribute("payPalOrderId", cipher.decrypt(order.getPayPalOrderId()));
-		return "confirmOrder";
-	}
-
 	@RequestMapping("/create_plan/{orderId}")
-	public String plan(@PathVariable Long orderId, Model model) {
+	public String createPlan(@PathVariable Long orderId, Model model) {
 		model.addAttribute("orderId", orderId);
 		return "createPlan";
-	}
-
-	@RequestMapping("/subscription_payment/{subscriptionId}")
-	public String subscriptionPayment(@PathVariable Long subscriptionId, Model model) {
-		Subscription subscription = subscriptionService.findById(subscriptionId);
-		Order order = orderService.findById(subscription.getOrderId());
-		Merchant merchant = cipher.decrypt(merchantService.findOneByApiKey(order.getMerchantApiKey()));
-
-		model.addAttribute("clientId", merchant.getClientId());
-		model.addAttribute("subscriptionId", subscriptionId);
-
-		merchant = cipher.encrypt(merchant);
-		return "confirmSubscription";
 	}
 
 	@RequestMapping("/register")
@@ -64,13 +60,18 @@ public class ViewController {
 	}
 
 	@RequestMapping("/success_url")
-	public String successPayment(Model model) {
+	public String success(Model model) {
 		return "success";
 	}
 
 	@RequestMapping("/cancel_url")
-	public String cancelPayment(Model model) {
+	public String cancel(Model model) {
 		return "cancel";
+	}
+
+	@RequestMapping("/error_url")
+	public String error(Model model) {
+		return "error";
 	}
 
 	@RequestMapping("/subscription_success_url")
@@ -86,11 +87,6 @@ public class ViewController {
 	@RequestMapping("/subscription_error_url")
 	public String subscriptionError(Model model) {
 		return "subscriptionError";
-	}
-
-	@RequestMapping("/error_url")
-	public String errorPayment(Model model) {
-		return "error";
 	}
 
 }

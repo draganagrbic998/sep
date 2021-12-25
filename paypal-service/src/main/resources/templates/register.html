@@ -1,157 +1,176 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8" />
-<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 
-<title>Register Merchant</title>
+    <title>Register Merchant</title>
 
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-<link
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
-	rel="stylesheet" type="text/css" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
+      rel="stylesheet"
+      type="text/css"
+    />
 
-<style>
-.rounded-lg {
-	border-radius: 1rem;
-}
+    <style>
+      .rounded-lg {
+        border-radius: 1rem;
+      }
 
-.background {
-	background: rgb(70, 205, 255);
-	background: linear-gradient(90deg, rgba(70, 205, 255, 1) 0%,
-		rgba(200, 243, 255, 1) 45%, rgba(200, 243, 255, 1) 55%,
-		rgba(70, 205, 255, 1) 100%);
-}
+      .background {
+        background: rgb(70, 205, 255);
+        background: linear-gradient(
+          90deg,
+          rgba(70, 205, 255, 1) 0%,
+          rgba(200, 243, 255, 1) 45%,
+          rgba(200, 243, 255, 1) 55%,
+          rgba(70, 205, 255, 1) 100%
+        );
+      }
 
-.title {
-	padding: 10px;
-	border-bottom: 1px solid lightgrey;
-}
+      .title-container {
+        width: 50%;
+        background-color: rgba(255, 255, 255, 0.4);
+        border-bottom: 3px inset lightgrey;
+      }
 
-.title-container {
-	width: 50%;
-	background-color: rgba(255, 255, 255, 0.4);
-	border-bottom: 3px inset lightgrey;
-}
+      .header {
+        color: #6e8eff;
+        background: rgb(255, 255, 255);
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 1) 15%,
+          rgba(255, 255, 255, 1) 85%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        height: 100%;
+        width: 60%;
+        margin-left: 20%;
+        margin-right: 20%;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 1) 20%,
+          rgba(255, 255, 255, 1) 80%,
+          rgba(255, 255, 255, 0) 100%
+        );
+      }
 
-.h1-custom {
-	color: #6e8eff;
-	background: rgb(255, 255, 255);
-	background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%,
-		rgba(255, 255, 255, 1) 15%, rgba(255, 255, 255, 1) 85%,
-		rgba(255, 255, 255, 0) 100%);
-	height: 100%;
-	width: 60%;
-	margin-left: 20%;
-	margin-right: 20%;
-	background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%,
-		rgba(255, 255, 255, 1) 20%, rgba(255, 255, 255, 1) 80%,
-		rgba(255, 255, 255, 0) 100%);
-}
+      .btn-color {
+        color: #fff;
+        background: rgb(4, 169, 249);
+        vertical-align: middle;
+        border: none;
+      }
 
-.btn-boja, .btn-primary:active {
-	color: #fff;
-	background: rgb(4, 169, 249);
-	vertical-align: middle;
-	border: none;
-}
+      .btn-color:hover {
+        color: #fff;
+        outline: none;
+        background: #6e8eff;
+      }
 
-.btn-boja:hover, .btn-primary:focus {
-	color: #fff;
-	outline: none;
-	background: #6e8eff;
-}
+      .container-card {
+        border-top: 1px outset lightgrey;
+        border-bottom: 2px inset lightgrey;
+        border-left: 1px outset lightgrey;
+        border-right: 1px inset lightgrey;
+      }
 
-.methods-container {
-	margin-left: 37.5%;
-	margin-right: 37.5%;
-	max-width: 25%;
-}
+      .icon {
+        color: #6e8eff;
+        width: 16px;
+      }
+    </style>
+  </head>
+  <body class="background">
+    <div class="row mb-4">
+      <div class="col-lg-12 mx-auto text-center title-container">
+        <h1 class="display-4 header">Merchant Registration</h1>
+      </div>
+    </div>
 
-.container-card {
-	border-top: 1px outset lightgrey;
-	border-bottom: 2px inset lightgrey;
-	border-left: 1px outset lightgrey;
-	border-right: 1px inset lightgrey;
-}
+    <br />
 
-/* Change color of icons in input forms*/
-.icon {
-	color: #6e8eff;
-	width: 16px;
-}
-</style>
-</head>
-<body class="background">
-
-	<div class="row mb-4">
-		<div class="col-lg-12 mx-auto text-center title-container">
-			<h1 class="display-4 h1-custom">Merchant Registration</h1>
-		</div>
-	</div>
-
-	<br />
-
-	<div class="row">
-		<div class="col-lg-5 mx-auto">
-			<div class="bg-white rounded-lg shadow-sm p-5 container-card">
-				<div>
-					<form>
-						<div class="input-group form-group">
-							<div class="input-group-prepend">
-								<span class="input-group-text"><i class="fas fa-cog icon"></i></span>
-							</div>
-							<input id="merchantApiKey" name="merchantApiKey" type="text"
-								class="form-control" placeholder="Merchant Api Key">
-						</div>
-						<div class="input-group form-group">
-							<div class="input-group-prepend">
-								<span class="input-group-text"><i
-									class="fas fa-user icon"></i></span>
-							</div>
-							<input id="clientId" name="clientId" type="text"
-								class="form-control" placeholder="Paypal client ID">
-						</div>
-						<div class="input-group form-group">
-							<div class="input-group-prepend">
-								<span class="input-group-text"><i class="fas fa-key icon"></i></span>
-							</div>
-							<input id="clientSecret" name="clientSecret" type="text"
-								class="form-control" placeholder="Paypal client secret">
-						</div>
-						<button type="submit" id="registration"
-							class="subscribe btn btn-boja btn-block shadow-sm"
-							style="margin: auto; max-width: 100px;">Register</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-	<script>
-	$(document).ready(function() {
-		$("#registration").click(function(e) {
-			e.preventDefault();
-			$.ajax({
-				type : 'POST',
-				url : 'https://localhost:8086/merchants',
-				contentType : "application/json",
-				data : JSON.stringify({
-					'merchantApiKey' : $('#merchantApiKey').val(),
-					'clientId' : $('#clientId').val(),
-					'clientSecret' : $('#clientSecret').val()
-				}),
-				success : function(res) {
-					alert('DONE');
-				},
-				error : function(odgovor) {
-					alert(odgovor.responseText);
-				}
-			});
-		});
-	});
-	</script>
-</body>
+    <div class="row">
+      <div class="col-lg-5 mx-auto">
+        <div class="bg-white rounded-lg shadow-sm p-5 container-card">
+          <div>
+            <form>
+              <div class="input-group form-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"
+                    ><i class="fas fa-cog icon"></i
+                  ></span>
+                </div>
+                <input
+                  id="merchantApiKey"
+                  class="form-control"
+                  placeholder="Merchant Api Key"
+                />
+              </div>
+              <div class="input-group form-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"
+                    ><i class="fas fa-user icon"></i
+                  ></span>
+                </div>
+                <input
+                  id="clientId"
+                  class="form-control"
+                  placeholder="Paypal client ID"
+                />
+              </div>
+              <div class="input-group form-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"
+                    ><i class="fas fa-key icon"></i
+                  ></span>
+                </div>
+                <input
+                  id="clientSecret"
+                  class="form-control"
+                  placeholder="Paypal client secret"
+                />
+              </div>
+              <button
+                id="registration"
+                class="btn btn-color btn-block shadow-sm"
+                style="margin: auto; max-width: 100px"
+              >
+                Register
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      $(document).ready(function () {
+        $("#registration").click(function (e) {
+          e.preventDefault();
+          $.ajax({
+            url: "https://localhost:8086/merchants",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+              merchantApiKey: $("#merchantApiKey").val(),
+              clientId: $("#clientId").val(),
+              clientSecret: $("#clientSecret").val(),
+            }),
+            success: function (res) {
+              alert("DONE");
+            },
+            error: function (odgovor) {
+              alert(odgovor.responseText);
+            },
+          });
+        });
+      });
+    </script>
+  </body>
 </html>
-
-

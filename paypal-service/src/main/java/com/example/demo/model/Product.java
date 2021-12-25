@@ -7,12 +7,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
+@NoArgsConstructor
 @Getter
 @Setter
+@Entity
 public class Product {
 
 	@Id
@@ -20,16 +23,12 @@ public class Product {
 	private Long id;
 
 	@Column
+	private LocalDateTime createdTimestamp = LocalDateTime.now();
+
+	@Column
 	private String productId;
 
 	@Column
 	private String name;
-
-	@Column
-	private LocalDateTime createdTimestamp;
-
-	public Product() {
-		this.createdTimestamp = LocalDateTime.now();
-	}
 
 }

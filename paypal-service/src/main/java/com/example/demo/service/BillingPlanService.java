@@ -4,7 +4,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,14 +14,15 @@ import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
 import com.example.demo.model.PaymentStatus;
 import com.example.demo.model.Product;
-import com.example.demo.repo.BillingPlanRepository;
-import com.example.demo.repo.OrderRepository;
-import com.example.demo.repo.ProductRepository;
+import com.example.demo.repository.BillingPlanRepository;
+import com.example.demo.repository.MerchantRepository;
+import com.example.demo.repository.OrderRepository;
+import com.example.demo.repository.ProductRepository;
 import com.example.demo.utils.DatabaseCipher;
+import com.example.demo.utils.PropertiesData;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.paypal.base.rest.APIContext;
-import com.paypal.base.rest.PayPalRESTException;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -32,95 +32,42 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class BillingPlanService {
 
-	private final RestTemplate restTemplate;
-
-	private final ProductRepository productRepository;
-
-	private final BillingPlanRepository planRepository;
-
+	private final BillingPlanRepository repo;
+	private final MerchantRepository merchantRepo;
+	private final OrderRepository orderRepo;
+	private final ProductRepository productRepo;
 	private final DatabaseCipher cipher;
+	private final RestTemplate restTemplate;
+	private final PropertiesData properties;
 
-	private final MerchantService merchantService;
+	public BillingPlan create(Long orderId, Long duration) {
+		log.info("BillingPlanService - createBillingPlan: orderId=" + orderId);
 
-	private final OrderRepository orderRepository;
-
-	public BillingPlan readOne(Long id) {
-		log.info("BillingPlanService - readOne: id=" + id);
-		return planRepository.getById(id);
-	}
-
-	public Product createProduct(Order order) {
-		log.info("BillingPlanService - createProduct");
-
-		Merchant merchant = cipher.decrypt(merchantService.findOneByApiKey(order.getMerchantApiKey()));
-		APIContext context = new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox");
-
-		String api = "https://api.sandbox.paypal.com/v1/catalogs/products";
-		String json = "{\n" + "  \"name\": \"Product " + order.getId() + "\",\n" + "  \"type\": \"SERVICE\",\n"
-				+ "  \"category\": \"SOFTWARE\"\n" + "  }]\n" + "}";
-
-		Product product = new Product();
-
-		try {
-			log.info("createProduct - create product using paypal api");
-
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);
-			headers.set("Authorization", context.fetchAccessToken());
-			HttpEntity<String> entity = new HttpEntity<String>(json, headers);
-
-			String res = restTemplate.postForObject(api, entity, String.class);
-
-			Gson gson = new Gson();
-
-			product.setProductId(gson.fromJson(res, JsonObject.class).get("id").getAsString());
-			product.setName(gson.fromJson(res, JsonObject.class).get("name").getAsString());
-		} catch (Exception e) {
-			log.error("createProduct - Error occured while creating paypal product");
-
-			order.setStatus(OrderStatus.FAILED);
-			order.setExecuted(true);
-
-			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-					new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.ERROR)), Void.class);
-
-			orderRepository.save(order);
-		}
-
-		merchant = cipher.encrypt(merchant);
-		return productRepository.save(cipher.encrypt(product));
-	}
-
-	public BillingPlan createBillingPlan(Order order, Product product, Long duration) {
-		log.info("BillingPlanService - createBillingPlan: productId=" + product.getProductId());
-
-		product = cipher.decrypt(product);
-		Merchant merchant = cipher.decrypt(merchantService.findOneByApiKey(order.getMerchantApiKey()));
-		APIContext context = new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox");
-
-		String api = "https://api.sandbox.paypal.com/v1/billing/plans";
-		String json = "{\n" + "  \"name\": \"Subscription - " + product.getName() + "\",\n" + "  \"product_id\": \""
-				+ product.getProductId() + "\",\n" + "  \"billing_cycles\": [{\n" + "    \"frequency\": {\n"
-				+ "      \"interval_unit\": \"MONTH\",\n" + "      \"interval_count\": 1\n" + "    },\n"
-				+ "    \"pricing_scheme\": {\n" + "	    \"fixed_price\": {\n" + "    	  \"value\": \""
-				+ order.getPrice() + "\",\n" + "     	  \"currency_code\": \"" + order.getCurrency() + "\"\n"
-				+ "    	}\n" + "    },\n" + "	\"tenure_type\": \"REGULAR\",\n" + "	\"sequence\": 1,\n"
-				+ "	\"total_cycles\": " + duration + "\n" + "  }],\n" + "  \"payment_preferences\": {\n"
-				+ "    \"payment_failure_threshold\": 3,\n" + "    \"auto_bill_outstanding\": true\n" + "  }\n" + "}";
-
+		Order order = cipher.decrypt(orderRepo.findById(orderId).get());
+		Merchant merchant = cipher
+				.decrypt(merchantRepo.findByMerchantApiKey(cipher.encrypt(order.getMerchantApiKey())));
+		Product product = cipher.decrypt(createProduct(order, merchant));
 		BillingPlan billingPlan = new BillingPlan();
 
 		try {
-			log.info("createBillingPlan - create billing plan using paypal api");
-
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
-			headers.set("Authorization", context.fetchAccessToken());
-			HttpEntity<String> entity = new HttpEntity<String>(json, headers);
-
-			String res = restTemplate.postForObject(api, entity, String.class);
+			headers.set("Authorization",
+					new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox").fetchAccessToken());
 
 			Gson gson = new Gson();
+			String res = restTemplate.postForObject(properties.paypalPlans,
+					new HttpEntity<>("{\n" + "  \"name\": \"Subscription - " + product.getName() + "\",\n"
+							+ "  \"product_id\": \"" + product.getProductId() + "\",\n" + "  \"billing_cycles\": [{\n"
+							+ "    \"frequency\": {\n" + "      \"interval_unit\": \"MONTH\",\n"
+							+ "      \"interval_count\": 1\n" + "    },\n" + "    \"pricing_scheme\": {\n"
+							+ "	    \"fixed_price\": {\n" + "    	  \"value\": \"" + order.getPrice() + "\",\n"
+							+ "     	  \"currency_code\": \"" + order.getCurrency() + "\"\n" + "    	}\n"
+							+ "    },\n" + "	\"tenure_type\": \"REGULAR\",\n" + "	\"sequence\": 1,\n"
+							+ "	\"total_cycles\": " + duration + "\n" + "  }],\n" + "  \"payment_preferences\": {\n"
+							+ "    \"payment_failure_threshold\": 3,\n" + "    \"auto_bill_outstanding\": true\n"
+							+ "  }\n" + "}", headers),
+					String.class);
 
 			billingPlan.setPlanId(gson.fromJson(res, JsonObject.class).get("id").getAsString());
 			billingPlan.setProductId(product.getProductId());
@@ -134,13 +81,43 @@ public class BillingPlanService {
 
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
 					new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.ERROR)), Void.class);
-
-			orderRepository.save(order);
+			orderRepo.save(cipher.encrypt(order));
 		}
 
-		product = cipher.encrypt(product);
-		merchant = cipher.encrypt(merchant);
-		return planRepository.save(cipher.encrypt(billingPlan));
+		return repo.save(cipher.encrypt(billingPlan));
+	}
+
+	private Product createProduct(Order order, Merchant merchant) {
+		log.info("BillingPlanService - createProduct");
+		Product product = new Product();
+
+		try {
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			headers.set("Authorization",
+					new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox").fetchAccessToken());
+
+			Gson gson = new Gson();
+			String res = restTemplate.postForObject(properties.paypalProducts,
+					new HttpEntity<>("{\n" + "  \"name\": \"Product " + order.getId() + "\",\n"
+							+ "  \"type\": \"SERVICE\",\n" + "  \"category\": \"SOFTWARE\"\n" + "  }]\n" + "}",
+							headers),
+					String.class);
+
+			product.setProductId(gson.fromJson(res, JsonObject.class).get("id").getAsString());
+			product.setName(gson.fromJson(res, JsonObject.class).get("name").getAsString());
+		} catch (Exception e) {
+			log.error("createProduct - Error occured while creating paypal product");
+
+			order.setStatus(OrderStatus.FAILED);
+			order.setExecuted(true);
+
+			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
+					new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.ERROR)), Void.class);
+			orderRepo.save(cipher.encrypt(order));
+		}
+
+		return productRepo.save(cipher.encrypt(product));
 	}
 
 }

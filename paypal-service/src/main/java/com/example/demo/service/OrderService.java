@@ -1,13 +1,11 @@
 package com.example.demo.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -17,8 +15,10 @@ import com.example.demo.model.Merchant;
 import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
 import com.example.demo.model.PaymentStatus;
-import com.example.demo.repo.OrderRepository;
+import com.example.demo.repository.MerchantRepository;
+import com.example.demo.repository.OrderRepository;
 import com.example.demo.utils.DatabaseCipher;
+import com.example.demo.utils.PropertiesData;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.paypal.api.payments.Amount;
@@ -28,7 +28,6 @@ import com.paypal.api.payments.PaymentExecution;
 import com.paypal.api.payments.RedirectUrls;
 import com.paypal.api.payments.Transaction;
 import com.paypal.base.rest.APIContext;
-import com.paypal.base.rest.PayPalRESTException;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -38,41 +37,45 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class OrderService {
 
-	private final RestTemplate restTemplate;
-
 	private final OrderRepository repo;
-
-	private final MerchantService merchantService;
-
+	private final MerchantRepository merchantRepo;
 	private final DatabaseCipher cipher;
-
-	public Order findById(Long orderId) {
-		log.info("OrderService - findById: id=" + orderId);
-		return repo.getById(orderId);
-	}
+	private final RestTemplate restTemplate;
+	private final PropertiesData properties;
 
 	public Order save(Order order) {
-		order = repo.save(cipher.encrypt(order));
 		log.info("OrderService - save: id=" + order.getId());
-		return order;
+		return repo.save(cipher.encrypt(order));
 	}
 
-	// Napravimo narudzbu kod paypal-a
-	// Klijent prodavnice onda treba da potvrdi placanje
-	public Order createPayment(Order order) {
-		log.info("OrderService - createPayment: orderId=" + order.getId());
+	public String getDetails(Long id) {
+		try {
+			log.info("OrderService - getDetails: id=" + id);
 
-		Merchant merchant = cipher.decrypt(merchantService.findOneByApiKey(order.getMerchantApiKey()));
-		order = cipher.decrypt(order);
+			Order order = cipher.decrypt(repo.findById(id).get());
+			Merchant merchant = cipher
+					.decrypt(merchantRepo.findByMerchantApiKey(cipher.encrypt(order.getMerchantApiKey())));
+
+			return Payment.get(new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox"),
+					order.getPayPalOrderId()).toJSON();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public Order createPayment(Long id) {
+		log.info("OrderService - createPayment: id=" + id);
+		Order order = cipher.decrypt(repo.findById(id).get());
+		Merchant merchant = cipher
+				.decrypt(merchantRepo.findByMerchantApiKey(cipher.encrypt(order.getMerchantApiKey())));
 
 		Amount amount = new Amount();
-		amount.setCurrency(order.getCurrency());
 		amount.setTotal(order.getPrice().toString());
+		amount.setCurrency(order.getCurrency());
 
 		Transaction transaction = new Transaction();
 		transaction.setAmount(amount);
-		List<Transaction> transactions = new ArrayList<>();
-		transactions.add(transaction);
+		List<Transaction> transactions = List.of(transaction);
 
 		Payer payer = new Payer();
 		payer.setPaymentMethod("paypal");
@@ -83,135 +86,97 @@ public class OrderService {
 		payment.setTransactions(transactions);
 
 		RedirectUrls redirectUrls = new RedirectUrls();
-		redirectUrls.setReturnUrl("https://localhost:8086/view/success_url");
-		redirectUrls.setCancelUrl("https://localhost:8086/view/cancel_url");
+		redirectUrls.setReturnUrl(properties.successUrl);
+		redirectUrls.setCancelUrl(properties.cancelUrl);
 		payment.setRedirectUrls(redirectUrls);
 
-		Payment createdPayment;
 		try {
-			log.info("createPayment - payment create using paypal api");
-			APIContext context = new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox");
-			createdPayment = payment.create(context);
-
+			Payment createdPayment = payment
+					.create(new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox"));
 			if (createdPayment != null) {
-				log.info("createPayment - payment created: payPalOrderId=" + createdPayment.getId());
-				order.setStatus(OrderStatus.CREATED);
 				order.setPayPalOrderId(createdPayment.getId());
+			} else {
+				throw new RuntimeException();
 			}
-		} catch (PayPalRESTException e) {
-			log.error("createPayment - Error occured during payment creation");
+		} catch (Exception e) {
+			log.error("createPayment - Error occured during payment transaction");
 
 			order.setStatus(OrderStatus.FAILED);
 			order.setExecuted(true);
 
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-					new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
+					new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
 		}
-		merchant = cipher.encrypt(merchant);
-		order = repo.save(cipher.encrypt(order));
-		return order;
+
+		return repo.save(cipher.encrypt(order));
 	}
 
-	// Poziva se nakon sto klijent odobri placanje
 	public String completePayment(String paymentId, String payerId) {
-		log.info("OrderService - completePayment: paymentId=" + paymentId + " payedId=" + payerId);
-
-		log.info("completePayment - fetching order by payPalOrderId=" + paymentId);
-		Order order = repo.findByPayPalOrderId(cipher.encrypt(paymentId)).get();
-		Merchant merchant = cipher.decrypt(merchantService.findOneByApiKey(order.getMerchantApiKey()));
+		log.info("OrderService - completePayment: paymentId=" + paymentId + ", payerId=" + payerId);
+		Order order = cipher.decrypt(repo.findByPayPalOrderId(cipher.encrypt(paymentId)).get());
+		Merchant merchant = cipher
+				.decrypt(merchantRepo.findByMerchantApiKey(cipher.encrypt(order.getMerchantApiKey())));
 
 		Payment payment = new Payment();
 		payment.setId(paymentId);
 		PaymentExecution paymentExecution = new PaymentExecution();
 		paymentExecution.setPayerId(payerId);
-
 		Payment completedPayment = new Payment();
 
 		try {
-			log.info("completePayment - payment execution using paypal api");
-			APIContext context = new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox");
-			completedPayment = payment.execute(context, paymentExecution);
+			completedPayment = payment.execute(
+					new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox"), paymentExecution);
 			if (completedPayment != null) {
+
 				order.setStatus(OrderStatus.COMPLETED);
+				order.setExecuted(true);
+
+				restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
+						new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)),
+						Void.class);
+			} else {
+				throw new RuntimeException();
 			}
-		} catch (PayPalRESTException e) {
+		} catch (Exception e) {
 			log.error("completePayment - Error occured during payment execution");
-			System.err.println(e.getDetails());
+
 			order.setStatus(OrderStatus.FAILED);
-		}
-
-		RestTemplate restTemplate = new RestTemplate();
-
-		if (order.getStatus().toString().equalsIgnoreCase("COMPLETED")) {
-			log.info("completePayment - payment execution status=COMPLETED");
 			order.setExecuted(true);
 
-			log.info("completePayment - notifying WebShop @" + order.getCallbackUrl());
-			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-					new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)), Void.class);
-		} else {
-			log.error("completePayment - Error occured during payment execution");
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
 					new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
 		}
 
-		merchant = cipher.encrypt(merchant);
-		repo.save(order);
-
+		repo.save(cipher.encrypt(order));
 		return completedPayment.toJSON();
-	}
-
-	public String getOrderDetails(Long orderId) throws PayPalRESTException {
-		log.info("OrderService - getOrderDetails: orderId=" + orderId);
-
-		Order order = repo.getById(orderId);
-		Merchant merchant = cipher.decrypt(merchantService.findOneByApiKey(order.getMerchantApiKey()));
-
-		APIContext context = new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox");
-		merchant = cipher.encrypt(merchant);
-
-		log.info("getOrderDetails - get payment details using paypal api");
-		Payment payment = Payment.get(context, cipher.decrypt(order.getPayPalOrderId()));
-
-		return payment.toJSON();
-//		String ecToken = null;
-//		for (Links link : payment.getLinks()) {
-//			if (link.getRel().equalsIgnoreCase("approval_url")) {
-//				ecToken = link.getHref().split("token=")[1];
-//				break;
-//			}
-//		}
-//
-//		return "{\"token\": \"" + ecToken+"\"}";
 	}
 
 	@Scheduled(fixedDelay = 300000)
 	public void checkOrders() {
 		log.info("OrderService - checkOrders");
-		List<Order> orders = repo.findAllByExecuted(false);
 
-		for (Order order : orders) {
-			if (order.getPayPalOrderId() == null)
+		for (Order order : repo.findAllByExecuted(false)) {
+			order = cipher.decrypt(order);
+			if (order.getPayPalOrderId() == null) {
 				continue;
-			
-			log.info("Order: id=" + order.getId() + " checking status");
+			}
 
-			Merchant merchant = cipher.decrypt(merchantService.findOneByApiKey(order.getMerchantApiKey()));
-
-			APIContext context = new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox");
-			merchant = cipher.encrypt(merchant);
+			Merchant merchant = cipher
+					.decrypt(merchantRepo.findByMerchantApiKey(cipher.encrypt(order.getMerchantApiKey())));
 
 			try {
-				String apiUrl = "https://api.sandbox.paypal.com/v2/checkout/orders/"
-						+ cipher.decrypt(order.getPayPalOrderId());
 				HttpHeaders headers = new HttpHeaders();
 				headers.setContentType(MediaType.APPLICATION_JSON);
-				headers.set("Authorization", context.fetchAccessToken());
-				HttpEntity entity = new HttpEntity(headers);
+				headers.set("Authorization",
+						new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox")
+								.fetchAccessToken());
 
-				log.info("checkOrders - get payment details using paypal api");
-				ResponseEntity<String> details = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
-				String status = (new Gson()).fromJson(details.getBody(), JsonObject.class).get("status").getAsString();
+				String status = (new Gson())
+						.fromJson(
+								restTemplate.exchange(properties.paypalOrdersCheckout + "/" + order.getPayPalOrderId(),
+										HttpMethod.GET, new HttpEntity<>(headers), String.class).getBody(),
+								JsonObject.class)
+						.get("status").getAsString();
 
 				if (status.equalsIgnoreCase("completed")) {
 					log.info("Order: id=" + order.getId() + " status=COMPLETED");
@@ -221,20 +186,20 @@ public class OrderService {
 					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
 							new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)),
 							Void.class);
+					repo.save(cipher.encrypt(order));
 				}
 
 			} catch (Exception e) {
-				log.error("checkOrders - Error occured while obtaining payment details");
-				e.printStackTrace();
+				log.error("Order: id=" + order.getId() + " status=FAILED");
 				order.setStatus(OrderStatus.FAILED);
 				order.setExecuted(true);
 
 				restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
 						new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
+				repo.save(cipher.encrypt(order));
 			}
 		}
 
-		repo.saveAll(orders);
 	}
 
 }

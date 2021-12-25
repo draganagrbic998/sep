@@ -9,11 +9,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
+@NoArgsConstructor
 @Getter
 @Setter
+@Entity
 public class Subscription {
 
 	@Id
@@ -21,19 +23,19 @@ public class Subscription {
 	private Long id;
 
 	@Column
-	private String subscriptionId;
+	private LocalDateTime createdTimestamp = LocalDateTime.now();
 
 	@Column
-	private String planId;
+	private String subscriptionId;
 
 	@Column
 	private Long orderId;
 
 	@Column
-	private Double price;
+	private String planId;
 
 	@Column
-	private String currency;
+	private String status;
 
 	@Column
 	private String subscriber;
@@ -42,10 +44,10 @@ public class Subscription {
 	private Long duration;
 
 	@Column
-	private String status;
+	private Double price;
 
 	@Column
-	private LocalDateTime createdTimestamp;
+	private String currency;
 
 	@Column
 	private String callbackUrl;
@@ -53,7 +55,4 @@ public class Subscription {
 	@Column
 	private String approveUrl;
 
-	public Subscription() {
-		this.createdTimestamp = LocalDateTime.now();
-	}
 }

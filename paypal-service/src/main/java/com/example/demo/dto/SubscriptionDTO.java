@@ -7,10 +7,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class MerchantDTO {
+public class SubscriptionDTO {
 
-	private String merchantApiKey;
-	private String clientId;
-	private String clientSecret;
+	private String email;
+	private Long duration;
 
 }

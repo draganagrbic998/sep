@@ -1,140 +1,146 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8" />
-<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+  <head>
+    <meta charset="UTF-8" />
 
-<title>Confirm Order</title>
+    <title>Confirm Order</title>
 
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-<link
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
-	rel="stylesheet" type="text/css" />
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 
-<style>
-.rounded-lg {
-	border-radius: 1rem;
-}
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
+      rel="stylesheet"
+      type="text/css"
+    />
 
-.background {
-	background: rgb(70, 205, 255);
-	background: linear-gradient(90deg, rgba(70, 205, 255, 1) 0%,
-		rgba(200, 243, 255, 1) 45%, rgba(200, 243, 255, 1) 55%,
-		rgba(70, 205, 255, 1) 100%);
-}
+    <style>
+      .rounded-lg {
+        border-radius: 1rem;
+      }
 
-.title {
-	padding: 10px;
-	border-bottom: 1px solid lightgrey;
-}
+      .background {
+        background: rgb(70, 205, 255);
+        background: linear-gradient(
+          90deg,
+          rgba(70, 205, 255, 1) 0%,
+          rgba(200, 243, 255, 1) 45%,
+          rgba(200, 243, 255, 1) 55%,
+          rgba(70, 205, 255, 1) 100%
+        );
+      }
 
-.title-container {
-	width: 50%;
-	background-color: rgba(255, 255, 255, 0.4);
-	border-bottom: 3px inset lightgrey;
-}
+      .title-container {
+        width: 50%;
+        background-color: rgba(255, 255, 255, 0.4);
+        border-bottom: 3px inset lightgrey;
+      }
 
-.h1-custom {
-	color: #6e8eff;
-	background: rgb(255, 255, 255);
-	background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%,
-		rgba(255, 255, 255, 1) 15%, rgba(255, 255, 255, 1) 85%,
-		rgba(255, 255, 255, 0) 100%);
-	height: 100%;
-	width: 60%;
-	margin-left: 20%;
-	margin-right: 20%;
-	background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%,
-		rgba(255, 255, 255, 1) 20%, rgba(255, 255, 255, 1) 80%,
-		rgba(255, 255, 255, 0) 100%);
-}
+      .header {
+        color: #6e8eff;
+        background: rgb(255, 255, 255);
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 1) 15%,
+          rgba(255, 255, 255, 1) 85%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        height: 100%;
+        width: 60%;
+        margin-left: 20%;
+        margin-right: 20%;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 1) 20%,
+          rgba(255, 255, 255, 1) 80%,
+          rgba(255, 255, 255, 0) 100%
+        );
+      }
 
-.container-card {
-	border-top: 1px outset lightgrey;
-	border-bottom: 2px inset lightgrey;
-	border-left: 1px outset lightgrey;
-	border-right: 1px inset lightgrey;
-}
-</style>
-</head>
-<body class="background">
-	<div class="row mb-4">
-		<div class="col-lg-12 mx-auto text-center title-container">
-			<h1 class="display-4 h1-custom">Confirm Order</h1>
-		</div>
-	</div>
+      .container-card {
+        border-top: 1px outset lightgrey;
+        border-bottom: 2px inset lightgrey;
+        border-left: 1px outset lightgrey;
+        border-right: 1px inset lightgrey;
+      }
+    </style>
+  </head>
+  <body class="background">
+    <div class="row mb-4">
+      <div class="col-lg-12 mx-auto text-center title-container">
+        <h1 class="display-4 header">Confirm Order</h1>
+      </div>
+    </div>
 
-	<br />
+    <br />
 
-	<div class="row">
-		<div class="col-lg-5 mx-auto">
-			<div class="bg-white rounded-lg shadow-sm p-5 container-card">
-				<div id="paypal-button-container"></div>
-			</div>
-		</div>
-	</div>
-	<script src="https://www.paypal.com/sdk/js?client-id=test&commit=false"></script>
+    <div class="row">
+      <div class="col-lg-5 mx-auto">
+        <div class="bg-white rounded-lg shadow-sm p-5 container-card">
+          <div id="paypal-button-container"></div>
+        </div>
+      </div>
+    </div>
+    <script src="https://www.paypal.com/sdk/js?client-id=test&commit=false"></script>
 
-	<script>
-		var orderId = "[[${orderId}]]";
-		 
-		paypal.Buttons({
-		    env: 'sandbox', /* sandbox | production */
-		    style: {
-		        layout: 'horizontal',   // horizontal | vertical 
-		        size:   'responsive',   /* medium | large | responsive*/
-		        shape:  'pill',         /* pill | rect*/
-		        color:  'gold',         /* gold | blue | silver | black*/
-		        fundingicons: false,    /* true | false */
-		        tagline: false          /* true | false */
-		    }, 
-		 	createOrder: function() {
-		        /* Set up a url on your server to create the order */
-		        var GET_ORDER_URL = 'https://localhost:8086/' + orderId;
-		 
-		        /* Make a call to your server to set up the payment */
-		        return fetch(GET_ORDER_URL)
-		         .then(function(res) {
-		          return res.json();
-		         }).then(function(data) {
-		        	console.log(data);
-		            var token;
+    <script>
+      var orderId = "[[${orderId}]]";
 
-		            for (let link of data.links) {
-		                if (link.rel === 'approval_url') {
-		                    token = link.href.match(/EC-\w+/)[0];
-		                }
-		            }
-		          return token;
-		         });
-		    },
-		 	onCancel: function() {
-		        window.location = 'https://localhost:8086/view/cancel_url';
-		 		
-		 	},
-		    /* onApprove() is called when the buyer approves the payment */
-		    onApprove: function(data, actions) {
-		        /* Set up a url on your server to execute the payment */
-		        var EXECUTE_URL = 'https://localhost:8086/complete/payment/' + data.paymentID + '/' + data.payerID;
-		 
-		        /* Set up the data you need to pass to your server */
-		 
-		        /* Make a call to your server to execute the payment */
-		 
-		        return fetch(EXECUTE_URL)
-		        .then(function(res) {
-		          return res.json();
-		        }).then(function(details) {
-		          window.location = 'https://localhost:8086/view/success_url';
-		        }).catch(function(error) {
-		      	  console.log(error);
-		          window.location = 'https://localhost:8086/view/error_url';
-		        });
-		    }
-		 
-		}).render('#paypal-button-container');
-		 
-	</script>
-</body>
+      paypal
+        .Buttons({
+          env: "sandbox",
+          style: {
+            layout: "horizontal",
+            size: "responsive",
+            shape: "pill",
+            color: "gold",
+            fundingicons: false,
+            tagline: false,
+          },
+          createOrder: function () {
+            return fetch("https://localhost:8086/" + orderId)
+              .then(function (res) {
+                return res.json();
+              })
+              .then(function (data) {
+                var token;
+
+                for (let link of data.links) {
+                  if (link.rel === "approval_url") {
+                    token = link.href.match(/EC-\w+/)[0];
+                  }
+                }
+                return token;
+              });
+          },
+          onCancel: function () {
+            window.location = "https://localhost:8086/view/cancel_url";
+          },
+          onApprove: function (data, actions) {
+            return fetch(
+              (EXECUTE_URL =
+                "https://localhost:8086/complete_payment/" +
+                data.paymentID +
+                "/" +
+                data.payerID)
+            )
+              .then(function (res) {
+                return res.json();
+              })
+              .then(function (details) {
+                window.location = "https://localhost:8086/view/success_url";
+              })
+              .catch(function (error) {
+                window.location = "https://localhost:8086/view/error_url";
+              });
+          },
+        })
+        .render("#paypal-button-container");
+    </script>
+  </body>
 </html>

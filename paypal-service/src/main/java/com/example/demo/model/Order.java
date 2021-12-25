@@ -25,29 +25,30 @@ public class Order {
 	private Long id;
 
 	@Column
-	private String payPalOrderId;
-
-	@Column
 	private LocalDateTime createdTimestamp;
-
-	@Column
-	private String merchantApiKey;
 
 	@Column
 	private OrderStatus status;
 
 	@Column
-	private String currency;
-
-	@Column
 	private Double price;
 
 	@Column
-	private Boolean executed = false;
+	private String currency;
+
+	@Column
+	private String payPalOrderId;
+
+	@Column
+	private String merchantApiKey;
 
 	@Column
 	private String redirectUrl;
 
 	@Column
 	private String callbackUrl;
+
+	@Column
+	private Boolean executed = false;
+
 }
