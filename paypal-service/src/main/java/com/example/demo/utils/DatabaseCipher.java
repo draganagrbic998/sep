@@ -101,18 +101,18 @@ public class DatabaseCipher {
 	}
 
 	public Subscription encrypt(Subscription subscription) {
-		subscription.setApproveUrl(encrypt(subscription.getApproveUrl()));
-		subscription.setSubscriber(encrypt(subscription.getSubscriber()));
 		subscription.setSubscriptionId(encrypt(subscription.getSubscriptionId()));
 		subscription.setPlanId(encrypt(subscription.getPlanId()));
+		subscription.setSubscriber(encrypt(subscription.getSubscriber()));
+		subscription.setApproveUrl(encrypt(subscription.getApproveUrl()));
 		return subscription;
 	}
 
 	public Subscription decrypt(Subscription subscription) {
-		subscription.setApproveUrl(decrypt(subscription.getApproveUrl()));
-		subscription.setSubscriber(decrypt(subscription.getSubscriber()));
 		subscription.setSubscriptionId(decrypt(subscription.getSubscriptionId()));
 		subscription.setPlanId(decrypt(subscription.getPlanId()));
+		subscription.setSubscriber(decrypt(subscription.getSubscriber()));
+		subscription.setApproveUrl(decrypt(subscription.getApproveUrl()));
 		return subscription;
 	}
 

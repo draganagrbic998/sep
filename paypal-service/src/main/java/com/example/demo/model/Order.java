@@ -1,7 +1,5 @@
 package com.example.demo.model;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,25 +23,19 @@ public class Order {
 	private Long id;
 
 	@Column
-	private LocalDateTime createdTimestamp;
-
-	@Column
-	private OrderStatus status;
-
-	@Column
-	private Double price;
-
-	@Column
-	private String currency;
-
-	@Column
 	private String payPalOrderId;
 
 	@Column
 	private String merchantApiKey;
 
 	@Column
-	private String redirectUrl;
+	private OrderStatus status = OrderStatus.CREATED;
+
+	@Column
+	private Double price;
+
+	@Column
+	private String currency;
 
 	@Column
 	private String callbackUrl;
