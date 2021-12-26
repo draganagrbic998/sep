@@ -47,40 +47,37 @@ public class SubscriptionService {
 
 	public Subscription create(Long orderId, SubscriptionDTO dto) {
 		log.info("SubscriptionService - create: orderId=" + orderId);
-		BillingPlan plan = cipher.decrypt(planService.create(orderId, dto.getDuration()));
+		BillingPlan plan = planService.create(orderId, dto.getDuration());
 
 		Optional<Subscription> subscriptionOptional = repo.findByPlanId(plan.getPlanId());
 		if (subscriptionOptional.isPresent()) {
-			log.warn("create - subrscription already created: planId=" + plan.getPlanId());
-			return subscriptionOptional.get();
+			log.warn("create - subrscription already created: planId=" + cipher.decrypt(plan.getPlanId()));
+			return cipher.decrypt(subscriptionOptional.get()); // is this fine?
 		}
 
-		Order order = cipher.decrypt(orderRepo.findById(orderId).get());
-		Merchant merchant = cipher
-				.decrypt(merchantRepo.findByMerchantApiKey(cipher.encrypt(order.getMerchantApiKey())));
+		Order order = orderRepo.findById(orderId).get();
+		Merchant merchant = merchantRepo.findByMerchantApiKey(order.getMerchantApiKey());
 		Subscription subscription = new Subscription();
 
 		try {
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
-			headers.set("Authorization",
-					new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox").fetchAccessToken());
+			headers.set("Authorization", new APIContext(cipher.decrypt(merchant.getClientId()),
+					cipher.decrypt(merchant.getClientSecret()), "sandbox").fetchAccessToken());
 
 			Gson gson = new Gson();
-			String res = restTemplate
-					.exchange(properties.paypalSubscriptions, HttpMethod.POST,
-							new HttpEntity<String>("{\n" + "  \"plan_id\": \"" + plan.getPlanId() + "\",\n"
-									+ "  \"start_time\": \""
-									+ new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(
-											new Date(new Date().getTime() + 600000))
-									+ "\",\n" + "  \"subscirber\": {\n" + "    \"email_address\": \"" + dto.getEmail()
-									+ "\"\n" + "  }" + "}", headers),
-							String.class)
-					.getBody();
+			String res = restTemplate.exchange(properties.paypalSubscriptions, HttpMethod.POST,
+					new HttpEntity<String>("{\n" + "  \"plan_id\": \"" + cipher.decrypt(plan.getPlanId()) + "\",\n"
+							+ "  \"start_time\": \""
+							+ new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+									.format(new Date(new Date().getTime() + 600000))
+							+ "\",\n" + "  \"subscirber\": {\n" + "    \"email_address\": \"" + dto.getEmail() + "\"\n"
+							+ "  }" + "}", headers),
+					String.class).getBody();
 
 			subscription.setSubscriptionId(gson.fromJson(res, JsonObject.class).get("id").getAsString());
 			subscription.setOrderId(order.getId());
-			subscription.setPlanId(plan.getPlanId());
+			subscription.setPlanId(cipher.decrypt(plan.getPlanId()));
 
 			subscription.setStatus(gson.fromJson(res, JsonObject.class).get("status").getAsString());
 			subscription.setSubscriber(dto.getEmail());
@@ -110,17 +107,19 @@ public class SubscriptionService {
 		try {
 			log.info("SubscriptionService - getDetails: subscriptionDBId=" + subscriptionDBId);
 
-			Subscription subscription = cipher.decrypt(repo.findById(subscriptionDBId).get());
-			Merchant merchant = cipher.decrypt(merchantRepo.findByMerchantApiKey(
-					cipher.encrypt(orderRepo.getById(subscription.getOrderId()).getMerchantApiKey())));
+			Subscription subscription = repo.findById(subscriptionDBId).get();
+			Merchant merchant = merchantRepo
+					.findByMerchantApiKey(orderRepo.getById(subscription.getOrderId()).getMerchantApiKey());
 
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
-			headers.set("Authorization",
-					new APIContext(merchant.getClientId(), merchant.getClientSecret(), "sandbox").fetchAccessToken());
+			headers.set("Authorization", new APIContext(cipher.decrypt(merchant.getClientId()),
+					cipher.decrypt(merchant.getClientSecret()), "sandbox").fetchAccessToken());
 
-			return restTemplate.exchange(properties.paypalSubscriptions + "/" + subscription.getSubscriptionId(),
-					HttpMethod.GET, new HttpEntity<>(headers), String.class).getBody();
+			return restTemplate
+					.exchange(properties.paypalSubscriptions + "/" + cipher.decrypt(subscription.getSubscriptionId()),
+							HttpMethod.GET, new HttpEntity<>(headers), String.class)
+					.getBody();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -130,8 +129,8 @@ public class SubscriptionService {
 		log.info("SubscriptionService - complete: subscriptionId=" + subscriptionId + ", subscriptionDBId="
 				+ subscriptionDBId);
 
-		Subscription subscription = cipher.decrypt(repo.findById(subscriptionDBId).get());
-		Order order = cipher.decrypt(orderRepo.getById(subscription.getOrderId()));
+		Subscription subscription = repo.findById(subscriptionDBId).get();
+		Order order = orderRepo.getById(subscription.getOrderId());
 
 		try {
 			if (new Gson().fromJson(getDetails(subscriptionDBId), JsonObject.class).get("status").getAsString()
@@ -146,14 +145,15 @@ public class SubscriptionService {
 						new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)),
 						Void.class);
 			} else {
-				log.error("activateSubscription - Error occured during subscription activation");
+				log.info("activateSubscription - subscription activated");
 
-				subscription.setStatus("FAILED");
-				order.setStatus(OrderStatus.FAILED);
+				subscription.setStatus("ACTIVE");
+				order.setStatus(OrderStatus.COMPLETED);
 				order.setExecuted(true);
 
 				restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-						new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
+						new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)),
+						Void.class);
 			}
 		} catch (Exception e) {
 			log.error("activateSubscription - Error occured during subscription details retrieval");
@@ -167,7 +167,7 @@ public class SubscriptionService {
 		}
 
 		orderRepo.save(order);
-		return repo.save(cipher.encrypt(subscription)).getStatus();
+		return repo.save(subscription).getStatus();
 	}
 
 	@Scheduled(fixedDelay = 300000)
@@ -175,7 +175,7 @@ public class SubscriptionService {
 		log.info("SubscriptionService - checkSubscriptions");
 
 		for (Subscription subscription : repo.findAllByStatus("APPROVAL_PENDING")) {
-			Order order = cipher.decrypt(orderRepo.getById(subscription.getOrderId()));
+			Order order = orderRepo.getById(subscription.getOrderId());
 
 			try {
 				if (new Gson().fromJson(getDetails(subscription.getId()), JsonObject.class).get("status").getAsString()
@@ -183,8 +183,6 @@ public class SubscriptionService {
 					log.info("Subscription: id=" + subscription.getId() + " status=ACTIVE");
 
 					subscription.setStatus("ACTIVE");
-					repo.save(cipher.encrypt(subscription));
-
 					order.setStatus(OrderStatus.COMPLETED);
 					order.setExecuted(true);
 
@@ -195,8 +193,6 @@ public class SubscriptionService {
 					log.error("Subscription: id=" + subscription.getId() + " status=FAILED");
 
 					subscription.setStatus("FAILED");
-					repo.save(cipher.encrypt(subscription));
-
 					order.setStatus(OrderStatus.FAILED);
 					order.setExecuted(true);
 
@@ -208,14 +204,15 @@ public class SubscriptionService {
 				log.error("checkSubscriptions - Error occured during subscription details retrieval");
 
 				subscription.setStatus("ERROR");
-				repo.save(cipher.encrypt(subscription));
-
 				order.setStatus(OrderStatus.FAILED);
 				order.setExecuted(true);
 
 				restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
 						new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.ERROR)), Void.class);
 			}
+
+			orderRepo.save(order);
+			repo.save(subscription);
 		}
 
 	}

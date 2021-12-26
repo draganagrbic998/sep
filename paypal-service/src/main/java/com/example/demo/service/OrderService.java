@@ -108,6 +108,7 @@ public class OrderService {
 					new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
 		}
 
+		merchantRepo.save(cipher.encrypt(merchant));
 		return repo.save(cipher.encrypt(order));
 	}
 
@@ -147,6 +148,7 @@ public class OrderService {
 					new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
 		}
 
+		merchantRepo.save(cipher.encrypt(merchant));
 		repo.save(cipher.encrypt(order));
 		return completedPayment.toJSON();
 	}
@@ -186,7 +188,6 @@ public class OrderService {
 					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
 							new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)),
 							Void.class);
-					repo.save(cipher.encrypt(order));
 				}
 
 			} catch (Exception e) {
@@ -196,8 +197,11 @@ public class OrderService {
 
 				restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
 						new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
-				repo.save(cipher.encrypt(order));
 			}
+			
+			merchantRepo.save(cipher.encrypt(merchant));
+			repo.save(cipher.encrypt(order));
+
 		}
 
 	}

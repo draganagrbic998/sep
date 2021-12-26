@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.model.Merchant;
-import com.example.demo.model.Order;
 import com.example.demo.repository.MerchantRepository;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.SubscriptionRepository;
@@ -26,9 +25,7 @@ public class ViewController {
 
 	@RequestMapping("/paypal_payment/{orderId}")
 	public String paypalPayment(@PathVariable Long orderId, Model model) {
-		Order order = cipher.decrypt(orderRepo.findById(orderId).get());
 		model.addAttribute("orderId", orderId);
-		model.addAttribute("payPalOrderId", order.getPayPalOrderId());
 		return "confirmOrder";
 	}
 

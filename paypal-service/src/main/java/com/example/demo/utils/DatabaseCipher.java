@@ -26,7 +26,7 @@ public class DatabaseCipher {
 	private IvParameterSpec ips;
 
 	public String encrypt(String plainText) {
-		if (plainText.isBlank()) {
+		if (plainText == null || plainText.isBlank()) {
 			return plainText;
 		}
 		try {
@@ -39,6 +39,9 @@ public class DatabaseCipher {
 	}
 
 	public String decrypt(String cipherText) {
+		if (cipherText == null) {
+			return cipherText;
+		}
 		try {
 			cipher.init(Cipher.DECRYPT_MODE, key, ips);
 			return new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)));

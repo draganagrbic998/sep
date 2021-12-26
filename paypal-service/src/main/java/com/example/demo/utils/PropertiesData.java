@@ -21,7 +21,7 @@ public class PropertiesData {
 	@Value("${success-url}")
 	public String successUrl;
 
-	@Value("${cancelUrl}")
+	@Value("${cancel-url}")
 	public String cancelUrl;
 
 	@Value("${paypal-payment-url}")
