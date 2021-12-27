@@ -12,7 +12,7 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/view")
 public class ViewController {
 
-	@RequestMapping("/paypal_payment/{orderId}")
+	@RequestMapping("/bitcoin_payment/{orderId}")
 	public String paypalPayment(@PathVariable Long orderId, Model model) {
 		model.addAttribute("orderId", orderId);
 		return "confirmOrder";

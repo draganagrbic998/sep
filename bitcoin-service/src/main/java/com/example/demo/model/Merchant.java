@@ -21,10 +21,7 @@ public class Merchant {
 	private Long id;
 
 	@Column
-	private String clientId;
-
-	@Column
-	private String clientSecret;
+	private String coingateToken;
 
 	@Column
 	private String merchantApiKey;

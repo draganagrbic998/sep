@@ -38,14 +38,8 @@ public class OrderController {
 	@GetMapping("/pay/{orderId}")
 	public ModelAndView pay(@PathVariable Long orderId) {
 		log.info("OrderController - pay: orderId=" + orderId);
-		return new ModelAndView("redirect:" + properties.chooseTypeUrl + "/" + orderId);
-	}
-
-	@GetMapping("/create_payment/{orderId}")
-	public ModelAndView createPayment(@PathVariable Long orderId) {
-		log.info("OrderController - createPayment");
 		service.createPayment(orderId);
-		return new ModelAndView("redirect:" + properties.paypalPaymentUrl + "/" + orderId);
+		return new ModelAndView("redirect:" + properties.bitcoinPaymentUrl + "/" + orderId);
 	}
 
 	@GetMapping(value = "/complete_payment/{paymentId}/{payerId}")

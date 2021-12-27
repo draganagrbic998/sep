@@ -23,7 +23,7 @@ public class Order {
 	private Long id;
 
 	@Column
-	private String payPalOrderId;
+	private String coingateOrderId;
 
 	@Column
 	private String merchantApiKey;

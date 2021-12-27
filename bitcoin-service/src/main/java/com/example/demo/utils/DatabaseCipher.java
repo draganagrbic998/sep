@@ -49,27 +49,25 @@ public class DatabaseCipher {
 	}
 
 	public Merchant encrypt(Merchant merchant) {
-		merchant.setClientId(encrypt(merchant.getClientId()));
-		merchant.setClientSecret(encrypt(merchant.getClientSecret()));
+		merchant.setCoingateToken(encrypt(merchant.getCoingateToken()));
 		merchant.setMerchantApiKey(encrypt(merchant.getMerchantApiKey()));
 		return merchant;
 	}
 
 	public Merchant decrypt(Merchant merchant) {
-		merchant.setClientId(decrypt(merchant.getClientId()));
-		merchant.setClientSecret(decrypt(merchant.getClientSecret()));
+		merchant.setCoingateToken(decrypt(merchant.getCoingateToken()));
 		merchant.setMerchantApiKey(decrypt(merchant.getMerchantApiKey()));
 		return merchant;
 	}
 
 	public Order encrypt(Order order) {
-		order.setPayPalOrderId(encrypt(order.getPayPalOrderId()));
+		order.setCoingateOrderId(encrypt(order.getCoingateOrderId()));
 		order.setMerchantApiKey(encrypt(order.getMerchantApiKey()));
 		return order;
 	}
 
 	public Order decrypt(Order order) {
-		order.setPayPalOrderId(decrypt(order.getPayPalOrderId()));
+		order.setCoingateOrderId(decrypt(order.getCoingateOrderId()));
 		order.setMerchantApiKey(decrypt(order.getMerchantApiKey()));
 		return order;
 	}
