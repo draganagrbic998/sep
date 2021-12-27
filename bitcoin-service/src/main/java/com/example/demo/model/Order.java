@@ -41,6 +41,6 @@ public class Order {
 	private String callbackUrl;
 
 	@Column
-	private Boolean executed = false;
+	private String paymentUrl;
 
 }

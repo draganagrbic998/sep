@@ -1,9 +1,12 @@
 package com.example.demo.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.example.demo.service.OrderService;
 
 import lombok.AllArgsConstructor;
 
@@ -12,9 +15,12 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/view")
 public class ViewController {
 
+	@Autowired
+	OrderService orderService;
+
 	@RequestMapping("/bitcoin_payment/{orderId}")
 	public String paypalPayment(@PathVariable Long orderId, Model model) {
-		model.addAttribute("orderId", orderId);
+		model.addAttribute("orderPaymentUrl", orderService.findOne(orderId).getPaymentUrl());
 		return "confirmOrder";
 	}
 

@@ -29,23 +29,11 @@ public class OrderController {
 		return ResponseEntity.ok(service.save(dto));
 	}
 
-	@GetMapping("/{id}")
-	public ResponseEntity<String> getDetails(@PathVariable Long id) {
-		log.info("OrderController - getDetails: id=" + id);
-		return ResponseEntity.ok(service.getDetails(id));
-	}
-
 	@GetMapping("/pay/{orderId}")
 	public ModelAndView pay(@PathVariable Long orderId) {
 		log.info("OrderController - pay: orderId=" + orderId);
 		service.createPayment(orderId);
 		return new ModelAndView("redirect:" + properties.bitcoinPaymentUrl + "/" + orderId);
-	}
-
-	@GetMapping(value = "/complete_payment/{paymentId}/{payerId}")
-	public ResponseEntity<String> completePayment(@PathVariable String paymentId, @PathVariable String payerId) {
-		log.info("OrderController - complete");
-		return ResponseEntity.ok(service.completePayment(paymentId, payerId));
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpEntity;
@@ -10,6 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.example.demo.dto.CoingateOrderInfoDTO;
 import com.example.demo.dto.PaymentCompletedDTO;
 import com.example.demo.model.CoingateOrder;
 import com.example.demo.model.Merchant;
@@ -35,23 +37,14 @@ public class OrderService {
 	private final RestTemplate restTemplate;
 	private final PropertiesData properties;
 
+	public Order findOne(Long orderId) {
+		log.info("OrderService - findOne: id=" + orderId);
+		return repo.getById(orderId);
+	}
+
 	public Order save(Order order) {
 		log.info("OrderService - save: id=" + order.getId());
 		return repo.save(cipher.encrypt(order));
-	}
-
-	public String getDetails(Long id) {
-		try {
-			log.info("OrderService - getDetails: id=" + id);
-
-			Order order = cipher.decrypt(repo.findById(id).get());
-			Merchant merchant = cipher
-					.decrypt(merchantRepo.findByMerchantApiKey(cipher.encrypt(order.getMerchantApiKey())));
-
-			return "";
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	public Order createPayment(Long id) {
@@ -81,49 +74,63 @@ public class OrderService {
 				HttpMethod.POST, new HttpEntity<CoingateOrder>(coingateOrder, headers), CoingateOrder.class);
 
 		order.setCoingateOrderId(responseEntity.getBody().getId().toString());
+		order.setPaymentUrl(responseEntity.getBody().getPayment_url());
 
 		merchantRepo.save(cipher.encrypt(merchant));
 		return repo.save(cipher.encrypt(order));
 	}
 
-	public String completePayment(String paymentId, String payerId) {
-		log.info("OrderService - completePayment: paymentId=" + paymentId + ", payerId=" + payerId);
-		Order order = cipher.decrypt(repo.findByPayPalOrderId(cipher.encrypt(paymentId)).get());
-		Merchant merchant = cipher
-				.decrypt(merchantRepo.findByMerchantApiKey(cipher.encrypt(order.getMerchantApiKey())));
-
-		merchantRepo.save(cipher.encrypt(merchant));
-		repo.save(cipher.encrypt(order));
-		return "";
-	}
-
-	@Scheduled(fixedDelay = 300000)
+	// Posto Coingate neam smart buttons moramo ovako
+	// da obavestavamo prodavnicu o ishodu placanja
+	@Scheduled(fixedDelay = 120000)
 	public void checkOrders() {
 		log.info("OrderService - checkOrders");
+		List<Order> orders = repo.findAll();
 
-		for (Order order : repo.findAllByExecuted(false)) {
+		for (Order order : orders) {
 			order = cipher.decrypt(order);
 			if (order.getCoingateOrderId() == null) {
 				continue;
 			}
 
-			Merchant merchant = cipher
-					.decrypt(merchantRepo.findByMerchantApiKey(cipher.encrypt(order.getMerchantApiKey())));
+			if (order.getStatus() == OrderStatus.CREATED || order.getStatus() == OrderStatus.EXPIRED) {
+				Merchant merchant = cipher
+						.decrypt(merchantRepo.findByMerchantApiKey(cipher.encrypt(order.getMerchantApiKey())));
 
-			try {
+				String coingateToken = "Bearer " + merchant.getCoingateToken();
+				HttpHeaders headers = new HttpHeaders();
+				headers.add("Authorization", coingateToken);
+				HttpEntity entity = new HttpEntity(headers);
 
-			} catch (Exception e) {
-				log.error("Order: id=" + order.getId() + " status=FAILED");
-				order.setStatus(OrderStatus.FAILED);
-				order.setExecuted(true);
+				ResponseEntity<CoingateOrderInfoDTO> response = restTemplate.exchange(
+						properties.bitcoinOrders + "/" + order.getCoingateOrderId(), HttpMethod.GET, entity,
+						CoingateOrderInfoDTO.class);
+				CoingateOrderInfoDTO responseBody = response.getBody();
 
-				restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-						new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
+				if (responseBody.getStatus().contentEquals("paid")) {
+					order.setStatus(OrderStatus.COMPLETED);
+
+					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
+							new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)),
+							Void.class);
+				} else if (responseBody.getStatus().contentEquals("expired")) {
+					order.setStatus(OrderStatus.FAILED);
+
+					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
+							new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.FAIL)),
+							Void.class);
+				} else if (responseBody.getStatus().contentEquals("invalid")) {
+					order.setStatus(OrderStatus.FAILED);
+
+					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
+							new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.FAIL)),
+							Void.class);
+				}
+
+				merchantRepo.save(cipher.encrypt(merchant));
+				repo.save(cipher.encrypt(order));
+
 			}
-
-			merchantRepo.save(cipher.encrypt(merchant));
-			repo.save(cipher.encrypt(order));
-
 		}
 
 	}
