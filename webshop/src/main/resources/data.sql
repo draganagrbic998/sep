@@ -15,3 +15,6 @@ values ('merchant3@gmail.com', '$2a$10$aL2cRpbMvSsvTcIGxUoauO4RMefDmYtEEARsmKJpw
 
 insert into product (user_id, name, description, category, price, currency, image_location)
 values (1, 'NAME 1', 'DESCRIPTION 1', 'CATEGORY 1', 1, 'USD', 'IMAGE LOCATION 1');
+
+insert into product (user_id, name, description, category, price, currency, image_location)
+values (1, 'NAME 2', 'DESCRIPTION 2', 'CATEGORY 1', 0.0001, 'BTC', 'IMAGE LOCATION 1');

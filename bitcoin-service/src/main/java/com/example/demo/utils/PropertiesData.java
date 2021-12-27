@@ -9,6 +9,9 @@ public class PropertiesData {
 	@Value("${bitcoin-orders}")
 	public String bitcoinOrders;
 
+	@Value("${complete-url}")
+	public String completeUrl;
+	
 	@Value("${success-url}")
 	public String successUrl;
 
