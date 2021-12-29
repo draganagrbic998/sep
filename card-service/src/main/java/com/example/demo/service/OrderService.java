@@ -1,7 +1,5 @@
 package com.example.demo.service;
 
-import java.util.stream.Collectors;
-
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -41,28 +39,26 @@ public class OrderService {
 
 	public String pay(Long id) {
 		log.info("OrderService - pay: id=" + id);
-		Order order = cipher.decrypt(repo.findById(id).get());
-		Merchant merchant = cipher
-				.decrypt(merchantRepo.findByMerchantApiKey(cipher.encrypt(order.getMerchantApiKey())));
+		Order order = repo.findById(id).get();
+		Merchant merchant = merchantRepo.findByMerchantApiKey(order.getMerchantApiKey());
 
-		log.info("OrderService - create PaymentRequest in bank @" + merchant.getBankUrl());
-		PaymentRequestResponse response = restTemplate
-				.exchange(merchant.getBankUrl() + "/payment-requests", HttpMethod.POST,
-						new HttpEntity<PaymentRequest>(
-								new PaymentRequest(merchant, order, properties.completeUrl, properties.viewUrl)),
-						PaymentRequestResponse.class)
-				.getBody();
+		log.info("OrderService - create PaymentRequest in bank @" + cipher.decrypt(merchant.getBankUrl()));
+		PaymentRequestResponse response = restTemplate.exchange(
+				cipher.decrypt(merchant.getBankUrl()) + "/payment-requests", HttpMethod.POST,
+				new HttpEntity<PaymentRequest>(new PaymentRequest(order, cipher.decrypt(merchant.getMerchantId()),
+						cipher.decrypt(merchant.getMerchantPassword()), properties.completeUrl, properties.viewUrl)),
+				PaymentRequestResponse.class).getBody();
 		return response.getUrl() + "/" + response.getId() + "?qr=" + properties.isQr;
 	}
 
 	public Order complete(Long id, PaymentStatus status) {
 		log.info("OrderService - complete: id=" + id);
-		Order order = cipher.decrypt(repo.findById(id).get());
+		Order order = repo.findById(id).get();
 
 		if (status.equals(PaymentStatus.SUCCESS)) {
 			log.info("Order: id=" + order.getId() + " payment_status=SUCCESS");
 			order.setStatus(OrderStatus.COMPLETED);
-			order = save(cipher.encrypt(order));
+			order = repo.save(order);
 
 			log.info("OrderService - complete: notifying WebShop @" + order.getCallbackUrl());
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
@@ -73,7 +69,7 @@ public class OrderService {
 		} else {
 			log.info("Order: id=" + order.getId() + " payment_status=FAILED");
 			order.setStatus(OrderStatus.FAILED);
-			order = save(cipher.encrypt(order));
+			order = repo.save(order);
 
 			log.info("OrderService - complete: notifying WebShop @" + order.getCallbackUrl());
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
@@ -87,17 +83,17 @@ public class OrderService {
 	public void checkOrders() {
 		log.info("OrderService - checkOrders");
 
-		for (Order order : repo.findAll().stream().map(item -> cipher.decrypt(item)).collect(Collectors.toList())) {
+		for (Order order : repo.findAll()) {
 			if (order.getStatus().equals(OrderStatus.CREATED)) {
 				if (order.getTicks() < 5) {
 					log.info("Order: id=" + order.getId() + " tick=" + order.getTicks() + " - OK");
 					order.setTicks(order.getTicks() + 1);
-					save(cipher.encrypt(order));
+					repo.save(order);
 
 				} else {
 					log.warn("Order: id=" + order.getId() + " tick=" + order.getTicks() + " - FAILED");
 					order.setStatus(OrderStatus.FAILED);
-					save(cipher.encrypt(order));
+					repo.save(order);
 
 					log.info("OrderService - checkOrders: notifying WebShop @" + order.getCallbackUrl());
 					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,

@@ -2,7 +2,6 @@ package com.example.demo.dto;
 
 import java.time.LocalDateTime;
 
-import com.example.demo.model.Merchant;
 import com.example.demo.model.Order;
 
 import lombok.Getter;
@@ -25,9 +24,9 @@ public class PaymentRequest {
 	private Long merchantOrderId;
 	private LocalDateTime merchantTimestamp;
 
-	public PaymentRequest(Merchant merchant, Order order, String completeUrl, String viewUrl) {
-		merchantId = merchant.getMerchantId();
-		merchantPassword = merchant.getMerchantPassword();
+	public PaymentRequest(Order order, String merchantId, String merchantPassword, String completeUrl, String viewUrl) {
+		this.merchantId = merchantId;
+		this.merchantPassword = merchantPassword;
 		amount = order.getPrice();
 		currency = order.getCurrency();
 		callbackUrl = completeUrl + "/" + order.getId();

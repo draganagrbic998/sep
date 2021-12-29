@@ -21,15 +21,15 @@ public class Merchant {
 	private Long id;
 
 	@NotBlank
-	private String merchantApiKey;
-
-	@NotBlank
-	private String bankUrl;
-
-	@NotBlank
 	private String merchantId;
 
 	@NotBlank
 	private String merchantPassword;
+
+	@NotBlank
+	private String merchantApiKey;
+
+	@NotBlank
+	private String bankUrl;
 
 }

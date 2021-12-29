@@ -23,6 +23,9 @@ public class Order {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@NotNull
+	private OrderStatus status = OrderStatus.CREATED;
+
 	@NotBlank
 	private String merchantApiKey;
 
@@ -34,9 +37,6 @@ public class Order {
 
 	@NotBlank
 	private String callbackUrl;
-
-	@NotNull
-	private OrderStatus status = OrderStatus.CREATED;
 
 	@NotNull
 	private Integer ticks = 0;

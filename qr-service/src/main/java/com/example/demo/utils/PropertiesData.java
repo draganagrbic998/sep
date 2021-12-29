@@ -15,4 +15,7 @@ public class PropertiesData {
 	@Value("${is-qr}")
 	public Boolean isQr;
 
+	@Value("${register-url}")
+	public String registerUrl;
+
 }
