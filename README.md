@@ -12,3 +12,8 @@
 1. инсталирати оба .cer сертификата и .der сертификат у JVM (налазе се у resources folder-у од paypal-service-а).
 2. улоговати се у вебшоп као merchant1@gmail.com
 3. направити ордер који има производе са ценом у EUR или USD (динар није подржан од стране sandbox PayPal-a).
+
+Разлике између bank-service-1 и bank-service-2:
+1. application.properties портови
+2. data.sql
+
