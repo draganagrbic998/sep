@@ -21,4 +21,7 @@ public class PropertiesData {
 	@Value("${confirm-url}")
 	public String confirmUrl;
 
+	@Value("${register-url}")
+	public String registerUrl;
+
 }

@@ -55,25 +55,9 @@ public class DatabaseCipher {
 		return client;
 	}
 
-	public Client decrypt(Client client) {
-		client.setCardHolder(decrypt(client.getCardHolder()));
-		client.setPanNumber(decrypt(client.getPanNumber()));
-		client.setExpirationDate(decrypt(client.getExpirationDate()));
-		client.setCvv(decrypt(client.getCvv()));
-		client.setMerchantId(decrypt(client.getMerchantId()));
-		client.setMerchantPassword(decrypt(client.getMerchantPassword()));
-		return client;
-	}
-
 	public PaymentRequest encrypt(PaymentRequest request) {
 		request.setMerchantId(encrypt(request.getMerchantId()));
 		request.setMerchantPassword(encrypt(request.getMerchantPassword()));
-		return request;
-	}
-
-	public PaymentRequest decrypt(PaymentRequest request) {
-		request.setMerchantId(decrypt(request.getMerchantId()));
-		request.setMerchantPassword(decrypt(request.getMerchantPassword()));
 		return request;
 	}
 

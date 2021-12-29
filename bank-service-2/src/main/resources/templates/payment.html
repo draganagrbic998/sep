@@ -165,7 +165,6 @@
                 id="registration"
                 class="btn btn-color btn-block shadow-sm"
                 style="margin: auto; max-width: 100px"
-                th:attr="confirmUrl=${confirmUrl}, requestId=${requestId}"
               >
                 Confirm
               </button>
@@ -178,8 +177,8 @@
       $(document).ready(function () {
         $("#registration").click(function (e) {
           e.preventDefault();
-          var confirmUrl = $(this).attr("confirmUrl");
-          var requestId = $(this).attr("requestId");
+          var confirmUrl = "[[${confirmUrl}]]";
+          var requestId = "[[${requestId}]]";
 
           $.ajax({
             url: confirmUrl + "/" + requestId,

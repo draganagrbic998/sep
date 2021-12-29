@@ -1,7 +1,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
-    <title>Payment Confirmation</title>
+    <title>Client Registration</title>
 
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 
@@ -88,7 +88,7 @@
   <body class="background">
     <div class="row mb-4">
       <div class="col-lg-12 mx-auto text-center title-container">
-        <h1 class="display-4 header">Payment Confirmation</h1>
+        <h1 class="display-4 header">Client Registration</h1>
       </div>
     </div>
 
@@ -177,11 +177,10 @@
       $(document).ready(function () {
         $("#registration").click(function (e) {
           e.preventDefault();
-          var confirmUrl = "[[${confirmUrl}]]";
-          var requestId = "[[${requestId}]]";
+          var registerUrl = "[[${registerUrl}]]";
 
           $.ajax({
-            url: confirmUrl + "/" + requestId,
+            url: registerUrl,
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({
@@ -192,7 +191,7 @@
               mm: $("#mm").val(),
             }),
             success: function (res) {
-              window.location.href = res;
+              alert('Registration done!');
             },
             error: function (res) {
               alert(res.responseText);

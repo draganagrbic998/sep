@@ -31,15 +31,16 @@ public class PccService {
 			log.error("Client: panNumber=" + request.getPanNumber() + " not found.");
 			return new PccResponse(false, false);
 		}
-		Client client = cipher.decrypt(clientOptional.get());
+		Client client = clientOptional.get();
 
-		if (!client.getCardHolder().equals(request.getCardHolder()) || !client.getCvv().equals(request.getCvv())
-				|| !client.getExpirationDate().equals(request.getMm() + "/" + request.getYy())) {
+		if (!cipher.decrypt(client.getCardHolder()).equals(request.getCardHolder())
+				|| !cipher.decrypt(client.getCvv()).equals(request.getCvv())
+				|| !cipher.decrypt(client.getExpirationDate()).equals(request.getMm() + "/" + request.getYy())) {
 			log.error("Client: panNumber=" + request.getPanNumber() + " invalid card data entered.");
 			return new PccResponse(false, false);
 		}
 
-		if (Utils.cardExpired(client)) {
+		if (Utils.cardExpired(cipher.decrypt(client.getExpirationDate()))) {
 			log.error("Client: panNumber=" + request.getCardHolder() + " card expired.");
 			return new PccResponse(false, false);
 		}
@@ -50,7 +51,7 @@ public class PccService {
 		}
 
 		client.decAvailableFunds(rateService.getCurrencyRate(request.getCurrency()) * request.getAmount());
-		clientRepo.save(cipher.encrypt(client));
+		clientRepo.save(client);
 		return new PccResponse(true, true);
 	}
 

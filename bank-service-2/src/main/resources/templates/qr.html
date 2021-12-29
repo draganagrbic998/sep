@@ -15,9 +15,6 @@
       type="text/css"
     />
 
-    <script type="text/javascript" src="jquery.qrcode.js"></script>
-    <script type="text/javascript" src="qrcode.js"></script>
-
     <style>
       .background {
         background: rgb(70, 205, 255);
@@ -100,6 +97,9 @@
     <div class="row">
       <div class="col-lg-7 mx-auto" style="height: 90%">
         <div class="bg-white shadow-sm p-5 rounded-lg container-card">
+          <div style="padding: 10px; text-align: center">
+            <img th:src="@{'data:image/png;base64,'+${qrcode}}" />
+          </div>
 
           <div
             style="
@@ -121,7 +121,6 @@
               id="different-bank"
               class="btn btn-color btn-block shadow-sm"
               style="margin: auto; max-width: 100px"
-              th:attr="confirmUrl=${confirmUrl}, requestId=${requestId}"
             >
               Different Bank
             </button>
@@ -133,8 +132,8 @@
       $(document).ready(function () {
         $("#same-bank").click(function (e) {
           e.preventDefault();
-          var confirmUrl = $(this).attr("confirmUrl");
-          var requestId = $(this).attr("requestId");
+          var confirmUrl = "[[${confirmUrl}]]";
+          var requestId = "[[${requestId}]]";
 
           $.ajax({
             url: confirmUrl + "/" + requestId,
@@ -158,8 +157,8 @@
 
         $("#different-bank").click(function (e) {
           e.preventDefault();
-          var confirmUrl = $(this).attr("confirmUrl");
-          var requestId = $(this).attr("requestId");
+          var confirmUrl = "[[${confirmUrl}]]";
+          var requestId = "[[${requestId}]]";
 
           $.ajax({
             url: confirmUrl + "/" + requestId,

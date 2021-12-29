@@ -45,18 +45,18 @@ public class PaymentRequestService {
 
 	public String confirm(Long id, Customer customer) {
 		log.info("PaymentRequestService - confirm: id=" + id);
-		PaymentRequest request = cipher.decrypt(repo.findById(id).get());
+		PaymentRequest request = repo.findById(id).get();
 		Transaction transaction = transactionRepo.save(new Transaction(request));
 
-		Optional<Client> merchantOptional = clientRepo.findByMerchantId(cipher.encrypt(request.getMerchantId()));
+		Optional<Client> merchantOptional = clientRepo.findByMerchantId(request.getMerchantId());
 		if (!merchantOptional.isPresent()) {
-			log.error("Merchant: id=" + request.getMerchantId() + " not found.");
+			log.error("Merchant: id=" + cipher.decrypt(request.getMerchantId()) + " not found.");
 			return refuse(request, transaction, false);
 		}
-		Client merchant = cipher.decrypt(merchantOptional.get());
+		Client merchant = merchantOptional.get();
 
 		if (!merchant.getMerchantPassword().equals(request.getMerchantPassword())) {
-			log.error("Merchant: id=" + request.getMerchantId() + " invalid password.");
+			log.error("Merchant: id=" + cipher.decrypt(request.getMerchantId()) + " invalid password.");
 			return refuse(request, transaction, true);
 		}
 
@@ -68,15 +68,16 @@ public class PaymentRequestService {
 				log.error("Client: panNumber=" + customer.getPanNumber() + " not found.");
 				return refuse(request, transaction, false);
 			}
-			Client client = cipher.decrypt(clientOptional.get());
+			Client client = clientOptional.get();
 
-			if (!client.getCardHolder().equals(customer.getCardHolder()) || !client.getCvv().equals(customer.getCvv())
-					|| !client.getExpirationDate().equals(customer.getMm() + "/" + customer.getYy())) {
+			if (!cipher.decrypt(client.getCardHolder()).equals(customer.getCardHolder())
+					|| !cipher.decrypt(client.getCvv()).equals(customer.getCvv())
+					|| !cipher.decrypt(client.getExpirationDate()).equals(customer.getMm() + "/" + customer.getYy())) {
 				log.error("Client: panNumber=" + customer.getPanNumber() + " invalid card data entered.");
 				return refuse(request, transaction, false);
 			}
 
-			if (Utils.cardExpired(client)) {
+			if (Utils.cardExpired(cipher.decrypt(client.getExpirationDate()))) {
 				log.error("Client: panNumber=" + customer.getPanNumber() + " card expired.");
 				return refuse(request, transaction, false);
 			}
@@ -88,9 +89,9 @@ public class PaymentRequestService {
 
 			Double rate = rateService.getCurrencyRate(transaction.getCurrency());
 			merchant.incAvailableFunds(rate * request.getAmount());
-			clientRepo.save(cipher.encrypt(merchant));
+			clientRepo.save(merchant);
 			client.decAvailableFunds(rate * request.getAmount());
-			clientRepo.save(cipher.encrypt(client));
+			clientRepo.save(client);
 
 			log.info("PaymentRequestService - notifying card-service @" + request.getCallbackUrl());
 			restTemplate.exchange(request.getCallbackUrl(), HttpMethod.PUT,
@@ -107,7 +108,7 @@ public class PaymentRequestService {
 			if (response.getAuthenticated() && response.getTransactionAuthorized()) {
 				log.info("PccResponse: authenticated=true, transactionAuthorized=true");
 				merchant.incAvailableFunds(rateService.getCurrencyRate(request.getCurrency()) * request.getAmount());
-				clientRepo.save(cipher.encrypt(merchant));
+				clientRepo.save(merchant);
 
 				log.info("PaymentRequestService - notifying card-service @" + request.getCallbackUrl());
 				restTemplate.exchange(request.getCallbackUrl(), HttpMethod.PUT,

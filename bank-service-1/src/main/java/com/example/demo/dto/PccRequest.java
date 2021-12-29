@@ -19,12 +19,12 @@ public class PccRequest {
 	private Double amount;
 	private String currency;
 
-	public PccRequest(PaymentRequest request, Customer client) {
-		cardHolder = client.getCardHolder();
-		panNumber = client.getPanNumber();
-		cvv = client.getCvv();
-		yy = client.getYy();
-		mm = client.getMm();
+	public PccRequest(PaymentRequest request, Customer customer) {
+		cardHolder = customer.getCardHolder();
+		panNumber = customer.getPanNumber();
+		cvv = customer.getCvv();
+		yy = customer.getYy();
+		mm = customer.getMm();
 		amount = request.getAmount();
 		currency = request.getCurrency();
 	}
