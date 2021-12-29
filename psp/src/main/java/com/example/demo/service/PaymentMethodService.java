@@ -7,7 +7,7 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.model.PaymentMethod;
-import com.example.demo.repo.PaymentMethodRepository;
+import com.example.demo.repository.PaymentMethodRepository;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;

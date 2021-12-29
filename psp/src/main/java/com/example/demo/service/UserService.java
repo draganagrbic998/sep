@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.example.demo.dto.Auth;
 import com.example.demo.model.User;
-import com.example.demo.repo.UserRepository;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.security.TokenUtils;
 
 import lombok.AllArgsConstructor;
@@ -67,7 +67,7 @@ public class UserService implements UserDetailsService {
 
 		if (!user.getRole().equals("psp-admin")) {
 			user.setWebshopId(restTemplate
-					.exchange(user.getWebshop() + "/users", HttpMethod.POST, new HttpEntity<User>(user), User.class)
+					.exchange(user.getWebshop() + "/users", HttpMethod.POST, new HttpEntity<>(user), User.class)
 					.getBody().getId());
 		}
 

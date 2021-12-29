@@ -71,7 +71,7 @@ public class OrderService {
 		log.info("createPayment - creating order using coingate api");
 
 		ResponseEntity<CoingateOrder> responseEntity = new RestTemplate().exchange(properties.bitcoinOrders,
-				HttpMethod.POST, new HttpEntity<CoingateOrder>(coingateOrder, headers), CoingateOrder.class);
+				HttpMethod.POST, new HttpEntity<>(coingateOrder, headers), CoingateOrder.class);
 
 		order.setCoingateOrderId(responseEntity.getBody().getId().toString());
 		order.setPaymentUrl(responseEntity.getBody().getPayment_url());
@@ -109,19 +109,19 @@ public class OrderService {
 					order.setStatus(OrderStatus.COMPLETED);
 
 					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-							new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)),
+							new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)),
 							Void.class);
 				} else if (responseBody.getStatus().contentEquals("expired")) {
 					order.setStatus(OrderStatus.FAILED);
 
 					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-							new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.FAIL)),
+							new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.FAIL)),
 							Void.class);
 				} else if (responseBody.getStatus().contentEquals("invalid")) {
 					order.setStatus(OrderStatus.FAILED);
 
 					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-							new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.FAIL)),
+							new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.FAIL)),
 							Void.class);
 				}
 
@@ -153,17 +153,17 @@ public class OrderService {
 			order.setStatus(OrderStatus.COMPLETED);
 
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-					new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)), Void.class);
+					new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)), Void.class);
 		} else if (responseBody.getStatus().contentEquals("expired")) {
 			order.setStatus(OrderStatus.FAILED);
 
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-					new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
+					new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
 		} else if (responseBody.getStatus().contentEquals("invalid")) {
 			order.setStatus(OrderStatus.FAILED);
 
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-					new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
+					new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
 		}
 
 		merchantRepo.save(cipher.encrypt(merchant));

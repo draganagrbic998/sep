@@ -67,7 +67,7 @@ public class SubscriptionService {
 
 			Gson gson = new Gson();
 			String res = restTemplate.exchange(properties.paypalSubscriptions, HttpMethod.POST,
-					new HttpEntity<String>("{\n" + "  \"plan_id\": \"" + cipher.decrypt(plan.getPlanId()) + "\",\n"
+					new HttpEntity<>("{\n" + "  \"plan_id\": \"" + cipher.decrypt(plan.getPlanId()) + "\",\n"
 							+ "  \"start_time\": \""
 							+ new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
 									.format(new Date(new Date().getTime() + 600000))
@@ -96,7 +96,7 @@ public class SubscriptionService {
 			order.setExecuted(true);
 
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-					new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.ERROR)), Void.class);
+					new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.ERROR)), Void.class);
 			orderRepo.save(order);
 		}
 
@@ -142,7 +142,7 @@ public class SubscriptionService {
 				order.setExecuted(true);
 
 				restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-						new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)),
+						new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)),
 						Void.class);
 			} else {
 				log.info("activateSubscription - subscription activated");
@@ -152,7 +152,7 @@ public class SubscriptionService {
 				order.setExecuted(true);
 
 				restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-						new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)),
+						new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)),
 						Void.class);
 			}
 		} catch (Exception e) {
@@ -163,7 +163,7 @@ public class SubscriptionService {
 			order.setExecuted(true);
 
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-					new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.ERROR)), Void.class);
+					new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.ERROR)), Void.class);
 		}
 
 		orderRepo.save(order);
@@ -187,7 +187,7 @@ public class SubscriptionService {
 					order.setExecuted(true);
 
 					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-							new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)),
+							new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)),
 							Void.class);
 				} else {
 					log.error("Subscription: id=" + subscription.getId() + " status=FAILED");
@@ -197,7 +197,7 @@ public class SubscriptionService {
 					order.setExecuted(true);
 
 					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-							new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.FAIL)),
+							new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.FAIL)),
 							Void.class);
 				}
 			} catch (Exception e) {
@@ -208,7 +208,7 @@ public class SubscriptionService {
 				order.setExecuted(true);
 
 				restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-						new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.ERROR)), Void.class);
+						new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.ERROR)), Void.class);
 			}
 
 			orderRepo.save(order);

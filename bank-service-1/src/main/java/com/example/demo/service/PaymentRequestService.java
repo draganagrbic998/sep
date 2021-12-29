@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.example.demo.dto.Customer;
-import com.example.demo.dto.PaymentRequestCompleted;
+import com.example.demo.dto.OrderStatusUpdate;
 import com.example.demo.dto.PccRequest;
 import com.example.demo.dto.PccResponse;
 import com.example.demo.model.Client;
@@ -82,28 +82,29 @@ public class PaymentRequestService {
 				return refuse(request, transaction, false);
 			}
 
-			if (request.getAmount() > client.getAvailableFunds()) {
+			double amount = rateService.getCurrencyRate(transaction.getCurrency()) * request.getAmount();
+			if (amount > client.getAvailableFunds()) {
 				log.error("Client: panNumber=" + customer.getPanNumber() + " not enough available funds.");
 				return refuse(request, transaction, false);
 			}
 
-			Double rate = rateService.getCurrencyRate(transaction.getCurrency());
-			merchant.incAvailableFunds(rate * request.getAmount());
+			merchant.incAvailableFunds(amount);
 			clientRepo.save(merchant);
-			client.decAvailableFunds(rate * request.getAmount());
+			client.decAvailableFunds(amount);
 			clientRepo.save(client);
 
 			log.info("PaymentRequestService - notifying card-service @" + request.getCallbackUrl());
 			restTemplate.exchange(request.getCallbackUrl(), HttpMethod.PUT,
-					new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.SUCCESS)),
-					Void.class);
+					new HttpEntity<>(new OrderStatusUpdate(PaymentStatus.SUCCESS)), Void.class);
 			return request.getSuccessUrl();
 		} else {
 			log.info("Client: panNumber=" + customer.getPanNumber() + " doesn't have an account in this bank.");
 			log.info("PaymentRequestService - sending PccRequest to PCC @" + properties.pccURL);
 
-			PccResponse response = restTemplate.exchange(properties.pccURL, HttpMethod.POST,
-					new HttpEntity<PccRequest>(new PccRequest(request, customer)), PccResponse.class).getBody();
+			PccResponse response = restTemplate
+					.exchange(properties.pccURL, HttpMethod.POST,
+							new HttpEntity<>(new PccRequest(customer, request, transaction.getId())), PccResponse.class)
+					.getBody();
 
 			if (response.getAuthenticated() && response.getTransactionAuthorized()) {
 				log.info("PccResponse: authenticated=true, transactionAuthorized=true");
@@ -112,8 +113,7 @@ public class PaymentRequestService {
 
 				log.info("PaymentRequestService - notifying card-service @" + request.getCallbackUrl());
 				restTemplate.exchange(request.getCallbackUrl(), HttpMethod.PUT,
-						new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.SUCCESS)),
-						Void.class);
+						new HttpEntity<>(new OrderStatusUpdate(PaymentStatus.SUCCESS)), Void.class);
 				return request.getSuccessUrl();
 			}
 
@@ -136,7 +136,7 @@ public class PaymentRequestService {
 		transaction.setStatus(error ? PaymentStatus.ERROR : PaymentStatus.FAIL);
 		transactionRepo.save(transaction);
 		restTemplate.exchange(request.getCallbackUrl(), HttpMethod.PUT,
-				new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.FAIL)), Void.class);
+				new HttpEntity<>(new OrderStatusUpdate(PaymentStatus.FAIL)), Void.class);
 		return error ? request.getErrorUrl() : request.getFailUrl();
 	}
 

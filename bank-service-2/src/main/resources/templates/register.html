@@ -166,7 +166,7 @@
                 class="btn btn-color btn-block shadow-sm"
                 style="margin: auto; max-width: 100px"
               >
-                Confirm
+                Register
               </button>
             </form>
           </div>
@@ -177,10 +177,9 @@
       $(document).ready(function () {
         $("#registration").click(function (e) {
           e.preventDefault();
-          var registerUrl = "[[${registerUrl}]]";
 
           $.ajax({
-            url: registerUrl,
+            url: "[[${registerUrl}]]",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({

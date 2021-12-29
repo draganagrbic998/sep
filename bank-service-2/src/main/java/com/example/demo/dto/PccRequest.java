@@ -1,5 +1,7 @@
 package com.example.demo.dto;
 
+import java.util.Date;
+
 import com.example.demo.model.PaymentRequest;
 
 import lombok.Getter;
@@ -18,8 +20,10 @@ public class PccRequest {
 	private String mm;
 	private Double amount;
 	private String currency;
+	private Long acquirerOrderId;
+	private Date acquirerTimestamp;
 
-	public PccRequest(PaymentRequest request, Customer customer) {
+	public PccRequest(Customer customer, PaymentRequest request, Long transactionId) {
 		cardHolder = customer.getCardHolder();
 		panNumber = customer.getPanNumber();
 		cvv = customer.getCvv();
@@ -27,6 +31,8 @@ public class PccRequest {
 		mm = customer.getMm();
 		amount = request.getAmount();
 		currency = request.getCurrency();
+		acquirerOrderId = transactionId;
+		acquirerTimestamp = new Date();
 	}
 
 }

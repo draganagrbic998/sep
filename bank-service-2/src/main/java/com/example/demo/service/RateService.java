@@ -23,7 +23,7 @@ public class RateService {
 
 	private final PropertiesData properties;
 
-	public Double getCurrencyRate(String currency) {
+	public double getCurrencyRate(String currency) {
 		currency = currency.toLowerCase();
 		if (currency.equals("rsd")) {
 			return 1.0;

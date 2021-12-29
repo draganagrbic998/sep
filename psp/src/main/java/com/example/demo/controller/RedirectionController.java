@@ -28,7 +28,8 @@ public class RedirectionController {
 	@PostMapping("/{method}")
 	public ResponseEntity<Order> pay(@PathVariable String method, @RequestBody Order dto) {
 		log.info("RedirectionController - sending order to payment service: name=" + method);
-		return ResponseEntity.ok(restTemplate.exchange(properties.zuulGatewayUrl + "/" + method, HttpMethod.POST,
-				new HttpEntity<Order>(dto), Order.class).getBody());
+		return ResponseEntity.ok(restTemplate
+				.exchange(properties.zuulGatewayUrl + "/" + method, HttpMethod.POST, new HttpEntity<>(dto), Order.class)
+				.getBody());
 	}
 }

@@ -109,7 +109,7 @@
             <h5 class="card-title title" th:text="${method.name}"></h5>
             <button
               class="btn btn-color selection"
-              th:attr="zuulGatewayUrl=${zuulGatewayUrl}, payUrl=${payUrl}, method=${method.name}, merchantApiKey=${merchantApiKey},  price=${price}, currency=${currency}, callbackUrl=${callbackUrl}"
+              th:attr="method=${method.name}"
             >
               Confirm
             </button>
@@ -122,23 +122,21 @@
       $(document).ready(function () {
         $(".selection").click(function (e) {
           e.preventDefault();
-          var zuulGatewayUrl = $(this).attr("zuulGatewayUrl");
-          var payUrl = $(this).attr("payUrl");
           var method = $(this).attr("method");
 
           $.ajax({
-            url: payUrl + "/" + method,
+            url: "[[${payUrl}]]" + "/" + method,
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({
-              merchantApiKey: $(this).attr("merchantApiKey"),
-              price: $(this).attr("price"),
-              currency: $(this).attr("currency"),
-              callbackUrl: $(this).attr("callbackUrl"),
+              merchantApiKey: "[[${merchantApiKey}]]",
+              price: "[[${price}]]",
+              currency: "[[${currency}]]",
+              callbackUrl: "[[${callbackUrl}]]",
             }),
             success: function (res) {
               window.location.href =
-                zuulGatewayUrl + "/" + method + "/pay/" + res.id;
+              "[[${zuulGatewayUrl}]]" + "/" + method + "/pay/" + res.id;
             },
             error: function (res) {
               alert(res.responseText);

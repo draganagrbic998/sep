@@ -177,11 +177,9 @@
       $(document).ready(function () {
         $("#registration").click(function (e) {
           e.preventDefault();
-          var confirmUrl = "[[${confirmUrl}]]";
-          var requestId = "[[${requestId}]]";
 
           $.ajax({
-            url: confirmUrl + "/" + requestId,
+            url: "[[${confirmUrl}]]" + "/" + "[[${requestId}]]",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({

@@ -44,12 +44,6 @@ public class DatabaseCipher {
 		}
 	}
 
-	public Bank encrypt(Bank bank) {
-		bank.setUrl(encrypt(bank.getUrl()));
-		bank.setPanNumber(encrypt(bank.getPanNumber()));
-		return bank;
-	}
-
 	public Bank decrypt(Bank bank) {
 		bank.setUrl(decrypt(bank.getUrl()));
 		bank.setPanNumber(decrypt(bank.getPanNumber()));

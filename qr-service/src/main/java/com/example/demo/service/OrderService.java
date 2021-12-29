@@ -6,8 +6,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.example.demo.dto.OrderStatusUpdate;
 import com.example.demo.dto.PaymentRequest;
-import com.example.demo.dto.PaymentRequestCompleted;
 import com.example.demo.dto.PaymentRequestResponse;
 import com.example.demo.model.Merchant;
 import com.example.demo.model.Order;
@@ -45,7 +45,7 @@ public class OrderService {
 		log.info("OrderService - create PaymentRequest in bank @" + cipher.decrypt(merchant.getBankUrl()));
 		PaymentRequestResponse response = restTemplate.exchange(
 				cipher.decrypt(merchant.getBankUrl()) + "/payment-requests", HttpMethod.POST,
-				new HttpEntity<PaymentRequest>(new PaymentRequest(order, cipher.decrypt(merchant.getMerchantId()),
+				new HttpEntity<>(new PaymentRequest(order, cipher.decrypt(merchant.getMerchantId()),
 						cipher.decrypt(merchant.getMerchantPassword()), properties.completeUrl, properties.viewUrl)),
 				PaymentRequestResponse.class).getBody();
 		return response.getUrl() + "/" + response.getId() + "?qr=" + properties.isQr;
@@ -58,23 +58,21 @@ public class OrderService {
 		if (status.equals(PaymentStatus.SUCCESS)) {
 			log.info("Order: id=" + order.getId() + " payment_status=SUCCESS");
 			order.setStatus(OrderStatus.COMPLETED);
-			order = repo.save(order);
+			repo.save(order);
 
 			log.info("OrderService - complete: notifying WebShop @" + order.getCallbackUrl());
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-					new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.SUCCESS)),
-					Void.class);
+					new HttpEntity<>(new OrderStatusUpdate(PaymentStatus.SUCCESS)), Void.class);
 			return order;
 
 		} else {
 			log.info("Order: id=" + order.getId() + " payment_status=FAILED");
 			order.setStatus(OrderStatus.FAILED);
-			order = repo.save(order);
+			repo.save(order);
 
 			log.info("OrderService - complete: notifying WebShop @" + order.getCallbackUrl());
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-					new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.FAIL)),
-					Void.class);
+					new HttpEntity<>(new OrderStatusUpdate(PaymentStatus.FAIL)), Void.class);
 			return order;
 		}
 	}
@@ -97,8 +95,7 @@ public class OrderService {
 
 					log.info("OrderService - checkOrders: notifying WebShop @" + order.getCallbackUrl());
 					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-							new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.FAIL)),
-							Void.class);
+							new HttpEntity<>(new OrderStatusUpdate(PaymentStatus.FAIL)), Void.class);
 
 				}
 			}

@@ -69,6 +69,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/image_**").permitAll().and().cors().and()
 				.addFilterBefore(new AuthFilter(userService, tokenUtils), BasicAuthenticationFilter.class).csrf()
 				.disable().headers().frameOptions().disable();
+
+		http.headers().xssProtection();
 	}
 
 }

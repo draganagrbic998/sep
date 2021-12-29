@@ -30,7 +30,7 @@ public class PccController {
 		String bankUrl = bankService.findByPanNumber(dto.getPanNumber().substring(0, 6)).getUrl();
 		log.info("PccController - redirect: notifying buyer bank @" + bankUrl);
 		return ResponseEntity.ok(restTemplate
-				.exchange(bankUrl + "/pcc", HttpMethod.POST, new HttpEntity<PccRequest>(dto), PccResponse.class)
+				.exchange(bankUrl + "/pcc", HttpMethod.POST, new HttpEntity<>(dto), PccResponse.class)
 				.getBody());
 	}
 

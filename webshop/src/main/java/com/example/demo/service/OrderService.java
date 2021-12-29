@@ -12,8 +12,10 @@ import com.example.demo.model.CartItem;
 import com.example.demo.model.Order;
 import com.example.demo.model.OrderStatus;
 import com.example.demo.model.PaymentStatus;
+import com.example.demo.model.Transaction;
 import com.example.demo.repository.CartItemRepository;
 import com.example.demo.repository.OrderRepository;
+import com.example.demo.repository.TransactionRepository;
 import com.example.demo.utils.PropertiesData;
 
 import lombok.AllArgsConstructor;
@@ -26,6 +28,7 @@ public class OrderService {
 
 	private final OrderRepository repo;
 	private final CartItemRepository cartRepo;
+	private final TransactionRepository transactionRepo;
 	private final UserService userService;
 	private final RestTemplate restTemplate;
 	private final PropertiesData properties;
@@ -41,8 +44,9 @@ public class OrderService {
 		Order order = repo.save(new Order(item));
 		cartRepo.deleteById(item.getId());
 
-		order.setPspId(restTemplate.exchange(properties.pspUrl + "/orders", HttpMethod.POST,
-				new HttpEntity<PspOrder>(new PspOrder(order, properties.callbackUrl + "/orders")), PspOrder.class)
+		order.setPspId(restTemplate
+				.exchange(properties.pspUrl + "/orders", HttpMethod.POST,
+						new HttpEntity<>(new PspOrder(order, properties.callbackUrl + "/orders")), PspOrder.class)
 				.getBody().getId());
 		return repo.save(order);
 	}
@@ -54,11 +58,13 @@ public class OrderService {
 		if (status.equals(PaymentStatus.SUCCESS)) {
 			log.info("Order: id=" + order.getId() + " payment_status=SUCCESS");
 			order.setStatus(OrderStatus.COMPLETED);
+			transactionRepo.save(new Transaction(order));
 			return repo.save(order);
 
 		} else {
 			log.info("Order: id=" + order.getId() + " payment_status=FAILED");
 			order.setStatus(OrderStatus.FAILED);
+			transactionRepo.save(new Transaction(order));
 			return repo.save(order);
 		}
 	}

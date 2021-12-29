@@ -79,7 +79,7 @@ public class BillingPlanService {
 			order.setExecuted(true);
 
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-					new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.ERROR)), Void.class);
+					new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.ERROR)), Void.class);
 			orderRepo.save(order);
 		}
 
@@ -112,7 +112,7 @@ public class BillingPlanService {
 			order.setExecuted(true);
 
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-					new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.ERROR)), Void.class);
+					new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.ERROR)), Void.class);
 			orderRepo.save(order);
 		}
 

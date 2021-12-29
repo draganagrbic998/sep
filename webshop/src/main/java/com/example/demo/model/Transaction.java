@@ -16,29 +16,34 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "order_table")
-public class Order {
+@Table(name = "transaction_table")
+public class Transaction {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotNull
-	private OrderStatus status = OrderStatus.CREATED;
-
-	@NotBlank
-	private String merchantApiKey;
+	private OrderStatus status;
 
 	@NotNull
-	private Double price;
+	private Double amount;
 
 	@NotBlank
 	private String currency;
 
 	@NotBlank
-	private String callbackUrl;
+	private String merchantApiKey;
 
 	@NotNull
-	private Integer ticks = 0;
+	private Long orderId;
+
+	public Transaction(Order order) {
+		status = order.getStatus();
+		amount = order.getQuantity() * order.getProduct().getPrice();
+		currency = order.getProduct().getCurrency();
+		merchantApiKey = order.getUser().getApiKey();
+		orderId = order.getId();
+	}
 
 }

@@ -113,7 +113,6 @@
               id="same-bank"
               class="btn btn-color btn-block shadow-sm"
               style="margin: auto; max-width: 100px"
-              th:attr="confirmUrl=${confirmUrl}, requestId=${requestId}"
             >
               Same Bank
             </button>
@@ -132,11 +131,9 @@
       $(document).ready(function () {
         $("#same-bank").click(function (e) {
           e.preventDefault();
-          var confirmUrl = "[[${confirmUrl}]]";
-          var requestId = "[[${requestId}]]";
 
           $.ajax({
-            url: confirmUrl + "/" + requestId,
+            url: "[[${confirmUrl}]]" + "/" + "[[${requestId}]]",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({
@@ -157,11 +154,9 @@
 
         $("#different-bank").click(function (e) {
           e.preventDefault();
-          var confirmUrl = "[[${confirmUrl}]]";
-          var requestId = "[[${requestId}]]";
 
           $.ajax({
-            url: confirmUrl + "/" + requestId,
+            url: "[[${confirmUrl}]]" + "/" + "[[${requestId}]]",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({

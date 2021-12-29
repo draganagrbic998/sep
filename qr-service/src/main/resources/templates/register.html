@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 
-    <title>Register Merchant</title>
+    <title>Merchant Registration</title>
 
     <link
       rel="stylesheet"
@@ -112,6 +112,7 @@
                     id="merchantId"
                     class="form-control"
                     placeholder="Merchant ID"
+                    required
                   />
                 </div>
                 <div class="input-group form-group">
@@ -124,6 +125,7 @@
                     id="merchantPassword"
                     class="form-control"
                     placeholder="Merchant password"
+                    required
                   />
                 </div>
                 <div class="input-group form-group">
@@ -136,6 +138,7 @@
                     id="merchantApiKey"
                     class="form-control"
                     placeholder="Merchant Api Key"
+                    required
                   />
                 </div>
                 <div class="input-group form-group">
@@ -148,6 +151,7 @@
                     id="bankUrl"
                     class="form-control"
                     placeholder="Merchant Bank URL"
+                    required
                   />
                 </div>
               </div>
@@ -167,10 +171,9 @@
       $(document).ready(function () {
         $("#registration").click(function (e) {
           e.preventDefault();
-          var registerUrl = "[[${registerUrl}]]";
 
           $.ajax({
-            url: registerUrl,
+            url: "[[${registerUrl}]]",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({

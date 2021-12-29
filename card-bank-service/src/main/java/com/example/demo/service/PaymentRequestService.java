@@ -92,7 +92,7 @@ public class PaymentRequestService {
 
 			log.info("PaymentRequestService - notifying card-service @" + request.getCallbackUrl());
 			restTemplate.exchange(request.getCallbackUrl(), HttpMethod.PUT,
-					new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.SUCCESS)),
+					new HttpEntity<>(new PaymentRequestCompleted(PaymentStatus.SUCCESS)),
 					Void.class);
 			return request.getSuccessUrl();
 		} else {
@@ -100,7 +100,7 @@ public class PaymentRequestService {
 			log.info("PaymentRequestService - sending PccRequest to PCC @" + properties.pccURL);
 
 			PccResponse response = restTemplate.exchange(properties.pccURL, HttpMethod.POST,
-					new HttpEntity<PccRequest>(new PccRequest(request, customer)), PccResponse.class).getBody();
+					new HttpEntity<>(new PccRequest(request, customer)), PccResponse.class).getBody();
 
 			if (response.getAuthenticated() && response.getTransactionAuthorized()) {
 				log.info("PccResponse: authenticated=true, transactionAuthorized=true");
@@ -109,7 +109,7 @@ public class PaymentRequestService {
 
 				log.info("PaymentRequestService - notifying card-service @" + request.getCallbackUrl());
 				restTemplate.exchange(request.getCallbackUrl(), HttpMethod.PUT,
-						new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.SUCCESS)),
+						new HttpEntity<>(new PaymentRequestCompleted(PaymentStatus.SUCCESS)),
 						Void.class);
 				return request.getSuccessUrl();
 			}
@@ -133,7 +133,7 @@ public class PaymentRequestService {
 		transaction.setStatus(error ? PaymentStatus.ERROR : PaymentStatus.FAIL);
 		transactionRepo.save(transaction);
 		restTemplate.exchange(request.getCallbackUrl(), HttpMethod.PUT,
-				new HttpEntity<PaymentRequestCompleted>(new PaymentRequestCompleted(PaymentStatus.FAIL)), Void.class);
+				new HttpEntity<>(new PaymentRequestCompleted(PaymentStatus.FAIL)), Void.class);
 		return error ? request.getErrorUrl() : request.getFailUrl();
 	}
 

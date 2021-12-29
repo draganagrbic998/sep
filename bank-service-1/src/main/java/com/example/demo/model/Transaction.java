@@ -10,6 +10,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.example.demo.dto.PccRequest;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,10 +39,7 @@ public class Transaction {
 	@NotBlank
 	private String currency;
 
-	@NotNull
 	private Long merchantOrderId;
-
-	@NotNull
 	private LocalDateTime merchantTimestamp;
 
 	public Transaction(PaymentRequest request) {
@@ -49,6 +48,12 @@ public class Transaction {
 		currency = request.getCurrency();
 		merchantOrderId = request.getMerchantOrderId();
 		merchantTimestamp = request.getMerchantTimestamp();
+	}
+
+	public Transaction(PccRequest request, String merchantId) {
+		this.merchantId = merchantId;
+		amount = request.getAmount();
+		currency = request.getCurrency();
 	}
 
 }

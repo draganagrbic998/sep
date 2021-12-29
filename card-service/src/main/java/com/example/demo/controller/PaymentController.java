@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.example.demo.dto.PaymentRequestCompleted;
+import com.example.demo.dto.OrderStatusUpdate;
 import com.example.demo.model.Order;
 import com.example.demo.service.OrderService;
 
@@ -28,7 +28,7 @@ public class PaymentController {
 	}
 
 	@PutMapping("/{orderId}")
-	public ResponseEntity<Order> complete(@PathVariable Long orderId, @RequestBody PaymentRequestCompleted dto) {
+	public ResponseEntity<Order> complete(@PathVariable Long orderId, @RequestBody OrderStatusUpdate dto) {
 		return ResponseEntity.ok(orderService.complete(orderId, dto.getStatus()));
 	}
 

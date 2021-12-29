@@ -20,6 +20,7 @@ public class AuthController {
 
 	@PostMapping
 	public ResponseEntity<Auth> login(@RequestBody Auth auth) {
+		System.out.println("AHA");
 		return ResponseEntity.ok(service.login(auth));
 	}
 

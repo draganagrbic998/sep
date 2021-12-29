@@ -133,7 +133,7 @@ public class OrderService {
 				order.setExecuted(true);
 
 				restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-						new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)),
+						new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)),
 						Void.class);
 			} else {
 				throw new RuntimeException();
@@ -145,7 +145,7 @@ public class OrderService {
 			order.setExecuted(true);
 
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-					new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
+					new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
 		}
 
 		merchantRepo.save(cipher.encrypt(merchant));
@@ -186,7 +186,7 @@ public class OrderService {
 					order.setExecuted(true);
 
 					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-							new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)),
+							new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.SUCCESS)),
 							Void.class);
 				}
 
@@ -196,7 +196,7 @@ public class OrderService {
 				order.setExecuted(true);
 
 				restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-						new HttpEntity<PaymentCompletedDTO>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
+						new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.FAIL)), Void.class);
 			}
 			
 			merchantRepo.save(cipher.encrypt(merchant));

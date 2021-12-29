@@ -11,6 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class PaymentRequestCompleted {
+public class OrderStatusUpdate {
 	private PaymentStatus status;
 }
