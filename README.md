@@ -17,3 +17,6 @@
 1. application.properties портови
 2. data.sql
 
+Разлике између card-service и qr-service:
+1. application.properties
+
