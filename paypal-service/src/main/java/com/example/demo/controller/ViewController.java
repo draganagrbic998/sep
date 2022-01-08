@@ -26,7 +26,6 @@ public class ViewController {
 
 	@RequestMapping("/paypal_payment/{orderId}")
 	public String paypalPayment(@PathVariable Long orderId, Model model) {
-		System.out.println("TEST");
 		model.addAttribute("orderId", orderId);
 		model.addAttribute("fetchUrl", properties.fetchPaymentUrl);
 		model.addAttribute("completeUrl", properties.completePaymentUrl);
