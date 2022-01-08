@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
+    <title>Paypal - Confirm Payment</title>
     <meta charset="UTF-8" />
-
-    <title>Confirm Order</title>
-
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 
     <link
@@ -73,7 +71,7 @@
   <body class="background">
     <div class="row mb-4">
       <div class="col-lg-12 mx-auto text-center title-container">
-        <h1 class="display-4 header">Confirm Order</h1>
+        <h1 class="display-4 header">Paypal - Confirm Payment</h1>
       </div>
     </div>
 
@@ -89,8 +87,6 @@
     <script src="https://www.paypal.com/sdk/js?client-id=test&commit=false"></script>
 
     <script>
-      var orderId = "[[${orderId}]]";
-
       paypal
         .Buttons({
           env: "sandbox",
@@ -103,7 +99,7 @@
             tagline: false,
           },
           createOrder: function () {
-            return fetch("https://localhost:8086/" + orderId)
+            return fetch("[[${fetchUrl}]]" + "/" + "[[${orderId}]]")
               .then(function (res) {
                 return res.json();
               })
@@ -124,13 +120,14 @@
           onApprove: function (data, actions) {
             return fetch(
               (EXECUTE_URL =
-                "https://localhost:8086/complete_payment/" +
+                "[[${completeUrl}]]" +
+                "/" +
                 data.paymentID +
                 "/" +
                 data.payerID)
             )
               .then(function (res) {
-                return res.json();
+                return res;
               })
               .then(function (details) {
                 window.location = "https://localhost:8086/view/success_url";

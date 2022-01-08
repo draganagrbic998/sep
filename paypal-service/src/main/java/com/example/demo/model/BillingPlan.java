@@ -26,15 +26,15 @@ public class BillingPlan {
 	private LocalDateTime createdTimestamp = LocalDateTime.now();
 
 	@Column
-	private String planId;
+	private String status;
 
 	@Column
 	private String productId;
 
 	@Column
-	private String name;
+	private String planId;
 
 	@Column
-	private String status;
+	private String name;
 
 }

@@ -11,8 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class PaymentCompletedDTO {
-
+public class OrderStatusUpdate {
 	private PaymentStatus status;
-
 }

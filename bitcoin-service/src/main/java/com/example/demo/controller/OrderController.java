@@ -36,7 +36,7 @@ public class OrderController {
 		return new ModelAndView("redirect:" + properties.bitcoinPaymentUrl + "/" + orderId);
 	}
 
-	@PostMapping(value = "/complete_payment/{orderId}")
+	@PostMapping("/complete_payment/{orderId}")
 	public ResponseEntity<String> completePayment(@PathVariable Long orderId) {
 		log.info("OrderController - complete");
 		return ResponseEntity.ok(service.completePayment(orderId));

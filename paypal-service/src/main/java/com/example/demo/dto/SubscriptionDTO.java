@@ -8,8 +8,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SubscriptionDTO {
-
 	private String email;
 	private Long duration;
-
 }

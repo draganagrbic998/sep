@@ -26,7 +26,7 @@ public class Subscription {
 	private LocalDateTime createdTimestamp = LocalDateTime.now();
 
 	@Column
-	private String subscriptionId;
+	private String status;
 
 	@Column
 	private Long orderId;
@@ -35,7 +35,7 @@ public class Subscription {
 	private String planId;
 
 	@Column
-	private String status;
+	private String subscriptionId;
 
 	@Column
 	private String subscriber;

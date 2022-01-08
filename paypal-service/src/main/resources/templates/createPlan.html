@@ -1,8 +1,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
+    <title>Paypal - Subscription Details</title>
     <meta charset="UTF-8" />
-    <title>Subscription Details</title>
-
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 
     <link
@@ -88,7 +87,7 @@
   <body class="background">
     <div class="row mb-4">
       <div class="col-lg-12 mx-auto text-center title-container">
-        <h1 class="display-4 header">Subscription Details</h1>
+        <h1 class="display-4 header">Paypal - Subscription Details</h1>
       </div>
     </div>
 
@@ -105,11 +104,7 @@
                     <label data-toggle="tooltip" title="Enter your email"
                       >Email
                     </label>
-                    <input
-                      id="email"
-                      class="form-control"
-                      required
-                    />
+                    <input id="email" class="form-control" required />
                   </div>
                   <div class="form-group mb-4">
                     <label
@@ -119,11 +114,11 @@
                     </label>
                     <input
                       id="duration"
+                      class="form-control"
+                      required
                       type="number"
                       min="1"
                       max="36"
-                      class="form-control"
-                      required
                     />
                   </div>
                 </div>
@@ -132,7 +127,6 @@
                 id="confirm"
                 class="btn btn-color btn-block shadow-sm"
                 style="margin: auto; max-width: 100px"
-                th:attr="orderId=${orderId}"
               >
                 Confirm
               </button>
@@ -145,10 +139,9 @@
       $(document).ready(function () {
         $("#confirm").click(function (e) {
           e.preventDefault();
-          var orderId = $(this).attr("orderId");
 
           $.ajax({
-            url: "https://localhost:8086/subscriptions/" + orderId,
+            url: "[[${createSubscriptionUrl}]]" + "/" + "[[${orderId}]]",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({

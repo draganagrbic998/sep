@@ -39,9 +39,6 @@ public class DatabaseCipher {
 	}
 
 	public String decrypt(String cipherText) {
-		if (cipherText == null) {
-			return cipherText;
-		}
 		try {
 			cipher.init(Cipher.DECRYPT_MODE, key, ips);
 			return new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)));
@@ -52,16 +49,9 @@ public class DatabaseCipher {
 	}
 
 	public Merchant encrypt(Merchant merchant) {
+		merchant.setMerchantApiKey(encrypt(merchant.getMerchantApiKey()));
 		merchant.setClientId(encrypt(merchant.getClientId()));
 		merchant.setClientSecret(encrypt(merchant.getClientSecret()));
-		merchant.setMerchantApiKey(encrypt(merchant.getMerchantApiKey()));
-		return merchant;
-	}
-
-	public Merchant decrypt(Merchant merchant) {
-		merchant.setClientId(decrypt(merchant.getClientId()));
-		merchant.setClientSecret(decrypt(merchant.getClientSecret()));
-		merchant.setMerchantApiKey(decrypt(merchant.getMerchantApiKey()));
 		return merchant;
 	}
 
@@ -71,51 +61,24 @@ public class DatabaseCipher {
 		return order;
 	}
 
-	public Order decrypt(Order order) {
-		order.setPayPalOrderId(decrypt(order.getPayPalOrderId()));
-		order.setMerchantApiKey(decrypt(order.getMerchantApiKey()));
-		return order;
-	}
-
 	public Product encrypt(Product product) {
 		product.setProductId(encrypt(product.getProductId()));
 		product.setName(encrypt(product.getName()));
 		return product;
 	}
 
-	public Product decrypt(Product product) {
-		product.setProductId(decrypt(product.getProductId()));
-		product.setName(decrypt(product.getName()));
-		return product;
-	}
-
 	public BillingPlan encrypt(BillingPlan plan) {
-		plan.setPlanId(encrypt(plan.getPlanId()));
 		plan.setProductId(encrypt(plan.getProductId()));
+		plan.setPlanId(encrypt(plan.getPlanId()));
 		plan.setName(encrypt(plan.getName()));
 		return plan;
 	}
 
-	public BillingPlan decrypt(BillingPlan plan) {
-		plan.setPlanId(decrypt(plan.getPlanId()));
-		plan.setProductId(decrypt(plan.getProductId()));
-		plan.setName(decrypt(plan.getName()));
-		return plan;
-	}
-
 	public Subscription encrypt(Subscription subscription) {
-		subscription.setSubscriptionId(encrypt(subscription.getSubscriptionId()));
 		subscription.setPlanId(encrypt(subscription.getPlanId()));
+		subscription.setSubscriptionId(encrypt(subscription.getSubscriptionId()));
 		subscription.setSubscriber(encrypt(subscription.getSubscriber()));
 		subscription.setApproveUrl(encrypt(subscription.getApproveUrl()));
-		return subscription;
-	}
-
-	public Subscription decrypt(Subscription subscription) {
-		subscription.setSubscriptionId(decrypt(subscription.getSubscriptionId()));
-		subscription.setPlanId(decrypt(subscription.getPlanId()));
-		subscription.setSubscriber(decrypt(subscription.getSubscriber()));
-		subscription.setApproveUrl(decrypt(subscription.getApproveUrl()));
 		return subscription;
 	}
 

@@ -82,23 +82,26 @@ public class OrderService {
 		log.info("OrderService - checkOrders");
 
 		for (Order order : repo.findAll()) {
-			if (order.getStatus().equals(OrderStatus.CREATED)) {
-				if (order.getTicks() < 5) {
-					log.info("Order: id=" + order.getId() + " tick=" + order.getTicks() + " - OK");
-					order.setTicks(order.getTicks() + 1);
-					repo.save(order);
-
-				} else {
-					log.warn("Order: id=" + order.getId() + " tick=" + order.getTicks() + " - FAILED");
-					order.setStatus(OrderStatus.FAILED);
-					repo.save(order);
-
-					log.info("OrderService - checkOrders: notifying WebShop @" + order.getCallbackUrl());
-					restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-							new HttpEntity<>(new OrderStatusUpdate(PaymentStatus.FAIL)), Void.class);
-
-				}
+			if (!order.getStatus().equals(OrderStatus.CREATED)) {
+				continue;
 			}
+
+			if (order.getTicks() < 5) {
+				log.info("Order: id=" + order.getId() + " tick=" + order.getTicks() + " - OK");
+				order.setTicks(order.getTicks() + 1);
+				repo.save(order);
+
+			} else {
+				log.warn("Order: id=" + order.getId() + " tick=" + order.getTicks() + " - FAILED");
+				order.setStatus(OrderStatus.FAILED);
+				repo.save(order);
+
+				log.info("OrderService - checkOrders: notifying WebShop @" + order.getCallbackUrl());
+				restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
+						new HttpEntity<>(new OrderStatusUpdate(PaymentStatus.FAIL)), Void.class);
+
+			}
+
 		}
 	}
 

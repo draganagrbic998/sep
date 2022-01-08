@@ -23,13 +23,13 @@ public class Order {
 	private Long id;
 
 	@Column
+	private OrderStatus status = OrderStatus.CREATED;
+
+	@Column
 	private String payPalOrderId;
 
 	@Column
 	private String merchantApiKey;
-
-	@Column
-	private OrderStatus status = OrderStatus.CREATED;
 
 	@Column
 	private Double price;
@@ -39,8 +39,5 @@ public class Order {
 
 	@Column
 	private String callbackUrl;
-
-	@Column
-	private Boolean executed = false;
 
 }

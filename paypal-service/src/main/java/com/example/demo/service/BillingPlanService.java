@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.example.demo.dto.PaymentCompletedDTO;
+import com.example.demo.dto.OrderStatusUpdate;
 import com.example.demo.model.BillingPlan;
 import com.example.demo.model.Merchant;
 import com.example.demo.model.Order;
@@ -41,8 +41,7 @@ public class BillingPlanService {
 	private final PropertiesData properties;
 
 	public BillingPlan create(Long orderId, Long duration) {
-		log.info("BillingPlanService - createBillingPlan: orderId=" + orderId);
-
+		log.info("BillingPlanService - create: orderId=" + orderId);
 		Order order = orderRepo.findById(orderId).get();
 		Merchant merchant = merchantRepo.findByMerchantApiKey(order.getMerchantApiKey());
 		Product product = createProduct(order, merchant);
@@ -68,19 +67,19 @@ public class BillingPlanService {
 							+ "    \"auto_bill_outstanding\": true\n" + "  }\n" + "}", headers),
 					String.class);
 
-			billingPlan.setPlanId(gson.fromJson(res, JsonObject.class).get("id").getAsString());
-			billingPlan.setProductId(cipher.decrypt(product.getProductId()));
-			billingPlan.setName("Subscription - " + cipher.decrypt(product.getName()));
 			billingPlan.setStatus(gson.fromJson(res, JsonObject.class).get("status").getAsString());
+			billingPlan.setProductId(cipher.decrypt(product.getProductId()));
+			billingPlan.setPlanId(gson.fromJson(res, JsonObject.class).get("id").getAsString());
+			billingPlan.setName("Subscription - " + cipher.decrypt(product.getName()));
+
 		} catch (Exception e) {
-			log.error("createBillingPlan - Error occured while creating billing plan");
+			log.error("create - Error occured while creating billing plan");
 
 			order.setStatus(OrderStatus.FAILED);
-			order.setExecuted(true);
-
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-					new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.ERROR)), Void.class);
+					new HttpEntity<>(new OrderStatusUpdate(PaymentStatus.ERROR)), Void.class);
 			orderRepo.save(order);
+
 		}
 
 		return repo.save(cipher.encrypt(billingPlan));
@@ -109,11 +108,10 @@ public class BillingPlanService {
 			log.error("createProduct - Error occured while creating paypal product");
 
 			order.setStatus(OrderStatus.FAILED);
-			order.setExecuted(true);
-
 			restTemplate.exchange(order.getCallbackUrl(), HttpMethod.PUT,
-					new HttpEntity<>(new PaymentCompletedDTO(PaymentStatus.ERROR)), Void.class);
+					new HttpEntity<>(new OrderStatusUpdate(PaymentStatus.ERROR)), Void.class);
 			orderRepo.save(order);
+
 		}
 
 		return productRepo.save(cipher.encrypt(product));

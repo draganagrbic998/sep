@@ -21,12 +21,12 @@ public class Merchant {
 	private Long id;
 
 	@Column
+	private String merchantApiKey;
+
+	@Column
 	private String clientId;
 
 	@Column
 	private String clientSecret;
-
-	@Column
-	private String merchantApiKey;
 
 }
