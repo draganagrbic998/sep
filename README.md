@@ -20,3 +20,5 @@
 Разлике између card-service и qr-service:
 1. application.properties
 
+избаци order=repo.save(order) фразе
+
