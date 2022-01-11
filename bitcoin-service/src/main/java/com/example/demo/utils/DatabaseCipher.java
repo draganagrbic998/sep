@@ -36,9 +36,6 @@ public class DatabaseCipher {
 	}
 
 	public String decrypt(String cipherText) {
-		if (cipherText == null) {
-			return cipherText;
-		}
 		try {
 			cipher.init(Cipher.DECRYPT_MODE, key, ips);
 			return new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)));
@@ -54,21 +51,9 @@ public class DatabaseCipher {
 		return merchant;
 	}
 
-	public Merchant decrypt(Merchant merchant) {
-		merchant.setCoingateToken(decrypt(merchant.getCoingateToken()));
-		merchant.setMerchantApiKey(decrypt(merchant.getMerchantApiKey()));
-		return merchant;
-	}
-
 	public Order encrypt(Order order) {
 		order.setCoingateOrderId(encrypt(order.getCoingateOrderId()));
 		order.setMerchantApiKey(encrypt(order.getMerchantApiKey()));
-		return order;
-	}
-
-	public Order decrypt(Order order) {
-		order.setCoingateOrderId(decrypt(order.getCoingateOrderId()));
-		order.setMerchantApiKey(decrypt(order.getMerchantApiKey()));
 		return order;
 	}
 

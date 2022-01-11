@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
+    <title>Merchant Registration</title>
     <meta charset="UTF-8" />
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-
-    <title>Register Merchant</title>
 
     <link
       rel="stylesheet"
@@ -120,21 +119,9 @@
                   ></span>
                 </div>
                 <input
-                  id="clientId"
+                  id="coingateToken"
                   class="form-control"
-                  placeholder="Paypal client ID"
-                />
-              </div>
-              <div class="input-group form-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"
-                    ><i class="fas fa-key icon"></i
-                  ></span>
-                </div>
-                <input
-                  id="clientSecret"
-                  class="form-control"
-                  placeholder="Paypal client secret"
+                  placeholder="Coingate Token"
                 />
               </div>
               <button
@@ -154,19 +141,18 @@
         $("#registration").click(function (e) {
           e.preventDefault();
           $.ajax({
-            url: "https://localhost:8086/merchants",
+            url: "[[${registerUrl}]]",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({
               merchantApiKey: $("#merchantApiKey").val(),
-              clientId: $("#clientId").val(),
-              clientSecret: $("#clientSecret").val(),
+              coingateToken: $("#coingateToken").val(),
             }),
             success: function (res) {
-              alert("DONE");
+              alert("Registration done!");
             },
-            error: function (odgovor) {
-              alert(odgovor.responseText);
+            error: function (res) {
+              alert(res.responseText);
             },
           });
         });

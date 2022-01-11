@@ -31,14 +31,14 @@ public class OrderController {
 
 	@GetMapping("/pay/{orderId}")
 	public ModelAndView pay(@PathVariable Long orderId) {
-		log.info("OrderController - pay: orderId=" + orderId);
-		service.createPayment(orderId);
-		return new ModelAndView("redirect:" + properties.bitcoinPaymentUrl + "/" + orderId);
+		log.info("OrderController - pay");
+		return new ModelAndView(
+				"redirect:" + properties.bitcoinPaymentUrl + "/" + service.createPayment(orderId).getId());
 	}
 
 	@PostMapping("/complete_payment/{orderId}")
 	public ResponseEntity<String> completePayment(@PathVariable Long orderId) {
-		log.info("OrderController - complete");
+		log.info("OrderController - completePayment");
 		return ResponseEntity.ok(service.completePayment(orderId));
 	}
 }

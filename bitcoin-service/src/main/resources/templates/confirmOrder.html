@@ -1,95 +1,113 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8" />
+  <head>
+    <title>Confirm Order</title>
+	<meta charset="UTF-8" />
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 
-<title>Confirm Order</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
+      rel="stylesheet"
+      type="text/css"
+    />
 
-<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <style>
+      .rounded-lg {
+        border-radius: 1rem;
+      }
 
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
-<link
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
-	rel="stylesheet" type="text/css" />
+      .background {
+        background: rgb(70, 205, 255);
+        background: linear-gradient(
+          90deg,
+          rgba(70, 205, 255, 1) 0%,
+          rgba(200, 243, 255, 1) 45%,
+          rgba(200, 243, 255, 1) 55%,
+          rgba(70, 205, 255, 1) 100%
+        );
+      }
 
-<style>
-.rounded-lg {
-	border-radius: 1rem;
-}
+      .title-container {
+        width: 50%;
+        background-color: rgba(255, 255, 255, 0.4);
+        border-bottom: 3px inset lightgrey;
+      }
 
-.background {
-	background: rgb(70, 205, 255);
-	background: linear-gradient(90deg, rgba(70, 205, 255, 1) 0%,
-		rgba(200, 243, 255, 1) 45%, rgba(200, 243, 255, 1) 55%,
-		rgba(70, 205, 255, 1) 100%);
-}
+      .header {
+        color: #6e8eff;
+        background: rgb(255, 255, 255);
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 1) 15%,
+          rgba(255, 255, 255, 1) 85%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        height: 100%;
+        width: 60%;
+        margin-left: 20%;
+        margin-right: 20%;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 1) 20%,
+          rgba(255, 255, 255, 1) 80%,
+          rgba(255, 255, 255, 0) 100%
+        );
+      }
 
-.title-container {
-	width: 50%;
-	background-color: rgba(255, 255, 255, 0.4);
-	border-bottom: 3px inset lightgrey;
-}
+      .container-card {
+        border-top: 1px outset lightgrey;
+        border-bottom: 2px inset lightgrey;
+        border-left: 1px outset lightgrey;
+        border-right: 1px inset lightgrey;
+      }
 
-.header {
-	color: #6e8eff;
-	background: rgb(255, 255, 255);
-	background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%,
-		rgba(255, 255, 255, 1) 15%, rgba(255, 255, 255, 1) 85%,
-		rgba(255, 255, 255, 0) 100%);
-	height: 100%;
-	width: 60%;
-	margin-left: 20%;
-	margin-right: 20%;
-	background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%,
-		rgba(255, 255, 255, 1) 20%, rgba(255, 255, 255, 1) 80%,
-		rgba(255, 255, 255, 0) 100%);
-}
+      .btn-color {
+        color: #fff;
+        background: rgb(4, 169, 249);
+        vertical-align: middle;
+        border: none;
+      }
 
-.container-card {
-	border-top: 1px outset lightgrey;
-	border-bottom: 2px inset lightgrey;
-	border-left: 1px outset lightgrey;
-	border-right: 1px inset lightgrey;
-}
+      .btn-color:hover {
+        color: #fff;
+        outline: none;
+        background: #6e8eff;
+      }
+    </style>
+  </head>
+  <body class="background">
+    <div class="row mb-4">
+      <div class="col-lg-12 mx-auto text-center title-container">
+        <h1 class="display-4 header">Confirm Order</h1>
+      </div>
+    </div>
 
-.btn-color {
-	color: #fff;
-	background: rgb(4, 169, 249);
-	vertical-align: middle;
-	border: none;
-}
+    <br />
 
-.btn-color:hover {
-	color: #fff;
-	outline: none;
-	background: #6e8eff;
-}
-</style>
-</head>
-<body class="background">
-	<div class="row mb-4">
-		<div class="col-lg-12 mx-auto text-center title-container">
-			<h1 class="display-4 header">Confirm Order</h1>
-		</div>
-	</div>
+    <div class="row">
+      <div class="col-lg-5 mx-auto">
+        <div class="bg-white rounded-lg shadow-sm p-5 container-card">
+          <div id="paypal-button-container">
+            <a
+              id="confirm"
+              class="btn btn-color btn-block shadow-sm"
+              style="margin: auto; max-width: 100px"
+              href="#"
+              >Confirm</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
 
-	<br />
-
-	<div class="row">
-		<div class="col-lg-5 mx-auto">
-			<div class="bg-white rounded-lg shadow-sm p-5 container-card">
-				<div id="paypal-button-container">
-					<a id="confirm" class="btn btn-color btn-block shadow-sm"
-						style="margin: auto; max-width: 100px" href="#">Confirm</a>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<script>
-      var orderPaymentUrl = "[[${orderPaymentUrl}]]";
-	  document.getElementById("confirm").href=orderPaymentUrl; 
+    <script>
+      document.getElementById("confirm").href = "[[${orderPaymentUrl}]]";
     </script>
-</body>
+  </body>
 </html>

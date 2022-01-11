@@ -33,24 +33,24 @@ public class CoingateOrder {
 	private String receive_currency = "DO_NOT_CONVERT";
 
 	@Column
+	private String token;
+
+	@Column
 	private String title;
 
 	@Column
 	private String description;
 
 	@Column
-	private String callback_url;
+	private String success_url;
 
 	@Column
 	private String cancel_url;
 
 	@Column
-	private String success_url;
-
-	@Column
 	private String payment_url;
 
 	@Column
-	private String token;
+	private String callback_url;
 
 }

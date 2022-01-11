@@ -1,12 +1,12 @@
 package com.example.demo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.service.OrderService;
+import com.example.demo.utils.PropertiesData;
 
 import lombok.AllArgsConstructor;
 
@@ -15,33 +15,33 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/view")
 public class ViewController {
 
-	@Autowired
-	OrderService orderService;
+	private final OrderService orderService;
+	private final PropertiesData properties;
 
 	@RequestMapping("/bitcoin_payment/{orderId}")
-	public String paypalPayment(@PathVariable Long orderId, Model model) {
+	public String bitcoinPayment(@PathVariable Long orderId, Model model) {
 		model.addAttribute("orderPaymentUrl", orderService.findOne(orderId).getPaymentUrl());
 		return "confirmOrder";
 	}
 
 	@RequestMapping("/register")
 	public String register(Model model) {
-
+		model.addAttribute("registerUrl", properties.registerUrl);
 		return "register";
 	}
 
 	@RequestMapping("/success_url")
-	public String success(Model model) {
+	public String success() {
 		return "success";
 	}
 
 	@RequestMapping("/cancel_url")
-	public String cancel(Model model) {
+	public String cancel() {
 		return "cancel";
 	}
 
 	@RequestMapping("/error_url")
-	public String error(Model model) {
+	public String error() {
 		return "error";
 	}
 

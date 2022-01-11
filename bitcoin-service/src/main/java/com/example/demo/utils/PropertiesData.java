@@ -6,19 +6,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class PropertiesData {
 
-	@Value("${bitcoin-orders}")
-	public String bitcoinOrders;
+	@Value("${register-url}")
+	public String registerUrl;
 
-	@Value("${complete-url}")
-	public String completeUrl;
-	
+	@Value("${bitcoin-orders-url}")
+	public String bitcoinOrdersUrl;
+
+	@Value("${bitcoin-payment-url}")
+	public String bitcoinPaymentUrl;
+
 	@Value("${success-url}")
 	public String successUrl;
 
 	@Value("${cancel-url}")
 	public String cancelUrl;
 
-	@Value("${bitcoin-payment-url}")
-	public String bitcoinPaymentUrl;
+	@Value("${complete-url}")
+	public String completeUrl;
 
 }

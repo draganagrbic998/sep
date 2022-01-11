@@ -23,13 +23,13 @@ public class Order {
 	private Long id;
 
 	@Column
+	private OrderStatus status = OrderStatus.CREATED;
+
+	@Column
 	private String coingateOrderId;
 
 	@Column
 	private String merchantApiKey;
-
-	@Column
-	private OrderStatus status = OrderStatus.CREATED;
 
 	@Column
 	private Double price;
