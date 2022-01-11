@@ -24,3 +24,4 @@ TODO:
 6. sonar qube
 7. написати шта смо од оних ствари за безбедност урадили
 8. тестирам оне success, cancell и error url-ове
+9. merchant registration test
