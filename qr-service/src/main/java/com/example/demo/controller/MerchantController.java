@@ -22,7 +22,6 @@ public class MerchantController {
 
 	@PostMapping
 	public ResponseEntity<Merchant> create(@RequestBody Merchant dto) {
-		System.out.println("ASD");
 		log.info("MerchantController - create");
 		return ResponseEntity.ok(service.save(dto));
 	}
