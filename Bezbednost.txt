@@ -11,4 +11,14 @@ III Maintain a vulnerability management program
 IV Implement strong access control measures
 
 7. Restrict access to cardholder data by business need to know - imamo autorizaciju i autentifikaciju.
-8. 
+8. Identify and authenticate access to system components - imamo id-eve za sve entitete. Sav pristup bazi programski.
+
+V Regularly monitor and test networks
+
+10. Track and monitor all access to network resources and cardholder data Requirement - imamo logovanje. Review logova radimo na nedelju dana. Istoriju cuvamo godinu dana, za poslednja tri meseca je odmah dostupna.
+11. Regularly test security systems and processes - Penetraciono testiranje staticki sa Sonarqube. Obavestili bismo osoblje o izmenama konf. datoteka.
+
+
+
+
+
