@@ -9,13 +9,8 @@
 2. keytool -importcert -file keystore.crt -alias webshop -keystore "C:\Program Files\Java\jdk-15.0.1\lib\security\cacerts" (покренути након покретања претходне команде, у истом директоријуму, при чему путању под наводницима променити да одговара локалној инсталацији) - када се појави prompt за унос лозинке, унети "changeit"
 
 Разлике између bank-service-1 и bank-service-2:
-1. application.properties портови
+1. application.properties
 2. data.sql
 
 Разлике између card-service и qr-service:
 1. application.properties
-
-TODO:
-4. тестирати јел оно истицање времена од 5 секунди ради
-8. тестирам оне success, cancell и error url-ове
-9. merchant registration test
