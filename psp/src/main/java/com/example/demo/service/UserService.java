@@ -60,6 +60,11 @@ public class UserService implements UserDetailsService {
 		return repo.findAll();
 	}
 
+	public User readOne(Long id) {
+		log.info("UserService - readOne");
+		return repo.findById(id).get();
+	}
+
 	public User save(User user) {
 		log.info("UserService - save: id=" + user.getId());
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -72,6 +77,13 @@ public class UserService implements UserDetailsService {
 		}
 
 		return repo.save(user);
+	}
+
+	public User save(Long id, User user) {
+		log.info("UserService - save: id=" + user.getId());
+		User old = repo.findById(id).get();
+		old.setMethods(user.getMethods());
+		return repo.save(old);
 	}
 
 	public void delete(Long id) {

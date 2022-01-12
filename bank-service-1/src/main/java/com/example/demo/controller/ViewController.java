@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.demo.model.PaymentRequest;
+import com.example.demo.repository.PaymentRequestRepository;
 import com.example.demo.utils.PropertiesData;
 import com.example.demo.utils.QRCodeGenerator;
 
@@ -18,6 +20,7 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/view")
 public class ViewController {
 
+	private final PaymentRequestRepository requestRepo;
 	private final PropertiesData properties;
 
 	@RequestMapping("/payment/{requestId}")
@@ -29,8 +32,13 @@ public class ViewController {
 		}
 
 		try {
-			model.addAttribute("qrcode",
-					Base64.getEncoder().encodeToString(QRCodeGenerator.generateQRCode(requestId + "", 250, 250)));
+			PaymentRequest request = requestRepo.findById(requestId).get();
+			model.addAttribute("qrcode", Base64.getEncoder()
+					.encodeToString(QRCodeGenerator.generateQRCode("{\r\n" + "    \"merchantId\": "
+							+ request.getMerchantId() + ",\r\n" + "    \"merchantPassword\": "
+							+ request.getMerchantPassword() + ",\r\n" + "    \"amount\": " + request.getAmount()
+							+ ",\r\n" + "    \"currency\": " + request.getCurrency() + ",\r\n"
+							+ "    \"merchantOrderId\": " + request.getMerchantOrderId() + "\r\n" + "}", 250, 250)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

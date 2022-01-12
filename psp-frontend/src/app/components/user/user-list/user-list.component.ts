@@ -10,7 +10,7 @@ export class UserListComponent {
   constructor(public service: UserService) { }
 
   editRoute = Route.USER_FORM
-  hideEdit = true;
+  // hideEdit = true;
   hideDelete = true;
 
   columnMappings: { [key: string]: string } = {

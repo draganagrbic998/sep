@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { PaymentMethodService } from 'src/app/services/payment-method.service';
 import { RoleService } from 'src/app/services/role.service';
 import { UserService } from 'src/app/services/user.service';
@@ -16,26 +17,34 @@ export class UserFormComponent {
     public service: UserService,
     private roleService: RoleService,
     private paymentMethodService: PaymentMethodService,
-    private webshopService: WebshopService
+    private webshopService: WebshopService,
+    private route: ActivatedRoute
   ) { }
+
+  get isEditing(){
+    return !!+this.route.snapshot.params.id
+  }
 
   entity = 'User'
   listRoute = Route.USERS
 
   formConfig: FormConfig = {
     email: {
-      validation: 'required'
+      validation: 'required',
+      disabled: this.isEditing
     },
     password: {
       type: 'password',
-      validation: 'required'
+      validation: 'required',
+      disabled: this.isEditing
     },
     role: {
       type: 'select',
       validation: 'required',
       options: this.roleService.read(),
       optionValue: 'name',
-      optionKey: 'name'
+      optionKey: 'name',
+      disabled: this.isEditing
     },
     methods: {
       type: 'multi-select',
@@ -45,7 +54,7 @@ export class UserFormComponent {
       hidding: {
         field: 'role',
         values: ['psp-admin', 'ws-admin', '']
-      },
+      }
     },
     webshop: {
       type: 'select',
@@ -57,6 +66,7 @@ export class UserFormComponent {
         field: 'role',
         values: ['psp-admin', '']
       },
+      disabled: this.isEditing
     }
   }
   style: FormStyle = {

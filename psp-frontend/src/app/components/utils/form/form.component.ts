@@ -81,6 +81,10 @@ export class FormComponent implements OnInit {
     }
   }
 
+  disabled(control: string) {
+    return !!this.config.formConfig[control].disabled
+  }
+
   type(control: string) {
     return this.config.formConfig[control].type || 'text'
   }
