@@ -10,6 +10,8 @@ export class UserListComponent {
   constructor(public service: UserService) { }
 
   editRoute = Route.USER_FORM
+
+  hideCreate = true;
   // hideEdit = true;
   hideDelete = true;
 
